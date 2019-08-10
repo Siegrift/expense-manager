@@ -44,7 +44,8 @@
     ],
     "object-literal-key-quotes": [true, "as-needed"],
     "quotemark": [true, "single", "jsx-double", "avoid-escape"],
-    "arrow-parens": true
+    "arrow-parens": true,
+    "jsx-boolean-value": [true, "never"]
   },
   "rulesDirectory": []
 }
