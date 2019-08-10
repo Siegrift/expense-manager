@@ -3,7 +3,7 @@ import { applyMiddleware, createStore } from 'redux'
 import { createLogger } from 'redux-logger'
 import rootReducer from './rootReducer'
 import { getInitialState } from '../state'
-import { Action } from './types'
+import { Action, ThunkExtraArgument } from './types'
 import { Logger } from '../types'
 import { Api } from '../api/index'
 
@@ -28,9 +28,11 @@ export const configureStore = () => {
     }),
   })
 
-  const middlewares = [
-    thunk.withExtraArgument({ logger, api: new Api(logger) }),
-  ]
+  const thunkExtra: ThunkExtraArgument = {
+    logger,
+    api: new Api(logger),
+  }
+  const middlewares = [thunk.withExtraArgument(thunkExtra)]
   if (process.env.NODE_ENV) {
     middlewares.push(loggerMiddleware)
   }
