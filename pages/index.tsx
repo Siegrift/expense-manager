@@ -5,6 +5,8 @@ import Counter from '../lib/counter'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider } from '@material-ui/styles'
 import theme from '../lib/theme'
+import Head from 'next/head'
+import { PROJECT_TITLE } from '../lib/constants'
 
 const store = configureStore()
 
@@ -12,6 +14,10 @@ const Home = () => (
   <div>
     <ReduxProvider store={store}>
       <ThemeProvider theme={theme}>
+        <Head>
+          {/* https://github.com/zeit/next.js/blob/master/errors/no-document-title.md */}
+          <title>{PROJECT_TITLE}</title>
+        </Head>
         <CssBaseline />
         <Counter />
         <div className="wrapper">

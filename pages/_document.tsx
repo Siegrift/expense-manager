@@ -2,7 +2,7 @@ import React from 'react'
 import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheets } from '@material-ui/styles'
 import theme from '../lib/theme'
-import { PROJECT_DESCRIPTION, PROJECT_TITLE } from '../lib/constants'
+import { PROJECT_DESCRIPTION } from '../lib/constants'
 
 class MyDocument extends Document {
   render() {
@@ -38,8 +38,6 @@ class MyDocument extends Document {
           {/* Bonus: Have app icon and splash screen for PWAs saved to homescreen on iOS devices */}
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-
-          <title>{PROJECT_TITLE}</title>
         </Head>
         <body>
           <Main />
