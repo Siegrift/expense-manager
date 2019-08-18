@@ -1,7 +1,7 @@
 import { ApiError } from './apiError'
 import { Logger } from '../types'
 
-let apiInstance: Api
+let apiInstance: Api | undefined
 
 export class Api {
   constructor(private logger: Logger) {

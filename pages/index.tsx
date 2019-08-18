@@ -1,87 +1,164 @@
-import React from 'react'
-import { Provider as ReduxProvider } from 'react-redux'
+import { ThemeProvider } from '@material-ui/styles'
+import React, { useEffect, useState } from 'react'
 import { configureStore } from '../lib/redux/configureStore'
 import Counter from '../lib/counter'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { ThemeProvider } from '@material-ui/styles'
+import { Provider as ReduxProvider } from 'react-redux'
 import theme from '../lib/theme'
 import Head from 'next/head'
 import { PROJECT_TITLE } from '../lib/constants'
+import { initializeFirebase } from '../lib/firebase'
+import * as firebase from 'firebase/app'
+
+initializeFirebase()
 
 const store = configureStore()
 
-const Home = () => (
-  <div>
-    <ReduxProvider store={store}>
-      <ThemeProvider theme={theme}>
-        <Head>
-          {/* https://github.com/zeit/next.js/blob/master/errors/no-document-title.md */}
-          <title>{PROJECT_TITLE}</title>
-        </Head>
-        <CssBaseline />
-        <Counter />
-        <div className="wrapper">
-          <img src="../static/coin.svg" alt="coin" className="image" />
-        </div>
-        <style jsx global>{`
-          body {
-            display: flex;
-            width: 100vw;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-            justify-content: center;
-            align-items: center;
-          }
+// Signs-in Friendly Chat.
+function signIn() {
+  // Sign into Firebase using popup auth & Google as the identity provider.
+  const provider = new firebase.auth.GoogleAuthProvider()
+  firebase.auth().signInWithPopup(provider)
+}
 
-          .wrapper {
-            border-radius: 8px;
-            padding: 30px;
-            border: 1px solid rgb(187, 184, 184);
-            display: flex;
-          }
+// Signs-out of Friendly Chat.
+function signOut() {
+  // Sign out of Firebase.
+  firebase.auth().signOut()
+}
 
-          @keyframes rotation {
-            from {
-              transform: rotateY(0deg);
+function authStateObserver(user: any) {
+  console.log(user)
+}
+
+firebase.auth().onAuthStateChanged(authStateObserver)
+
+const updateMess = (text: any) => () => {
+  // Add a new message entry to the Firebase database.
+  return firebase
+    .firestore()
+    .collection('messages')
+    .add({
+      text,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    })
+    .catch(function(error) {
+      console.error('Error writing new message to Firebase Database', error)
+    })
+}
+
+const Home = () => {
+  const [mess, updMess] = useState('')
+  useEffect(() => {
+    // Create the query to load the last 12 messages and listen for new ones.
+    const query = firebase
+      .firestore()
+      .collection('messages')
+      .orderBy('timestamp', 'desc')
+      .limit(12)
+
+    // Start listening to the query.
+    return query.onSnapshot(function(snapshot) {
+      snapshot.docChanges().forEach(function(change) {
+        // if (change.type === 'removed') {
+        //   deleteMessage(change.doc.id)
+        // } else {
+        //   const message = change.doc.data()
+        //   displayMessage(
+        //     change.doc.id,
+        //     message.timestamp,
+        //     message.name,
+        //     message.text,
+        //     message.profilePicUrl,
+        //     message.imageUrl,
+        //   )
+        // }
+        console.log('carefull, called on every render!', change)
+      })
+    })
+  })
+
+  return (
+    <div>
+      <ReduxProvider store={store}>
+        <ThemeProvider theme={theme}>
+          <Head>
+            {/* https://github.com/zeit/next.js/blob/master/errors/no-document-title.md */}
+            <title>{PROJECT_TITLE}</title>
+          </Head>
+          <CssBaseline />
+          <Counter />
+          <button onClick={signIn}>google sign in</button>
+          <button onClick={signOut}>google sign out</button>
+          <input
+            type="text"
+            value={mess}
+            onChange={(e) => updMess(e.target.value)}
+          />
+          <button onClick={updateMess(mess)}>update message</button>
+          <div className="wrapper">
+            <img src="../static/coin.svg" alt="coin" className="image" />
+          </div>
+          <style jsx global>{`
+            body {
+              display: flex;
+              width: 100vw;
+              height: 100vh;
+              margin: 0;
+              padding: 0;
+              justify-content: center;
+              align-items: center;
             }
-            to {
-              transform: rotateY(1800deg);
+
+            .wrapper {
+              border-radius: 8px;
+              padding: 30px;
+              border: 1px solid rgb(187, 184, 184);
+              display: flex;
             }
-          }
 
-          .image {
-            width: 150px;
-            animation: rotation 2s infinite ease-in-out;
-          }
-        `}</style>
-        <style jsx>{`
-          h1,
-          a {
-            font-family: "Arial";
-          }
+            @keyframes rotation {
+              from {
+                transform: rotateY(0deg);
+              }
+              to {
+                transform: rotateY(1800deg);
+              }
+            }
 
-          ul {
-            padding: 0;
-          }
+            .image {
+              width: 150px;
+              animation: rotation 2s infinite ease-in-out;
+            }
+          `}</style>
+          <style jsx>{`
+            h1,
+            a {
+              font-family: "Arial";
+            }
 
-          li {
-            list-style: none;
-            margin: 5px 0;
-          }
+            ul {
+              padding: 0;
+            }
 
-          a {
-            text-decoration: none;
-            color: blue;
-          }
+            li {
+              list-style: none;
+              margin: 5px 0;
+            }
 
-          a:hover {
-            opacity: 0.6;
-          }
-        `}</style>
-      </ThemeProvider>
-    </ReduxProvider>
-  </div>
-)
+            a {
+              text-decoration: none;
+              color: blue;
+            }
+
+            a:hover {
+              opacity: 0.6;
+            }
+          `}</style>
+        </ThemeProvider>
+      </ReduxProvider>
+    </div>
+  )
+}
 
 export default Home
