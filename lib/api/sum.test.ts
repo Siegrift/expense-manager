@@ -6,15 +6,15 @@ describe('api', () => {
   })
 
   test('can create only single api instance', () => {
-    const api = new Api(undefined)
+    const api = new Api(undefined as any)
     expect(() => {
       // tslint:disable-next-line: no-unused-expression
-      new Api(undefined)
+      new Api(undefined as any)
     }).toThrow()
   })
 
   test('can retrieve the api instance', () => {
-    const api = new Api(undefined)
+    const api = new Api(undefined as any)
     expect(getAPI()).toBe(api)
   })
 
