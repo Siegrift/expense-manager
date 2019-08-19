@@ -1,25 +1,19 @@
 {
   "short_name": "Next PWA",
-  "name": "Next PWA Boilerplate",
+  "name": "Expense manager",
   "icons": [
     {
-      "src": "/static/graphics/icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png"
-    },
-    {
-      "src": "/static/graphics/icon-192.png",
+      "src": "/static/coin192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/static/graphics/icon-512.png",
+      "src": "/static/coin512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#fff",
-  "background_color": "#000"
+  "background_color": "#b8860b"
 }

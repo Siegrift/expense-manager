@@ -16,7 +16,7 @@ class MyDocument extends Document {
             content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
           />
           {/* PWA primary color */}
-          <meta name="theme-color" content={theme.palette.primary.main} />
+          <meta name="theme-color" content="#a5790a" />
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
@@ -30,7 +30,7 @@ class MyDocument extends Document {
           <meta name="theme-color" content="#fff" />
 
           {/* Progressive Web App: Provide manifest file for metadata */}
-          <link rel="manifest" href="./static/manifest.json" />
+          <link rel="manifest" href="/static/manifest.json" />
 
           {/* SEO: App description for search-engine optimization */}
           <meta name="Description" content={PROJECT_DESCRIPTION} />
