@@ -1,7 +1,6 @@
 import React from 'react'
 import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheets } from '@material-ui/styles'
-import theme from '../lib/theme'
 import { PROJECT_DESCRIPTION } from '../lib/constants'
 
 class MyDocument extends Document {
@@ -17,17 +16,12 @@ class MyDocument extends Document {
           />
           {/* PWA primary color */}
           <meta name="theme-color" content="#a5790a" />
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-          />
+
+          {/* Page favicon */}
           <link rel="icon" type="image/png" href="../static/coin.png" />
 
           {/* Progressive Web App: Match the width of app’s content with width of viewport for mobile devices */}
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-          {/* Progressive Web App: Have address bar match brand colors */}
-          <meta name="theme-color" content="#fff" />
 
           {/* Progressive Web App: Provide manifest file for metadata */}
           <link rel="manifest" href="/static/manifest.json" />
@@ -38,6 +32,12 @@ class MyDocument extends Document {
           {/* Bonus: Have app icon and splash screen for PWAs saved to homescreen on iOS devices */}
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+          {/* Enable material UI typography font */}
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          />
         </Head>
         <body>
           <Main />

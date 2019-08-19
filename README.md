@@ -20,6 +20,13 @@ _We use canary version of next, because deploying with firebase works only after
 version 9.0.4, which is at this time in canary. [Reference
 link](https://github.com/zeit/next.js/issues/6073#issuecomment-467589586)_
 
+## Conventions
+
+1. **Lower case filenames** - Nextjs uses predefined routing _(pages directory
+   is automatically routed)_ and the url name must match the page filename. I
+   want URL parts _(e.g. /login)_ to be lowercased, and for consistency all
+   files should start with lowercase.
+
 ## Upgrade deps
 
 Run `yarn upgrade --latest`
