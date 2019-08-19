@@ -4,6 +4,11 @@ import * as firebase from 'firebase/app'
 // Add the Firebase products that you want to use
 import 'firebase/auth'
 import 'firebase/firestore'
+import { Store } from 'redux'
+import { getQueries } from './queries'
+import { State } from '../state'
+import { Action } from '../redux/types'
+import { firestoneChangeAction } from './actions'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBSskq5HfVggNz65zJoJaieWxkBCzxqHcM',
@@ -15,8 +20,15 @@ const firebaseConfig = {
   appId: '1:163758023183:web:522028afd5102881',
 }
 
-export const initializeFirebase = () => {
+export const initializeFirebase = (store: Store) => {
+  // firebase can be initialized only once, but crashes on hot update
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig)
   }
+
+  getQueries().forEach((query) => {
+    query.firestoneQuery.onSnapshot((change) => {
+      store.dispatch(firestoneChangeAction(query, change))
+    })
+  })
 }

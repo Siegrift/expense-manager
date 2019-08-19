@@ -5,7 +5,7 @@ import rootReducer from './rootReducer'
 import { getInitialState } from '../state'
 import { Action, ThunkExtraArgument } from './types'
 import { Logger } from '../types'
-import { Api } from '../api/index'
+import { Api } from '../api'
 
 export const configureStore = () => {
   const logger: Logger = {

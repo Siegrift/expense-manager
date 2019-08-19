@@ -6,10 +6,14 @@ import { useCallback } from 'react'
 
 const Counter = () => {
   const cnt = useSelector((state: State) => state.cnt)
+  const messages = useSelector((state: State) => state.messages)
   const dispatch = useDispatch()
 
   return (
     <div>
+      {Object.keys(messages).map((mkey) => (
+        <div key={mkey}>{messages[mkey].text}</div>
+      ))}
       <Button
         color="primary"
         variant="contained"

@@ -3,16 +3,16 @@ import React, { useEffect, useState } from 'react'
 import { configureStore } from '../lib/redux/configureStore'
 import Counter from '../lib/counter'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { Provider as ReduxProvider } from 'react-redux'
+import { Provider as ReduxProvider, useSelector } from 'react-redux'
 import theme from '../lib/theme'
 import Head from 'next/head'
 import { PROJECT_TITLE } from '../lib/constants'
-import { initializeFirebase } from '../lib/firebase'
+import { initializeFirebase } from '../lib/firebase/firebase'
 import * as firebase from 'firebase/app'
-
-initializeFirebase()
+import { State } from '../lib/state'
 
 const store = configureStore()
+initializeFirebase(store)
 
 // Signs-in Friendly Chat.
 function signIn() {
@@ -49,34 +49,6 @@ const updateMess = (text: any) => () => {
 
 const Home = () => {
   const [mess, updMess] = useState('')
-  useEffect(() => {
-    // Create the query to load the last 12 messages and listen for new ones.
-    const query = firebase
-      .firestore()
-      .collection('messages')
-      .orderBy('timestamp', 'desc')
-      .limit(12)
-
-    // Start listening to the query.
-    return query.onSnapshot(function(snapshot) {
-      snapshot.docChanges().forEach(function(change) {
-        // if (change.type === 'removed') {
-        //   deleteMessage(change.doc.id)
-        // } else {
-        //   const message = change.doc.data()
-        //   displayMessage(
-        //     change.doc.id,
-        //     message.timestamp,
-        //     message.name,
-        //     message.text,
-        //     message.profilePicUrl,
-        //     message.imageUrl,
-        //   )
-        // }
-        console.log('carefull, called on every render!', change)
-      })
-    })
-  })
 
   return (
     <div>

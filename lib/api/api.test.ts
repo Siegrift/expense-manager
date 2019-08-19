@@ -1,4 +1,4 @@
-import { Api, clearAPIInstance, getAPI } from './index'
+import { Api, clearAPIInstance, getAPI } from '.'
 
 describe('api', () => {
   beforeEach(() => {
