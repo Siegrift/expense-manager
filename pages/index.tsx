@@ -1,6 +1,6 @@
-import Loading from '../lib/shared/Loading'
 import { INDEX_PAGE_REDIRECT } from '../lib/constants'
 import { useRequireLoginEffect } from '../lib/shared/hooks'
+import Loading from '../lib/shared/Loading'
 
 /**
  * We want to show add expense screen on smaller devices and dashboard on larger

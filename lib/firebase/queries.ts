@@ -1,5 +1,7 @@
 import { firestore } from 'firebase/app'
+
 import { State } from '../state'
+
 import { lastTenEntries } from './queryReducers'
 
 export type QueryReducer = (

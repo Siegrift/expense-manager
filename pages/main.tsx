@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import Counter from '../lib/counter'
 import * as firebase from 'firebase/app'
+import React, { useEffect, useState } from 'react'
+
+import Counter from '../lib/counter'
 
 // Signs-in Friendly Chat.
 function signIn() {
@@ -24,7 +25,7 @@ const updateMess = (text: any) => () => {
       text,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.error('Error writing new message to Firebase Database', error)
     })
 }

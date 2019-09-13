@@ -1,15 +1,16 @@
-import React from 'react'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
+import Avatar from '@material-ui/core/Avatar'
+import IconButton from '@material-ui/core/IconButton'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
-import IconButton from '@material-ui/core/IconButton'
-import MenuIcon from '@material-ui/icons/Menu'
 import AccountCircle from '@material-ui/icons/AccountCircle'
-import { useSelector } from 'react-redux'
-import { State } from '../state'
+import MenuIcon from '@material-ui/icons/Menu'
 import { auth } from 'firebase/app'
-import Avatar from '@material-ui/core/Avatar'
+import React from 'react'
+import { useSelector } from 'react-redux'
+
+import { State } from '../state'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

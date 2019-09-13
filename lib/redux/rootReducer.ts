@@ -1,4 +1,5 @@
 import { getInitialState, State } from '../state'
+
 import { Action } from './types'
 
 const rootReducer = (state: State = getInitialState(), action: Action) => {

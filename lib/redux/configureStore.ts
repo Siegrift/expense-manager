@@ -1,11 +1,13 @@
-import thunk from 'redux-thunk'
 import { applyMiddleware, createStore } from 'redux'
 import { createLogger } from 'redux-logger'
-import rootReducer from './rootReducer'
-import { getInitialState } from '../state'
-import { Action, ThunkExtraArgument } from './types'
-import { Logger } from '../types'
+import thunk from 'redux-thunk'
+
 import { Api } from '../api'
+import { getInitialState } from '../state'
+import { Logger } from '../types'
+
+import rootReducer from './rootReducer'
+import { Action, ThunkExtraArgument } from './types'
 
 export const configureStore = () => {
   const logger: Logger = {

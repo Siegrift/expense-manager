@@ -1,7 +1,9 @@
-import { firestore, User } from 'firebase'
-import { Action } from '../redux/types'
-import { Query } from './queries'
 import { set } from '@siegrift/tsfunct'
+import { firestore, User } from 'firebase'
+
+import { Action } from '../redux/types'
+
+import { Query } from './queries'
 
 export const firestoneChangeAction = (
   query: Query,

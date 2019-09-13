@@ -1,14 +1,15 @@
-import React from 'react'
-import App from 'next/app'
-import { Provider } from 'react-redux'
-import { ThemeProvider } from '@material-ui/styles'
-import { configureStore } from '../lib/redux/configureStore'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { Provider as ReduxProvider } from 'react-redux'
-import theme from '../lib/theme'
+import { ThemeProvider } from '@material-ui/styles'
+import App from 'next/app'
 import Head from 'next/head'
+import React from 'react'
+import { Provider as ReduxProvider } from 'react-redux'
+import { Provider } from 'react-redux'
+
 import { PROJECT_TITLE } from '../lib/constants'
 import { initializeFirebase } from '../lib/firebase/firebase'
+import { configureStore } from '../lib/redux/configureStore'
+import theme from '../lib/theme'
 
 const store = configureStore()
 initializeFirebase(store)

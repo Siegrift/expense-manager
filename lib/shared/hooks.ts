@@ -1,6 +1,7 @@
 import Router from 'next/router'
 import { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
+
 import { State } from '../state'
 
 export function useRequireLoginEffect(delay = 0) {

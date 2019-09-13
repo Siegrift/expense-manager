@@ -1,6 +1,7 @@
-import React from 'react'
-import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheets } from '@material-ui/styles'
+import Document, { Head, Main, NextScript } from 'next/document'
+import React from 'react'
+
 import { PROJECT_DESCRIPTION } from '../lib/constants'
 
 class MyDocument extends Document {

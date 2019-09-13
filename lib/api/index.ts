@@ -1,5 +1,6 @@
-import { ApiError } from './apiError'
 import { Logger } from '../types'
+
+import { ApiError } from './apiError'
 
 let apiInstance: Api | undefined
 
