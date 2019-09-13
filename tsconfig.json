@@ -18,5 +18,5 @@
     "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */
   },
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "lib/**/*.ts", "pages/**/*.tsx"]
+  "include": ["next-env.d.ts", "lib/**/*.ts", "pages/**/*.tsx", "lib/**/*.tsx"]
 }
