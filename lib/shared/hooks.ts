@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 
 import { State } from '../state'
+import { redirectTo } from '../utils'
 
 export function useRequireLoginEffect(delay = 0) {
   const isSigned = useSelector((state: State) => state.isSigned)
@@ -10,20 +11,20 @@ export function useRequireLoginEffect(delay = 0) {
   const isSignedRef = useRef(isSigned)
   isSignedRef.current = isSigned
 
-  const redirect = () => {
+  const wrappedRedirect = () => {
     const currentRoute = Router.pathname
-    if (isSignedRef.current && currentRoute !== '/addExpense') {
-      Router.push('/addExpense')
+    if (isSignedRef.current && currentRoute !== '/main') {
+      redirectTo('/main')
     } else if (currentRoute !== '/login') {
-      Router.push('/login')
+      redirectTo('/login')
     }
   }
 
   useEffect(() => {
     if (delay > 0) {
-      setTimeout(redirect, delay)
+      setTimeout(wrappedRedirect, delay)
     } else {
-      redirect()
+      wrappedRedirect()
     }
   })
 }

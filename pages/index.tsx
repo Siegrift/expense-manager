@@ -1,4 +1,4 @@
-import { INDEX_PAGE_REDIRECT } from '../lib/constants'
+import { INDEX_PAGE_REDIRECT_DELAY } from '../lib/constants'
 import { useRequireLoginEffect } from '../lib/shared/hooks'
 import Loading from '../lib/shared/Loading'
 
@@ -9,7 +9,7 @@ import Loading from '../lib/shared/Loading'
 const IndexPage = () => {
   // Firebase is loaded asynchronously and there is no user at the beginning.
   // We don't want to present user with flashing screen though...
-  useRequireLoginEffect(INDEX_PAGE_REDIRECT)
+  useRequireLoginEffect(INDEX_PAGE_REDIRECT_DELAY)
 
   return (
     <Loading
