@@ -1,4 +1,3 @@
-import * as A from './actions'
 
 describe('test', () => {
   test('works', () => {

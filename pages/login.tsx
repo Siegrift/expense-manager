@@ -1,14 +1,9 @@
 import Typography from '@material-ui/core/Typography'
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
-import { auth } from 'firebase/app'
-import Link from 'next/link'
 import GoogleButton from 'react-google-button'
-import { useSelector } from 'react-redux'
 
 import { PROJECT_TITLE } from '../lib/constants'
 import { signIn } from '../lib/firebase/util'
 import { useRequireLoginEffect } from '../lib/shared/hooks'
-import { State } from '../lib/state'
 
 const Login = () => {
   useRequireLoginEffect()

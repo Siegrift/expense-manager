@@ -1,5 +1,5 @@
 import * as firebase from 'firebase/app'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import Counter from '../lib/counter'
 

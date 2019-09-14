@@ -8,11 +8,7 @@ export const updateCnt = (): Action => ({
   reducer: (state) => ({ ...state, cnt: state.cnt + 1 }),
 })
 
-export const thunk = (): Thunk => async (
-  dispatch,
-  getState,
-  { logger, api },
-) => {
+export const thunk = (): Thunk => async (dispatch, getState, { logger }) => {
   logger.log('Waiting')
   await new Promise((res) => setTimeout(res, 1000))
   logger.log('End')
