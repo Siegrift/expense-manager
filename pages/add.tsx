@@ -25,8 +25,8 @@ import { map, omit, pick } from '@siegrift/tsfunct'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import Select from 'react-select/creatable'
 import uuid from 'uuid/v4'
 
 import {
@@ -158,7 +158,7 @@ const AddTransaction = () => {
                   e.preventDefault()
               }
             }}
-            onChange={(changedTags) =>
+            onChange={(changedTags: any) =>
               dispatch(
                 setTags(
                   changedTags === null
