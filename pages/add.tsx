@@ -5,9 +5,9 @@ import FormControl from '@material-ui/core/FormControl'
 import Grid from '@material-ui/core/Grid'
 import Input from '@material-ui/core/Input'
 import InputAdornment from '@material-ui/core/InputAdornment'
-import InputBase from '@material-ui/core/InputBase'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
+import Paper from '@material-ui/core/Paper'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Tab from '@material-ui/core/Tab'
 import Tabs from '@material-ui/core/Tabs'
@@ -52,6 +52,8 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       padding: theme.spacing(3),
+      // TODO: hide bottom navigation when kayboard is shown
+      marginBottom: 60,
     },
     chipField: { flex: 1 },
     amountInput: { marginLeft: theme.spacing(1) },
@@ -66,6 +68,9 @@ const useStyles = makeStyles((theme: Theme) =>
       alignSelf: 'stretch',
     },
     currency: { width: 105, marginLeft: theme.spacing(2) },
+    paper: {
+      padding: 16,
+    },
   }),
 )
 
@@ -117,129 +122,130 @@ const AddTransaction = () => {
       alignItems="center"
       className={classes.root}
     >
-      <Grid container className={classes.row}>
-        <ButtonGroup variant="contained" fullWidth>
-          <Button
-            onClick={() => dispatch(setIsExpense(true))}
-            variant="contained"
-            color={isExpense ? 'primary' : 'default'}
-          >
-            Expense
-          </Button>
-          <Button
-            onClick={() => dispatch(setIsExpense(false))}
-            variant="contained"
-            color={!isExpense ? 'primary' : 'default'}
-          >
-            Income
-          </Button>
-        </ButtonGroup>
-      </Grid>
-
-      <Grid className={classes.row}>
-        <Select
-          closeMenuOnSelect={false}
-          components={animatedComponents}
-          placeholder="Transaction tags..."
-          isMulti
-          options={suggestedTags}
-          className={classes.chipField}
-          onKeyDown={(e) => {
-            switch (e.key) {
-              case 'Enter':
-              case 'Tab':
-                dispatch(createNewTag(tagInputValue))
-                e.preventDefault()
-            }
-          }}
-          onChange={(changedTags) =>
-            dispatch(
-              setTags(
-                changedTags === null
-                  ? []
-                  : (changedTags as ReactSelectTag[]).map((tag) =>
-                      convertReactSelectTagToTag(allTags, tag),
-                    ),
-              ),
-            )
-          }
-          onInputChange={(newValue) => dispatch(setTagInputValue(newValue))}
-          inputValue={tagInputValue}
-          value={currentTags}
-        />
-      </Grid>
-
-      <Grid container className={classes.row}>
-        <Grid item className={classes.amount}>
-          <FormControl>
-            <InputLabel htmlFor="amount-id">Transaction amount</InputLabel>
-            <Input
-              id="amount-id"
-              type="number"
-              placeholder="0.00"
-              value={amount}
-              onChange={(e) => dispatch(setAmount(e.target.value))}
-              endAdornment={
-                <InputAdornment position="end">
-                  <CancelIcon
-                    color="primary"
-                    onClick={() => dispatch(setAmount(''))}
-                    style={{ visibility: amount ? 'visible' : 'hidden' }}
-                  />
-                </InputAdornment>
-              }
-            />
-          </FormControl>
-
-          <TextField
-            select
-            label="Currecy"
-            value={currency}
-            className={classes.currency}
-            onChange={(e) => dispatch(setCurrency(e.target.value))}
-          >
-            {currencies.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
+      <Paper className={classes.paper}>
+        <Grid container className={classes.row}>
+          <ButtonGroup variant="contained" fullWidth>
+            <Button
+              onClick={() => dispatch(setIsExpense(true))}
+              variant="contained"
+              color={isExpense ? 'primary' : 'default'}
+            >
+              Expense
+            </Button>
+            <Button
+              onClick={() => dispatch(setIsExpense(false))}
+              variant="contained"
+              color={!isExpense ? 'primary' : 'default'}
+            >
+              Income
+            </Button>
+          </ButtonGroup>
         </Grid>
-      </Grid>
 
-      <Grid className={classes.row}>
-        <DateTimePicker
-          autoOk
-          ampm={false}
-          disableFuture
-          value={dateTime}
-          onChange={(newDateTime) => dispatch(setDateTime(newDateTime as Date))}
-          label="Transaction date"
-          style={{ flex: 1 }}
-        />
-      </Grid>
+        <Grid className={classes.row}>
+          <Select
+            closeMenuOnSelect={false}
+            components={animatedComponents}
+            placeholder="Transaction tags..."
+            isMulti
+            options={suggestedTags}
+            className={classes.chipField}
+            onKeyDown={(e) => {
+              switch (e.key) {
+                case 'Enter':
+                case 'Tab':
+                  dispatch(createNewTag(tagInputValue))
+                  e.preventDefault()
+              }
+            }}
+            onChange={(changedTags) =>
+              dispatch(
+                setTags(
+                  changedTags === null
+                    ? []
+                    : (changedTags as ReactSelectTag[]).map((tag) =>
+                        convertReactSelectTagToTag(allTags, tag),
+                      ),
+                ),
+              )
+            }
+            onInputChange={(newValue) => dispatch(setTagInputValue(newValue))}
+            inputValue={tagInputValue}
+            value={currentTags}
+          />
+        </Grid>
 
-      <Grid className={classes.row}>
-        <TextField
-          fullWidth
-          label="Additional note"
-          value={note}
-          onChange={(e) => dispatch(setNote(e.target.value))}
-        />
-      </Grid>
+        <Grid container className={classes.row}>
+          <Grid item className={classes.amount}>
+            <FormControl>
+              <InputLabel htmlFor="amount-id">Transaction amount</InputLabel>
+              <Input
+                id="amount-id"
+                type="number"
+                placeholder="0.00"
+                value={amount}
+                onChange={(e) => dispatch(setAmount(e.target.value))}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <CancelIcon
+                      color="primary"
+                      onClick={() => dispatch(setAmount(''))}
+                      style={{ visibility: amount ? 'visible' : 'hidden' }}
+                    />
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
 
-      <Grid className={classes.row}>
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          // TODO: validate we can add transaction
-          onClick={() => dispatch(addTransaction())}
-        >
-          Add transaction
-        </Button>
-      </Grid>
+            <TextField
+              select
+              label="Currecy"
+              value={currency}
+              className={classes.currency}
+              onChange={(e) => dispatch(setCurrency(e.target.value))}
+            >
+              {currencies.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+        </Grid>
 
+        <Grid className={classes.row}>
+          <DateTimePicker
+            autoOk
+            ampm={false}
+            disableFuture
+            value={dateTime}
+            onChange={(newDateTime) => dispatch(setDateTime(newDateTime as Date))}
+            label="Transaction date"
+            style={{ flex: 1 }}
+          />
+        </Grid>
+
+        <Grid className={classes.row}>
+          <TextField
+            fullWidth
+            label="Additional note"
+            value={note}
+            onChange={(e) => dispatch(setNote(e.target.value))}
+          />
+        </Grid>
+
+        <Grid className={classes.row}>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            // TODO: validate we can add transaction
+            onClick={() => dispatch(addTransaction())}
+          >
+            Add transaction
+          </Button>
+        </Grid>
+      </Paper>
       <Navigation />
     </Grid>
   )
