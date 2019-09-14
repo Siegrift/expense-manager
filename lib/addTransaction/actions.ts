@@ -1,8 +1,9 @@
-import { set, update } from '@siegrift/tsfunct'
+import { omit, pick, set, update } from '@siegrift/tsfunct'
 import uuid from 'uuid/v4'
 
 import { Action } from '../redux/types'
 import { State } from '../state'
+import { ObjectOf } from '../types'
 
 import { createDefaultAddTransactionState, Tag } from './state'
 
@@ -20,7 +21,7 @@ export const setCurrency = (currency: string): Action<string> => ({
 })
 
 export const createNewTag = (tagName: string): Action<string> => ({
-  type: 'Create new tag (if not empty)',
+  type: 'Create new tag in add transaction (if not empty)',
   payload: tagName,
   reducer: (state) => {
     if (tagName === '') {
@@ -31,8 +32,9 @@ export const createNewTag = (tagName: string): Action<string> => ({
     return update(state, ['addTransaction'], (addTx) => ({
       ...addTx,
       tagInputValue: '',
-      tags: {
-        ...addTx.tags,
+      tagIds: [...addTx.tagIds, id],
+      newTags: {
+        ...addTx.newTags,
         [id]: {
           id,
           name: tagName,
@@ -52,12 +54,21 @@ export const setTagInputValue = (value: string): Action<string> => ({
 export const setTags = (tags: Tag[]): Action<Tag[]> => ({
   type: 'Set tags in input field',
   payload: tags,
-  reducer: (state) =>
-    set(
-      state,
-      ['addTransaction', 'tags'],
-      tags.reduce((acc, t) => ({ ...acc, [t.id]: t }), {}),
-    ) as State,
+  reducer: (state) => {
+    const available = state.availableTags
+    const tagIds = tags.map((t) => t.id)
+    return {
+      ...state,
+      addTransaction: {
+        ...state.addTransaction,
+        tagIds,
+        newTags: pick(
+          state.addTransaction.newTags,
+          tagIds.filter((t) => !available.hasOwnProperty(t)),
+        ) as ObjectOf<Tag>,
+      },
+    }
+  },
 })
 
 export const setIsExpense = (isExpense: boolean): Action<boolean> => ({
@@ -88,7 +99,11 @@ export const addTransaction = (): Action => ({
     return {
       ...state,
       addTransaction: createDefaultAddTransactionState(),
-      transactions: { ...state.transactions, [id]: { id, ...tx } },
+      transactions: {
+        ...state.transactions,
+        [id]: { id, ...omit(tx, ['newTags']) },
+      },
+      availableTags: { ...state.availableTags, ...tx.newTags },
     }
   },
 })

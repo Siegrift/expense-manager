@@ -44,6 +44,7 @@ import { Tag } from '../lib/addTransaction/state'
 import { currencies } from '../lib/currencies'
 import Navigation from '../lib/shared/Navigation'
 import { State } from '../lib/state'
+import { ObjectOf } from '../lib/types'
 
 const animatedComponents = makeAnimated()
 
@@ -71,25 +72,19 @@ const useStyles = makeStyles((theme: Theme) =>
 interface ReactSelectTag {
   value: string
   label: string
-  rawTag?: Tag
-  __isNew__?: boolean
+  tagId: string
 }
 
 const convertTagToReactSelectTag = (tag: Tag): ReactSelectTag => ({
   value: tag.name,
   label: tag.name,
-  rawTag: tag,
+  tagId: tag.id,
 })
 
-const convertReactSelectTagToTag = (tag: ReactSelectTag): Tag => {
-  if (tag.rawTag) {
-    return tag.rawTag
-  } else if (tag.__isNew__) {
-    return { id: uuid(), name: tag.label }
-  } else {
-    throw new Error(`Unknown ReactSelectTag format! ${tag}`)
-  }
-}
+const convertReactSelectTagToTag = (
+  allTags: ObjectOf<Tag>,
+  tag: ReactSelectTag,
+): Tag => allTags[tag.tagId]
 
 const AddTransaction = () => {
   const classes = useStyles()
@@ -98,18 +93,20 @@ const AddTransaction = () => {
   const {
     amount,
     currency,
-    tags,
+    tagIds,
+    newTags,
     tagInputValue,
     isExpense,
     note,
     dateTime,
   } = useSelector((state: State) => state.addTransaction)
   const availableTags = useSelector((state: State) => state.availableTags)
-  const suggestedTags: ReactSelectTag[] = Object.entries(availableTags).map(
-    ([id, tag]) => convertTagToReactSelectTag(tag),
+  const allTags = { ...availableTags, ...newTags }
+  const suggestedTags: ReactSelectTag[] = Object.values(availableTags).map(
+    convertTagToReactSelectTag,
   )
-  const currentTags: ReactSelectTag[] = Object.entries(tags).map(([id, tag]) =>
-    convertTagToReactSelectTag(tag),
+  const currentTags: ReactSelectTag[] = tagIds.map((id) =>
+    convertTagToReactSelectTag(allTags[id]),
   )
 
   return (
@@ -155,13 +152,13 @@ const AddTransaction = () => {
                 e.preventDefault()
             }
           }}
-          onChange={(newTags) =>
+          onChange={(changedTags) =>
             dispatch(
               setTags(
-                newTags === null
+                changedTags === null
                   ? []
-                  : (newTags as ReactSelectTag[]).map(
-                      convertReactSelectTagToTag,
+                  : (changedTags as ReactSelectTag[]).map((tag) =>
+                      convertReactSelectTagToTag(allTags, tag),
                     ),
               ),
             )
@@ -236,6 +233,7 @@ const AddTransaction = () => {
           variant="contained"
           color="primary"
           fullWidth
+          // TODO: validate we can add transaction
           onClick={() => dispatch(addTransaction())}
         >
           Add transaction

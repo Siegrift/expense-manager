@@ -12,7 +12,8 @@ export interface Tag {
 export interface BaseTransaction {
   transactionType: TransactionType
   amount: string
-  tags: ObjectOf<Tag>
+  // NOTE: order might be important
+  tagIds: string[]
   currency: string
   tagInputValue: string
   isExpense: boolean
@@ -24,12 +25,15 @@ export interface Transaction extends BaseTransaction {
   id: string
 }
 
-export type AddTransaction = BaseTransaction
+export interface AddTransaction extends BaseTransaction {
+  newTags: ObjectOf<Tag>
+}
 
 export const createDefaultAddTransactionState = (): AddTransaction => ({
   transactionType: 'fromUser',
   amount: '',
-  tags: {},
+  tagIds: [],
+  newTags: {},
   currency: DEFAULT_CURRENCY.value,
   tagInputValue: '',
   isExpense: true,
