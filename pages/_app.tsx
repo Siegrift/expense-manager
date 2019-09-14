@@ -1,4 +1,6 @@
+import DateFnsUtils from '@date-io/date-fns'
 import CssBaseline from '@material-ui/core/CssBaseline'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import { ThemeProvider } from '@material-ui/styles'
 import App from 'next/app'
 import Head from 'next/head'
@@ -21,20 +23,22 @@ class ExpenseManagerApp extends App {
       <Provider store={store}>
         <ReduxProvider store={store}>
           <ThemeProvider theme={theme}>
-            <Head>
-              {/* https://github.com/zeit/next.js/blob/master/errors/no-document-title.md */}
-              <title>{PROJECT_TITLE}</title>
-            </Head>
-            <CssBaseline />
-            {/* Custom global styles */}
-            <style jsx global>
-              {`
-                body {
-                  background-color: blanchedalmond !important;
-                }
-              `}
-            </style>
-            <Component {...pageProps} />
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <Head>
+                {/* https://github.com/zeit/next.js/blob/master/errors/no-document-title.md */}
+                <title>{PROJECT_TITLE}</title>
+              </Head>
+              <CssBaseline />
+              {/* Custom global styles */}
+              <style jsx global>
+                {`
+                  body {
+                    background-color: blanchedalmond !important;
+                  }
+                `}
+              </style>
+              <Component {...pageProps} />
+            </MuiPickersUtilsProvider>
           </ThemeProvider>
         </ReduxProvider>
       </Provider>

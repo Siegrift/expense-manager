@@ -1,22 +1,12 @@
-import { DEFAULT_CURRENCY } from './currencies'
+import {
+  createDefaultAddTransactionState,
+  AddTransaction,
+  Tag,
+  Transaction
+} from './addTransaction/state'
 import { ObjectOf } from './types'
 
 export type ScreenTitle = 'add' | 'transactions' | 'settings'
-
-export type TransactionType = 'expense' | 'income'
-
-export interface Tag {
-  id: string
-  name: string
-}
-
-export interface AddTransaction {
-  transactionType: TransactionType
-  amount: string
-  tags: ObjectOf<Tag>
-  currency: string
-  tagInputValue: string
-}
 
 export interface State {
   cnt: number
@@ -26,6 +16,7 @@ export interface State {
   currentScreen: ScreenTitle
   addTransaction: AddTransaction
   availableTags: ObjectOf<Tag>
+  transactions: ObjectOf<Transaction>
 }
 
 const state: State = {
@@ -33,14 +24,9 @@ const state: State = {
   isSigned: false,
   messages: {},
   currentScreen: 'add',
-  addTransaction: {
-    transactionType: 'expense',
-    amount: '',
-    tags: {},
-    currency: DEFAULT_CURRENCY.value,
-    tagInputValue: '',
-  },
+  addTransaction: createDefaultAddTransactionState(),
   availableTags: {},
+  transactions: {},
 }
 
 export const getInitialState = () => state
