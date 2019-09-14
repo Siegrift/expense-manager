@@ -85,7 +85,7 @@ export const setNote = (note: string): Action<string> => ({
 })
 
 export const setDateTime = (dateTime: Date): Action<Date> => ({
-  type: 'Set datetime in add transaction',
+  type: 'Set date time in add transaction',
   payload: dateTime,
   reducer: (state) =>
     set(state, ['addTransaction', 'dateTime'], dateTime) as State,
@@ -101,9 +101,22 @@ export const addTransaction = (): Action => ({
       addTransaction: createDefaultAddTransactionState(),
       transactions: {
         ...state.transactions,
-        [id]: { id, ...omit(tx, ['newTags']) },
+        [id]: {
+          id,
+          ...omit(tx, ['newTags']),
+          dateTime: tx.useCurrentTime ? new Date() : tx.dateTime!,
+        },
       },
       availableTags: { ...state.availableTags, ...tx.newTags },
     }
   },
+})
+
+export const setUseCurrentTime = (
+  useCurrentTime: boolean,
+): Action<boolean> => ({
+  type: 'Set current time',
+  payload: useCurrentTime,
+  reducer: (state) =>
+    set(state, ['addTransaction', 'useCurrentTime'], useCurrentTime) as State,
 })

@@ -1,7 +1,8 @@
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
-import Divider from '@material-ui/core/Divider'
+import Collapse from '@material-ui/core/Collapse'
 import FormControl from '@material-ui/core/FormControl'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Grid from '@material-ui/core/Grid'
 import Input from '@material-ui/core/Input'
 import InputAdornment from '@material-ui/core/InputAdornment'
@@ -9,8 +10,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import Paper from '@material-ui/core/Paper'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import Tab from '@material-ui/core/Tab'
-import Tabs from '@material-ui/core/Tabs'
+import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
 import CancelIcon from '@material-ui/icons/Cancel'
 import DirectionsIcon from '@material-ui/icons/Directions'
@@ -38,7 +38,8 @@ import {
   setIsExpense,
   setNote,
   setTags,
-  setTagInputValue
+  setTagInputValue,
+  setUseCurrentTime
 } from '../lib/addTransaction/actions'
 import { Tag } from '../lib/addTransaction/state'
 import { currencies } from '../lib/currencies'
@@ -104,6 +105,7 @@ const AddTransaction = () => {
     isExpense,
     note,
     dateTime,
+    useCurrentTime,
   } = useSelector((state: State) => state.addTransaction)
   const availableTags = useSelector((state: State) => state.availableTags)
   const allTags = { ...availableTags, ...newTags }
@@ -213,17 +215,34 @@ const AddTransaction = () => {
           </Grid>
         </Grid>
 
-        <Grid className={classes.row}>
-          <DateTimePicker
-            autoOk
-            ampm={false}
-            disableFuture
-            value={dateTime}
-            onChange={(newDateTime) => dispatch(setDateTime(newDateTime as Date))}
-            label="Transaction date"
-            style={{ flex: 1 }}
+        <Grid className={classes.row} style={{ justifyContent: 'start' }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={useCurrentTime}
+                onChange={() => dispatch(setUseCurrentTime(!useCurrentTime))}
+                color="primary"
+              />
+            }
+            label="Use current date and time"
           />
         </Grid>
+
+        <Collapse in={!useCurrentTime}>
+          <Grid className={classes.row}>
+            <DateTimePicker
+              autoOk
+              ampm={false}
+              disableFuture
+              value={dateTime}
+              onChange={(newDateTime) =>
+                dispatch(setDateTime(newDateTime as Date))
+              }
+              label="Transaction date"
+              style={{ flex: 1 }}
+            />
+          </Grid>
+        </Collapse>
 
         <Grid className={classes.row}>
           <TextField
