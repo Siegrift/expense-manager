@@ -1,5 +1,6 @@
-import { ObjectOf } from '../types'
 import Typography from '@material-ui/core/Typography'
+
+import { ObjectOf } from '../types'
 
 export interface LoadingProps {
   imageStyle?: ObjectOf<string>

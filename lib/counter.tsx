@@ -1,8 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { thunk, updateCnt } from './actions'
 import Button from '@material-ui/core/Button'
-import { State } from './state'
 import { useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { thunk, updateCnt } from './actions'
+import { State } from './state'
 
 const Counter = () => {
   const cnt = useSelector((state: State) => state.cnt)

@@ -1,5 +1,6 @@
-import { Logger, ObjectOf } from '../types'
 import { DEFAULT_REQUEST_TIMEOUT } from '../constants'
+import { Logger, ObjectOf } from '../types'
+
 import { ApiError } from './apiError'
 
 export interface RequestOptions {

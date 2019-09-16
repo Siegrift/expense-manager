@@ -1,12 +1,13 @@
 // Firebase App (the core Firebase SDK) is always required and must be listed first
 import * as firebase from 'firebase/app'
-
-// Add the Firebase products that you want to use
 import 'firebase/auth'
 import 'firebase/firestore'
 import { Store } from 'redux'
-import { getQueries } from './queries'
+
 import { authChangeAction, firestoneChangeAction } from './actions'
+import { getQueries } from './queries'
+
+// Add the Firebase products that you want to use
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBSskq5HfVggNz65zJoJaieWxkBCzxqHcM',

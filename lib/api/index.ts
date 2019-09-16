@@ -1,9 +1,11 @@
-import { ApiError } from './apiError'
 import { Logger } from '../types'
+
+import { ApiError } from './apiError'
 
 let apiInstance: Api | undefined
 
 export class Api {
+  // tslint:disable-next-line
   constructor(private logger: Logger) {
     if (apiInstance) {
       throw new ApiError(
