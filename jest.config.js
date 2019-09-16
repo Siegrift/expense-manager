@@ -1,5 +1,5 @@
 module.exports = {
-  roots: ["<rootDir>/lib", "<rootDir>/pages", "<rootDir>/pages__tests"],
+  roots: ["<rootDir>/lib", "<rootDir>/pages"],
   preset: "ts-jest/presets/js-with-ts",
   moduleFileExtensions: ["ts", "tsx", "js"],
   transform: {

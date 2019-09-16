@@ -8,7 +8,7 @@ import { ObjectOf } from '../types'
 import { createDefaultAddTransactionState, Tag } from './state'
 
 export const setAmount = (amount: string): Action<string> => ({
-  type: 'Set amount in add transaction (if valid)',
+  type: 'Set amount in add transaction',
   payload: amount,
   reducer: (state) => set(state, ['addTransaction', 'amount'], amount) as State,
 })
@@ -118,5 +118,9 @@ export const setUseCurrentTime = (
   type: 'Set current time',
   payload: useCurrentTime,
   reducer: (state) =>
-    set(state, ['addTransaction', 'useCurrentTime'], useCurrentTime) as State,
+    set(state, ['addTransaction'], {
+      ...state.addTransaction,
+      useCurrentTime,
+      dateTime: useCurrentTime ? new Date() : undefined,
+    }) as State,
 })
