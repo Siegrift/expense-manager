@@ -6,7 +6,7 @@ import 'firebase/firestore'
 import { Store } from 'redux'
 
 import { authChangeAction, firestoneChangeAction } from './actions'
-import { getQueries } from './queries'
+import { getQueries } from './firestoneQueries'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBSskq5HfVggNz65zJoJaieWxkBCzxqHcM',
@@ -25,7 +25,7 @@ export const initializeFirebase = (store: Store) => {
   }
 
   getQueries().forEach((query) => {
-    query.firestoneQuery.onSnapshot((change) => {
+    query.createFirestoneQuery().onSnapshot((change) => {
       store.dispatch(firestoneChangeAction(query, change))
     })
   })

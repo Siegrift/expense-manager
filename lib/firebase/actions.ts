@@ -4,10 +4,10 @@ import { firestore } from 'firebase'
 import { Action } from '../redux/types'
 import { SignInStatus } from '../state'
 
-import { Query } from './queries'
+import { FirestoneQuery } from './firestoneQueries'
 
 export const firestoneChangeAction = (
-  query: Query,
+  query: FirestoneQuery,
   payload: firestore.QuerySnapshot,
 ): Action<firestore.QuerySnapshot> => ({
   type: 'Firestore query change: ' + query.type,

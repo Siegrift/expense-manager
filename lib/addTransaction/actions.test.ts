@@ -1,3 +1,4 @@
+import { omit } from '@siegrift/tsfunct'
 import mockdate from 'mockdate'
 
 import { getInitialState, State } from '../state'
@@ -5,6 +6,7 @@ import { ObjectOf } from '../types'
 
 import {
   addTransaction,
+  addTransactionLocally,
   createNewTag,
   setAmount,
   setCurrency,
@@ -105,7 +107,7 @@ describe('Add transaction tests', () => {
     expect(newState.addTransaction.dateTime).toBe(now)
   })
 
-  describe('addTransaction', () => {
+  describe('addTransactionLocally', () => {
     let mockedDate
 
     beforeEach(() => {
@@ -134,9 +136,18 @@ describe('Add transaction tests', () => {
       mockdate.reset()
     })
 
+    // TODO: mock firebase and test correctly
     test('adds a transaction to transactions', () => {
-      const newState = addTransaction().reducer(state)
       const id = 'uuid1'
+      const newState = addTransactionLocally({
+        id,
+        ...omit(state.addTransaction, [
+          'useCurrentTime',
+          'tagInputValue',
+          'newTags',
+        ]),
+        dateTime: mockedDate,
+      }).reducer(state)
 
       expect(newState.transactions[id]).toEqual({
         amount: '12.4',
@@ -146,9 +157,7 @@ describe('Add transaction tests', () => {
         isExpense: true,
         note: 'note',
         tagIds: ['id1', 'id2'],
-        tagInputValue: 'unfinished',
         transactionType: 'fromUser',
-        useCurrentTime: true,
       })
       expect(newState.addTransaction).toEqual(getInitialState().addTransaction)
       expect(newState.availableTags).toEqual(
