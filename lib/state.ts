@@ -17,7 +17,7 @@ export interface State {
   messages: any
   currentScreen: ScreenTitle
   addTransaction: AddTransaction
-  availableTags: ObjectOf<Tag>
+  tags: ObjectOf<Tag>
   transactions: ObjectOf<Transaction>
 }
 
@@ -27,7 +27,7 @@ const state: State = {
   messages: {},
   currentScreen: 'add',
   addTransaction: createDefaultAddTransactionState(),
-  availableTags: {},
+  tags: {},
   transactions: {},
 }
 

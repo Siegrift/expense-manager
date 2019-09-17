@@ -9,8 +9,11 @@ import { FirestoneQuery } from './firestoneQueries'
 export const firestoneChangeAction = (
   query: FirestoneQuery,
   payload: firestore.QuerySnapshot,
+  isInitial: boolean = false,
 ): Action<firestore.QuerySnapshot> => ({
-  type: 'Firestore query change: ' + query.type,
+  type: `${isInitial ? 'Initial firestore' : 'Firestore'} query change: ${
+    query.type
+  }`,
   payload,
   reducer: (state) => query.reducer(state, payload),
 })

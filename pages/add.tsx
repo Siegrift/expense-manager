@@ -102,9 +102,9 @@ const AddTransaction = () => {
     dateTime,
     useCurrentTime,
   } = useSelector((state: State) => state.addTransaction)
-  const availableTags = useSelector((state: State) => state.availableTags)
-  const allTags = { ...availableTags, ...newTags }
-  const suggestedTags: ReactSelectTag[] = Object.values(availableTags).map(
+  const tags = useSelector((state: State) => state.tags)
+  const allTags = { ...tags, ...newTags }
+  const suggestedTags: ReactSelectTag[] = Object.values(tags).map(
     convertTagToReactSelectTag,
   )
   const currentTags: ReactSelectTag[] = tagIds.map((id) =>

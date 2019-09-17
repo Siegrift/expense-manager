@@ -56,7 +56,7 @@ export const setTags = (tags: Tag[]): Action<Tag[]> => ({
   type: 'Set tags in input field',
   payload: tags,
   reducer: (state) => {
-    const available = state.availableTags
+    const available = state.tags
     const tagIds = tags.map((t) => t.id)
     return {
       ...state,
@@ -92,20 +92,12 @@ export const setDateTime = (dateTime: Date): Action<Date> => ({
     set(state, ['addTransaction', 'dateTime'], dateTime) as State,
 })
 
-export const addTransactionLocally = (
-  tx: Transaction,
-): Action<Transaction> => ({
+export const resetAddTransaction = (): Action => ({
   type: 'Add transaction',
-  payload: tx,
   reducer: (state) => {
     return {
       ...state,
       addTransaction: createDefaultAddTransactionState(),
-      transactions: {
-        ...state.transactions,
-        [tx.id]: tx,
-      },
-      availableTags: { ...state.availableTags, ...state.addTransaction.newTags },
     }
   },
 })
@@ -126,7 +118,8 @@ export const addTransaction = (): Thunk => (dispatch, getState, { logger }) => {
     dispatch(uploadTransaction(tx)),
     dispatch(uploadTags(getState().addTransaction.newTags)),
   ]
-  dispatch(addTransactionLocally(tx))
+
+  dispatch(resetAddTransaction())
   return Promise.all(uploads)
 }
 
@@ -140,10 +133,7 @@ export const uploadTransaction = (tx: Transaction): Thunk => (
   return firestore()
     .collection('transactions')
     .doc(tx.id)
-    .set({
-      ...tx,
-      timestamp: firestore.FieldValue.serverTimestamp(),
-    })
+    .set(tx)
     .catch((error) => {
       // TODO: handle errors
       console.error('Error writing new message to Firebase Database', error)
@@ -161,7 +151,7 @@ export const uploadTags = (tags: ObjectOf<Tag>): Thunk => (
   const uploads = Object.values(tags).map((tag) =>
     coll
       .doc(tag.id)
-      .set({ ...tag, timestamp: firestore.FieldValue.serverTimestamp() })
+      .set(tag)
       .catch((error) => {
         // TODO: handle errors
         console.error('Error writing new message to Firebase Database', error)
