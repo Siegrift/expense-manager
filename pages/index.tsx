@@ -1,6 +1,9 @@
-import { INDEX_PAGE_REDIRECT_DELAY } from '../lib/constants'
-import { useRequireLoginEffect } from '../lib/shared/hooks'
-import Loading from '../lib/shared/Loading'
+import Router from 'next/router'
+
+import { useRedirectIfNotSignedIn } from '../lib/shared/hooks'
+import { LoadingScreen } from '../lib/shared/Loading'
+
+import AddTransaction from './add'
 
 /**
  * We want to show add expense screen on smaller devices and dashboard on larger
@@ -9,14 +12,12 @@ import Loading from '../lib/shared/Loading'
 const IndexPage = () => {
   // Firebase is loaded asynchronously and there is no user at the beginning.
   // We don't want to present user with flashing screen though...
-  useRequireLoginEffect(INDEX_PAGE_REDIRECT_DELAY)
-
-  return (
-    <Loading
-      imageStyle={{ marginTop: '20vh', width: '60vw' }}
-      text="Loading..."
-    />
-  )
+  if (useRedirectIfNotSignedIn() !== 'loggedIn') {
+    return <LoadingScreen />
+  } else {
+    Router.push('/add')
+    return <AddTransaction />
+  }
 }
 
 export default IndexPage
