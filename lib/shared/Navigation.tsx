@@ -1,3 +1,4 @@
+import { createStyles, makeStyles, Theme } from '@material-ui/core'
 import BottomNavigation from '@material-ui/core/BottomNavigation'
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction'
 import { SvgIconProps } from '@material-ui/core/SvgIcon'
@@ -10,6 +11,20 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setCurrentScreen } from '../actions'
 import { ScreenTitle, State } from '../state'
 import { redirectTo } from '../utils'
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    bottomNav: {
+      // hide bottom navigation when keyboard is up
+      ['@media (max-height:500px)']: {
+        display: 'none',
+      },
+      width: '100%',
+      position: 'fixed',
+      bottom: 0,
+    },
+  }),
+)
 
 interface NavigationItem {
   screen: ScreenTitle
@@ -25,6 +40,7 @@ const navigationItems: NavigationItem[] = [
 const Navigation = () => {
   const currentScreen = useSelector((state: State) => state.currentScreen)
   const dispatch = useDispatch()
+  const classes = useStyles()
 
   return (
     <BottomNavigation
@@ -33,11 +49,7 @@ const Navigation = () => {
         dispatch(setCurrentScreen(newValue))
       }}
       showLabels
-      style={{
-        width: '100%',
-        position: 'fixed',
-        bottom: 0,
-      }}
+      className={classes.bottomNav}
     >
       {navigationItems.map(({ screen, Icon }) => (
         // NOTE: BottomNavigationAction must be a direct child of BottomNavigation
