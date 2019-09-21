@@ -3,11 +3,9 @@ import * as firebase from 'firebase/app'
 // Add the Firebase products that you want to use
 import 'firebase/auth'
 import 'firebase/firestore'
-import debounce from 'lodash/debounce'
 import { Store } from 'redux'
 
-import { authChangeAction, firestoneChangeAction } from './actions'
-import { getQueries } from './firestoneQueries'
+import { authChangeAction } from './actions'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBSskq5HfVggNz65zJoJaieWxkBCzxqHcM',
@@ -18,8 +16,6 @@ const firebaseConfig = {
   messagingSenderId: '163758023183',
   appId: '1:163758023183:web:522028afd5102881',
 }
-
-const FIRESTONE_STATE_UPDATE_DEBOUNCE_TIME = 500
 
 export const initializeFirebase = async (store: Store) => {
   // firebase can be initialized only once, but crashes on hot update
@@ -48,28 +44,7 @@ export const initializeFirebase = async (store: Store) => {
       })
   }
 
-  // TODO: solve how to dispatch state change to avoid inconsistencies
-  // https://stackoverflow.com/questions/57982742/how-to-use-firebase-onsnapshot-and-maintain-consistency
-  // For now just debounce the value for a short time and wait for initial data loading
-  const initialQueries: Array<Promise<unknown>> = []
-  getQueries().forEach((query) => {
-    const q = query.createFirestoneQuery()
-    initialQueries.push(
-      q
-        .get()
-        .then((snapshot) =>
-          store.dispatch(firestoneChangeAction(query, snapshot, true)),
-        ),
-    )
-    q.onSnapshot((change) => {
-      debounce(() => {
-        store.dispatch(firestoneChangeAction(query, change))
-      }, FIRESTONE_STATE_UPDATE_DEBOUNCE_TIME)()
-    })
-  })
-  await Promise.all(initialQueries)
-
   firebase.auth().onAuthStateChanged((user) => {
-    store.dispatch(authChangeAction(user ? 'loggedIn' : 'loggedOut'))
+    store.dispatch(authChangeAction(user ? 'loggedIn' : 'loggedOut') as any)
   })
 }
