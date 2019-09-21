@@ -8,7 +8,7 @@ import { ObjectOf } from './types'
 
 export type ScreenTitle = 'add' | 'transactions' | 'settings'
 
-export type SignInStatus = 'loggedIn' | 'loggingIn' | 'loggedOut'
+export type SignInStatus = 'loggedIn' | 'loggingIn' | 'loggedOut' | 'unknown'
 
 export interface State {
   cnt: number
@@ -23,7 +23,7 @@ export interface State {
 
 const state: State = {
   cnt: 0,
-  signInStatus: 'loggedOut',
+  signInStatus: 'unknown',
   messages: {},
   currentScreen: 'add',
   addTransaction: createDefaultAddTransactionState(),

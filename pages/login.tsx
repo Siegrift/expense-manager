@@ -14,42 +14,45 @@ import AddTransaction from './add'
 const Login = () => {
   const dispatch = useDispatch()
   const signInStatus = useRedirectIfNotSignedIn()
-  if (signInStatus === 'loggedIn') {
-    Router.push('/add')
-    return <AddTransaction />
-  } else if (signInStatus === 'loggingIn') {
-    return <LoadingScreen text="Signing in..." />
-  } else {
-    return (
-      <>
-        <img
-          src="../static/coin.svg"
-          alt="coin"
-          style={{
-            width: `60vw`,
-            margin: 'auto',
-            marginTop: '10vh',
-            display: 'block',
-          }}
-        />
+  switch (signInStatus) {
+    case 'loggedIn':
+      Router.push('/add')
+      return <AddTransaction />
+    case 'unknown':
+      return <LoadingScreen />
+    case 'loggingIn':
+      return <LoadingScreen text="Signing in..." />
+    case 'loggedOut':
+      return (
+        <>
+          <img
+            src="../static/coin.svg"
+            alt="coin"
+            style={{
+              width: `60vw`,
+              margin: 'auto',
+              marginTop: '10vh',
+              display: 'block',
+            }}
+          />
 
-        <Typography
-          variant="h4"
-          gutterBottom
-          style={{ textAlign: 'center', marginTop: '5vh' }}
-        >
-          {PROJECT_TITLE}
-        </Typography>
+          <Typography
+            variant="h4"
+            gutterBottom
+            style={{ textAlign: 'center', marginTop: '5vh' }}
+          >
+            {PROJECT_TITLE}
+          </Typography>
 
-        <GoogleButton
-          onClick={() => {
-            dispatch(authChangeAction('loggingIn'))
-            signIn()
-          }}
-          style={{ margin: 'auto', marginTop: '30vh' }}
-        />
-      </>
-    )
+          <GoogleButton
+            onClick={() => {
+              dispatch(authChangeAction('loggingIn'))
+              signIn()
+            }}
+            style={{ margin: 'auto', marginTop: '30vh' }}
+          />
+        </>
+      )
   }
 }
 
