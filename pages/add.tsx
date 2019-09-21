@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     currency: { width: 105, marginLeft: theme.spacing(2) },
     paper: {
-      padding: 16,
+      padding: theme.spacing(2),
     },
   }),
 )
