@@ -9,6 +9,8 @@ import { Logger } from '../types'
 import rootReducer from './rootReducer'
 import { Action, ThunkExtraArgument } from './types'
 
+const DISABLE_SERVER_SIDE_LOGGING = true
+
 export const configureStore = () => {
   const logger: Logger = {
     log: (_, __) => null,
@@ -23,7 +25,11 @@ export const configureStore = () => {
 
   const loggerMiddleware = createLogger({
     collapsed: true,
-    predicate: (_, action: Action) => !(action.loggable === false),
+    predicate: (_, action: Action) =>
+      !(
+        (DISABLE_SERVER_SIDE_LOGGING && typeof window === 'undefined') ||
+        action.loggable === false
+      ),
     actionTransformer: (action: Action) => ({
       ...action,
       type: `${action.type}`,

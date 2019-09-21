@@ -18,3 +18,6 @@ export const currencies = [
     label: '¥',
   },
 ]
+
+export const getCurrencySymbol = (currency: string) =>
+  currencies.find((c) => c.value === currency)!.label

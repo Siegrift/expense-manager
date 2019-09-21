@@ -46,4 +46,12 @@ const Loading = ({ imageStyle, text, size, textStyle }: LoadingProps) => {
   )
 }
 
+export const LoadingScreen = (props?: LoadingProps) => (
+  <Loading
+    imageStyle={{ marginTop: '20vh', width: '60vw' }}
+    text="Loading..."
+    {...props}
+  />
+)
+
 export default Loading

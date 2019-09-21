@@ -1,11 +1,12 @@
 import { omit, pick, set, update } from '@siegrift/tsfunct'
+import { firestore } from 'firebase/app'
 import uuid from 'uuid/v4'
 
-import { Action } from '../redux/types'
+import { Action, Thunk } from '../redux/types'
 import { State } from '../state'
 import { ObjectOf } from '../types'
 
-import { createDefaultAddTransactionState, Tag } from './state'
+import { createDefaultAddTransactionState, Tag, Transaction } from './state'
 
 export const setAmount = (amount: string): Action<string> => ({
   type: 'Set amount in add transaction',
@@ -55,7 +56,7 @@ export const setTags = (tags: Tag[]): Action<Tag[]> => ({
   type: 'Set tags in input field',
   payload: tags,
   reducer: (state) => {
-    const available = state.availableTags
+    const available = state.tags
     const tagIds = tags.map((t) => t.id)
     return {
       ...state,
@@ -91,26 +92,74 @@ export const setDateTime = (dateTime: Date): Action<Date> => ({
     set(state, ['addTransaction', 'dateTime'], dateTime) as State,
 })
 
-export const addTransaction = (): Action => ({
+export const resetAddTransaction = (): Action => ({
   type: 'Add transaction',
   reducer: (state) => {
-    const id = uuid()
-    const tx = state.addTransaction
     return {
       ...state,
       addTransaction: createDefaultAddTransactionState(),
-      transactions: {
-        ...state.transactions,
-        [id]: {
-          id,
-          ...omit(tx, ['newTags']),
-          dateTime: tx.useCurrentTime ? new Date() : tx.dateTime!,
-        },
-      },
-      availableTags: { ...state.availableTags, ...tx.newTags },
     }
   },
 })
+
+export const addTransaction = (): Thunk => (dispatch, getState, { logger }) => {
+  logger.log('Add transaction')
+
+  // create transaction from addTransaction state
+  const addTx = getState().addTransaction
+  const id = uuid()
+  const tx = {
+    id,
+    ...omit(addTx, ['newTags', 'tagInputValue', 'useCurrentTime']),
+    dateTime: addTx.useCurrentTime ? new Date() : addTx.dateTime!,
+  }
+
+  const uploads = [
+    dispatch(uploadTransaction(tx)),
+    dispatch(uploadTags(getState().addTransaction.newTags)),
+  ]
+
+  dispatch(resetAddTransaction())
+  return Promise.all(uploads)
+}
+
+export const uploadTransaction = (tx: Transaction): Thunk => (
+  dispatch,
+  getState,
+  { logger },
+) => {
+  logger.log('Upload transaction to firestone')
+
+  return firestore()
+    .collection('transactions')
+    .doc(tx.id)
+    .set(tx)
+    .catch((error) => {
+      // TODO: handle errors
+      console.error('Error writing new message to Firebase Database', error)
+    })
+}
+
+export const uploadTags = (tags: ObjectOf<Tag>): Thunk => (
+  dispatch,
+  getState,
+  { logger },
+) => {
+  logger.log('Upload tags to firestone')
+
+  const coll = firestore().collection('tags')
+  const uploads = Object.values(tags).map((tag) =>
+    coll
+      .doc(tag.id)
+      .set(tag)
+      .catch((error) => {
+        // TODO: handle errors
+        console.error('Error writing new message to Firebase Database', error)
+      }),
+  )
+
+  return Promise.all(uploads)
+}
 
 export const setUseCurrentTime = (
   useCurrentTime: boolean,

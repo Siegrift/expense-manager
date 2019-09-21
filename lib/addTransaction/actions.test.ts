@@ -1,11 +1,12 @@
+import { omit } from '@siegrift/tsfunct'
 import mockdate from 'mockdate'
 
 import { getInitialState, State } from '../state'
 import { ObjectOf } from '../types'
 
 import {
-  addTransaction,
   createNewTag,
+  resetAddTransaction,
   setAmount,
   setCurrency,
   setDateTime,
@@ -74,13 +75,13 @@ describe('Add transaction tests', () => {
           newTags: createTestTagsObject(['id1', 'id2']),
           tagIds: ['id1', 'id2', 'id3'],
         },
-        availableTags: createTestTagsObject(['id3']),
+        tags: createTestTagsObject(['id3']),
       }
     })
 
     test('correctly updates tags', () => {
       const newState = setTags([{ id: 'id1', name: 'id1' }]).reducer(state)
-      expect(newState.availableTags).toEqual(createTestTagsObject(['id3']))
+      expect(newState.tags).toEqual(createTestTagsObject(['id3']))
       expect(newState.addTransaction.newTags).toEqual(
         createTestTagsObject(['id1']),
       )
@@ -105,7 +106,7 @@ describe('Add transaction tests', () => {
     expect(newState.addTransaction.dateTime).toBe(now)
   })
 
-  describe('addTransaction', () => {
+  describe('addTransactionLocally', () => {
     let mockedDate
 
     beforeEach(() => {
@@ -123,7 +124,7 @@ describe('Add transaction tests', () => {
           transactionType: 'fromUser',
           useCurrentTime: true,
         },
-        availableTags: createTestTagsObject(['id1']),
+        tags: createTestTagsObject(['id1']),
       }
 
       mockedDate = new Date()
@@ -134,26 +135,14 @@ describe('Add transaction tests', () => {
       mockdate.reset()
     })
 
+    // TODO: mock firebase and test correctly
     test('adds a transaction to transactions', () => {
-      const newState = addTransaction().reducer(state)
       const id = 'uuid1'
+      const newState = resetAddTransaction().reducer(state)
 
-      expect(newState.transactions[id]).toEqual({
-        amount: '12.4',
-        currency: 'EUR',
-        dateTime: mockedDate,
-        id: 'uuid1',
-        isExpense: true,
-        note: 'note',
-        tagIds: ['id1', 'id2'],
-        tagInputValue: 'unfinished',
-        transactionType: 'fromUser',
-        useCurrentTime: true,
-      })
+      expect(newState.transactions[id]).not.toBeDefined()
       expect(newState.addTransaction).toEqual(getInitialState().addTransaction)
-      expect(newState.availableTags).toEqual(
-        createTestTagsObject(['id1', 'id2']),
-      )
+      expect(newState.tags).toEqual(createTestTagsObject(['id1']))
     })
   })
 

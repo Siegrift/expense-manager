@@ -15,7 +15,6 @@ export interface BaseTransaction {
   // NOTE: order might be important
   tagIds: string[]
   currency: string
-  tagInputValue: string
   isExpense: boolean
   note: string
 }
@@ -29,6 +28,7 @@ export interface AddTransaction extends BaseTransaction {
   useCurrentTime: boolean
   newTags: ObjectOf<Tag>
   dateTime?: Date
+  tagInputValue: string
 }
 
 export const createDefaultAddTransactionState = (): AddTransaction => ({
