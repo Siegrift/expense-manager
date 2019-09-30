@@ -3,6 +3,7 @@ import BottomNavigation from '@material-ui/core/BottomNavigation'
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction'
 import { SvgIconProps } from '@material-ui/core/SvgIcon'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
+import BarChartIcon from '@material-ui/icons/BarChart'
 import ListIcon from '@material-ui/icons/List'
 import SettingsIcon from '@material-ui/icons/Settings'
 import React, { ComponentType } from 'react'
@@ -34,6 +35,7 @@ interface NavigationItem {
 const navigationItems: NavigationItem[] = [
   { screen: 'add', Icon: AddCircleOutlineIcon },
   { screen: 'transactions', Icon: ListIcon },
+  { screen: 'charts', Icon: BarChartIcon },
   { screen: 'settings', Icon: SettingsIcon },
 ]
 

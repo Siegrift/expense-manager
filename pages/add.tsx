@@ -14,6 +14,7 @@ import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
 import CancelIcon from '@material-ui/icons/Cancel'
 import { DateTimePicker } from '@material-ui/pickers'
+import { find } from 'lodash'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Select from 'react-select'
@@ -22,7 +23,9 @@ import makeAnimated from 'react-select/animated'
 import { setCurrentScreen } from '../lib/actions'
 import {
   addTransaction,
+  clearInputValue,
   createNewTag,
+  selectNewTag,
   setAmount,
   setCurrency,
   setDateTime,
@@ -45,9 +48,7 @@ const animatedComponents = makeAnimated()
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      padding: theme.spacing(3),
-      // TODO: hide bottom navigation when kayboard is shown
-      marginBottom: 60,
+      padding: theme.spacing(2),
     },
     chipField: { flex: 1 },
     amountInput: { marginLeft: theme.spacing(1) },
@@ -154,7 +155,16 @@ const AddTransaction = () => {
                 switch (e.key) {
                   case 'Enter':
                   case 'Tab':
-                    dispatch(createNewTag(tagInputValue))
+                    const foundTag = find(
+                      allTags,
+                      (tag) => tag.name === tagInputValue,
+                    )
+                    if (foundTag) {
+                      dispatch(selectNewTag(foundTag.id))
+                    } else {
+                      dispatch(createNewTag(tagInputValue))
+                    }
+                    dispatch(clearInputValue())
                     e.preventDefault()
                 }
               }}

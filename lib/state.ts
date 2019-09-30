@@ -6,7 +6,7 @@ import {
 } from './addTransaction/state'
 import { ObjectOf } from './types'
 
-export type ScreenTitle = 'add' | 'transactions' | 'settings'
+export type ScreenTitle = 'add' | 'transactions' | 'charts' | 'settings'
 
 export type SignInStatus = 'loggedIn' | 'loggingIn' | 'loggedOut' | 'unknown'
 

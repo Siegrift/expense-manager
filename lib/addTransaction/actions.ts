@@ -32,7 +32,6 @@ export const createNewTag = (tagName: string): Action<string> => ({
     const id = uuid()
     return update(state, ['addTransaction'], (addTx) => ({
       ...addTx,
-      tagInputValue: '',
       tagIds: [...addTx.tagIds, id],
       newTags: {
         ...addTx.newTags,
@@ -43,6 +42,20 @@ export const createNewTag = (tagName: string): Action<string> => ({
       },
     }))
   },
+})
+
+export const clearInputValue = (): Action => ({
+  type: 'Clear input value',
+  reducer: (state) => set(state, ['addTransaction', 'tagInputValue'], ''),
+})
+
+export const selectNewTag = (tagId: string): Action<string> => ({
+  type: 'Add tag to selection (if not already selected)',
+  payload: tagId,
+  reducer: (state) =>
+    update(state, ['addTransaction', 'tagIds'], (ids) =>
+      ids.includes(tagId) ? ids : [...ids, tagId],
+    ) as State,
 })
 
 export const setTagInputValue = (value: string): Action<string> => ({
