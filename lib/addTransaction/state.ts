@@ -1,4 +1,4 @@
-import { DEFAULT_CURRENCY } from '../currencies'
+import { DEFAULT_CURRENCY } from '../shared/currencies'
 import { ObjectOf } from '../types'
 
 // TODO: later create 'imported', 'automatic'

@@ -21,12 +21,12 @@ import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 
 import { setCurrentScreen } from '../../lib/actions'
-import { currencies } from '../../lib/currencies'
 import { useRedirectIfNotSignedIn } from '../../lib/shared/hooks'
-import { LoadingScreen } from '../../lib/shared/Loading'
-import Navigation from '../../lib/shared/Navigation'
 import { State } from '../../lib/state'
 import { ObjectOf } from '../../lib/types'
+import { LoadingScreen } from '../components/loading'
+import Navigation from '../components/navigation'
+import { currencies } from '../shared/currencies'
 
 import {
   addTransaction,

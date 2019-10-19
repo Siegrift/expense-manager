@@ -6,8 +6,8 @@ import subDays from 'date-fns/subDays'
 import range from 'lodash.range'
 import { useSelector } from 'react-redux'
 
-import { DEFAULT_CURRENCY } from '../../currencies'
-import { State } from '../../state'
+import { DEFAULT_CURRENCY } from '../shared/currencies'
+import { State } from '../state'
 
 interface LineChartData {
   amount: string

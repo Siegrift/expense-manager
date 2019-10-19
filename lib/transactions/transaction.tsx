@@ -9,8 +9,8 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
 
-import { getCurrencySymbol } from '../../currencies'
-import { State } from '../../state'
+import { getCurrencySymbol } from '../shared/currencies'
+import { State } from '../state'
 
 const formatAmount = (amount: string, isExpense: boolean, currency: string) =>
   `${isExpense ? '-' : '+'}${amount}${getCurrencySymbol(currency)}`

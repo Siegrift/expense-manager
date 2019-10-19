@@ -8,7 +8,10 @@ import configureStore from 'redux-mock-store'
 import { State } from './state'
 import theme from './theme'
 
-export const reduxify = (Component: () => JSX.Element, initialState: Partial<State>) => {
+export const reduxify = (
+  Component: () => JSX.Element,
+  initialState: Partial<State>,
+) => {
   const store = configureStore()(initialState)
   return (
     <ReduxProvider store={store}>

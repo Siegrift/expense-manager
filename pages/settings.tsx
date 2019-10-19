@@ -1,12 +1,3 @@
-import Navigation from '../lib/shared/Navigation'
-
-const Settings = () => {
-  return (
-    <>
-      <Navigation />
-      settings
-    </>
-  )
-}
+import Settings from '../lib/components/settings'
 
 export default Settings
