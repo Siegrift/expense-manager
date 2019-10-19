@@ -17,7 +17,7 @@ export interface FirestoneQuery {
 }
 
 const createQueryReducer = (
-  stateProp: keyof Pick<State, 'messages' | 'transactions' | 'tags'>,
+  stateProp: keyof Pick<State, 'transactions' | 'tags'>,
 ): QueryReducer => (state, payload) => {
   return update(state, [stateProp], (statePart) => {
     let newStatePart = statePart
@@ -41,16 +41,6 @@ const createQueryReducer = (
   }) as State
 }
 
-const lastTenMessages: FirestoneQuery = {
-  type: 'Last 10 messages',
-  createFirestoneQuery: () =>
-    firestore()
-      .collection('messages')
-      .orderBy('timestamp', 'desc')
-      .limit(12),
-  reducer: createQueryReducer('messages'),
-}
-
 const allTransactionsQuery: FirestoneQuery = {
   type: 'All transactions query',
   createFirestoneQuery: () => firestore().collection('transactions'),
@@ -64,5 +54,5 @@ const allTags: FirestoneQuery = {
 }
 
 export const getQueries = (): FirestoneQuery[] => {
-  return [lastTenMessages, allTransactionsQuery, allTags]
+  return [allTransactionsQuery, allTags]
 }

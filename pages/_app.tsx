@@ -7,9 +7,9 @@ import Head from 'next/head'
 import React from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
 
-import { PROJECT_TITLE } from '../lib/constants'
 import { initializeFirebase } from '../lib/firebase/firebase'
 import { configureStore } from '../lib/redux/configureStore'
+import { PROJECT_TITLE } from '../lib/shared/constants'
 import theme from '../lib/theme'
 
 const store = configureStore()

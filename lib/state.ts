@@ -14,7 +14,6 @@ export interface State {
   cnt: number
   // use firebase.auth().currentUser to get the current user
   signInStatus: SignInStatus
-  messages: any
   currentScreen: ScreenTitle
   addTransaction: AddTransaction
   tags: ObjectOf<Tag>
@@ -24,7 +23,6 @@ export interface State {
 const state: State = {
   cnt: 0,
   signInStatus: 'unknown',
-  messages: {},
   currentScreen: 'add',
   addTransaction: createDefaultAddTransactionState(),
   tags: {},

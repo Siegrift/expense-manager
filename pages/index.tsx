@@ -1,7 +1,7 @@
 import Router from 'next/router'
 
+import { LoadingScreen } from '../lib/components/loading'
 import { useRedirectIfNotSignedIn } from '../lib/shared/hooks'
-import { LoadingScreen } from '../lib/shared/Loading'
 
 import AddTransaction from './add'
 

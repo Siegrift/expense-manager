@@ -4,9 +4,10 @@ import { ResponsiveSunburst } from '@nivo/sunburst'
 import { reduce } from 'lodash'
 import { useSelector } from 'react-redux'
 
-import { Transaction } from '../../addTransaction/state'
-import { tagSharesSel, TagShare } from '../../selectors/chart'
-import { State } from '../../state'
+import { Transaction } from '../addTransaction/state'
+import { State } from '../state'
+
+import { tagSharesSel, TagShare } from './chart'
 
 const MAX_LEVELS = 4
 const MAX_BRANCHING_PER_LEVEL = [8, 6, 4, 2]

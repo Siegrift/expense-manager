@@ -10,8 +10,8 @@ import React, { ComponentType } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setCurrentScreen } from '../actions'
+import { redirectTo } from '../shared/utils'
 import { ScreenTitle, State } from '../state'
-import { redirectTo } from '../utils'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

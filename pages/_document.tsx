@@ -2,7 +2,7 @@ import { ServerStyleSheets } from '@material-ui/styles'
 import Document, { Head, Main, NextScript } from 'next/document'
 import React from 'react'
 
-import { PROJECT_DESCRIPTION } from '../lib/constants'
+import { PROJECT_DESCRIPTION } from '../lib/shared/constants'
 
 class MyDocument extends Document {
   render() {
