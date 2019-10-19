@@ -1,4 +1,5 @@
 import Typography from '@material-ui/core/Typography'
+import React from 'react'
 
 import { ObjectOf } from '../types'
 
@@ -25,7 +26,7 @@ const Loading = ({ imageStyle, text, size, textStyle }: LoadingProps) => {
         {text}
       </Typography>
 
-      <style jsx>{`
+      <style>{`
         @keyframes rotation {
           from {
             transform: rotateY(0deg);
