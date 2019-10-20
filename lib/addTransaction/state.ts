@@ -11,7 +11,6 @@ export interface Tag {
 
 export interface BaseTransaction {
   transactionType: TransactionType
-  amount: string
   // NOTE: order might be important
   tagIds: string[]
   currency: string
@@ -22,6 +21,7 @@ export interface BaseTransaction {
 export interface Transaction extends BaseTransaction {
   id: string
   dateTime: Date
+  amount: number
 }
 
 export interface AddTransaction extends BaseTransaction {
@@ -29,6 +29,8 @@ export interface AddTransaction extends BaseTransaction {
   newTags: ObjectOf<Tag>
   dateTime?: Date
   tagInputValue: string
+  amount: string
+  shouldValidateAmount: boolean
 }
 
 export const createDefaultAddTransactionState = (): AddTransaction => ({
@@ -42,4 +44,5 @@ export const createDefaultAddTransactionState = (): AddTransaction => ({
   note: '',
   dateTime: undefined,
   useCurrentTime: true,
+  shouldValidateAmount: false,
 })

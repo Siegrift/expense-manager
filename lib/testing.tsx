@@ -5,11 +5,12 @@ import { ThemeProvider } from '@material-ui/styles'
 import firebasemock from 'firebase-mock'
 import React from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
-import { Store } from 'redux'
-import reduxMockStore from 'redux-mock-store'
+import { applyMiddleware, createStore, Store } from 'redux'
 import thunk from 'redux-thunk'
 
-import { State } from './state'
+import { TestApi } from './api'
+import rootReducer from './redux/rootReducer'
+import { getInitialState, State } from './state'
 import theme from './theme'
 
 export const reduxify = (Component: () => JSX.Element, store: Store) => {
@@ -23,9 +24,23 @@ export const reduxify = (Component: () => JSX.Element, store: Store) => {
     </ReduxProvider>
   )
 }
+// TODO: maybe move this to the files alongside real impl.
+export const configureTestStore = (
+  state: Partial<State> = getInitialState(),
+) => {
+  const logger = { log: () => null }
+  const thunkExtra = {
+    logger,
+    api: new TestApi(logger),
+  }
+  const middlewares = [thunk.withExtraArgument(thunkExtra)]
+  const store = createStore<State, any, unknown, unknown>(
+    rootReducer as any,
+    state as any,
+    applyMiddleware(...middlewares),
+  )
 
-export const configureMockStore = (state: Partial<State>) => {
-  return reduxMockStore([thunk])(state)
+  return store
 }
 
 export const byAriaLabel = (value: string) => `[aria-label="${value}"]`

@@ -6,12 +6,16 @@ import { Action, Thunk } from '../redux/types'
 import { State } from '../state'
 import { ObjectOf } from '../types'
 
+import { isInvalidAmountSel } from './selectors'
 import { createDefaultAddTransactionState, Tag, Transaction } from './state'
 
 export const setAmount = (amount: string): Action<string> => ({
   type: 'Set amount in add transaction',
   payload: amount,
-  reducer: (state) => set(state, ['addTransaction', 'amount'], amount) as State,
+  reducer: (state) => {
+    const newState = set(state, ['addTransaction', 'amount'], amount)
+    return set(newState, ['addTransaction', 'shouldValidateAmount'], true)
+  },
 })
 
 export const setCurrency = (currency: string): Action<string> => ({
@@ -118,12 +122,19 @@ export const resetAddTransaction = (): Action => ({
 export const addTransaction = (): Thunk => (dispatch, getState, { logger }) => {
   logger.log('Add transaction')
 
+  // some fields were not filled correctly. Show incorrect and return.
+  if (isInvalidAmountSel(getState())) {
+    dispatch(triggerValidation())
+    return Promise.resolve()
+  }
+
   // create transaction from addTransaction state
   const addTx = getState().addTransaction
   const id = uuid()
   const tx = {
     id,
     ...omit(addTx, ['newTags', 'tagInputValue', 'useCurrentTime']),
+    amount: Number.parseFloat(addTx.amount),
     dateTime: addTx.useCurrentTime ? new Date() : addTx.dateTime!,
   }
 
@@ -185,4 +196,9 @@ export const setUseCurrentTime = (
       useCurrentTime,
       dateTime: useCurrentTime ? new Date() : undefined,
     }) as State,
+})
+
+export const triggerValidation = (): Action => ({
+  type: 'Trigger validation',
+  reducer: (state) => set(state, ['addTransaction', 'shouldValidateAmount'], true),
 })

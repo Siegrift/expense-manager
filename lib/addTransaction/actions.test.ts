@@ -1,4 +1,3 @@
-import { omit } from '@siegrift/tsfunct'
 import mockdate from 'mockdate'
 
 import { getInitialState, State } from '../state'
@@ -123,6 +122,7 @@ describe('Add transaction tests', () => {
           tagInputValue: 'unfinished',
           transactionType: 'fromUser',
           useCurrentTime: true,
+          shouldValidateAmount: false,
         },
         tags: createTestTagsObject(['id1']),
       }

@@ -13,11 +13,7 @@ export interface TagShare {
 }
 
 const totalAmountSel = (state: State) =>
-  reduce(
-    state.transactions,
-    (acc, tx) => acc + Number.parseFloat(tx.amount),
-    0,
-  )
+  reduce(state.transactions, (acc, tx) => acc + tx.amount, 0)
 
 export const tagSharesSel = createSelector(
   tagsSel,
@@ -26,11 +22,7 @@ export const tagSharesSel = createSelector(
   (tags, txs, total): TagShare[] => {
     const tagShares = map(tags, (tag) => {
       const filteredTx = filter(txs, (tx) => tx.tagIds.includes(tag.id))
-      const sum = reduce(
-        filteredTx,
-        (acc, tx) => acc + Number.parseFloat(tx.amount),
-        0,
-      )
+      const sum = reduce(filteredTx, (acc, tx) => acc + tx.amount, 0)
 
       return {
         id: tag.id,
