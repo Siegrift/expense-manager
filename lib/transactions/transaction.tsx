@@ -56,7 +56,7 @@ const Transaction = (props: ListChildComponentProps) => {
               variant="h4"
               style={{ color: tx.isExpense ? 'red' : 'green' }}
             >
-              {formatAmount(tx.amount, tx.isExpense, tx.currency)}
+              {formatAmount('' + tx.amount, tx.isExpense, tx.currency)}
             </Typography>
           }
         />

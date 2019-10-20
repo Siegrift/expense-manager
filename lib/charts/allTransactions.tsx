@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux'
 import { Transaction } from '../addTransaction/state'
 import { State } from '../state'
 
-import { tagSharesSel, TagShare } from './chart'
+import { tagSharesSel, TagShare } from './selectors'
 
 const MAX_LEVELS = 4
 const MAX_BRANCHING_PER_LEVEL = [8, 6, 4, 2]
@@ -30,7 +30,7 @@ const createDataLeaf = (
   const txTags = tags
     .filter((t) => !usedTagIds.includes(t.id) && txs[0].tagIds.includes(t.id))
     .map((t) => t.label)
-  return { name: txTags.join(','), amount: Number.parseFloat(txs[0].amount) }
+  return { name: txTags.join(','), amount: txs[0].amount }
 }
 
 const createRecData = (
@@ -46,7 +46,7 @@ const createRecData = (
     return [
       {
         name: '...',
-        amount: reduce(txs, (acc, tx) => acc + Number.parseFloat(tx.amount), 0),
+        amount: reduce(txs, (acc, tx) => acc + tx.amount, 0),
       },
     ]
   }

@@ -1,10 +1,10 @@
 import { mount } from 'enzyme'
-import { MockStore } from 'redux-mock-store'
+import { Store } from 'redux'
 
 import { getInitialState, State } from '../state'
 import {
   byAriaLabel,
-  configureMockStore,
+  configureTestStore,
   getMockedFirebase,
   initializeMockFirebase,
   reduxify
@@ -17,20 +17,20 @@ jest.mock('../firebase/firebase', () => initializeMockFirebase())
 describe('settings', () => {
   test('shows loading page', () => {
     const comp = mount(
-      reduxify(Settings, configureMockStore(getInitialState())),
+      reduxify(Settings, configureTestStore(getInitialState())),
     )
     expect(comp.html()).toMatchSnapshot()
   })
 
   describe('logged in', () => {
     let state: State
-    let store: MockStore
+    let store: Store
     let firebase: ReturnType<typeof getMockedFirebase>
 
     beforeEach(() => {
       state = getInitialState()
       firebase = getMockedFirebase()
-      store = configureMockStore(state)
+      store = configureTestStore(state)
       state.signInStatus = 'loggedIn'
       firebase.auth().currentUser = {
         uid: 'userId',

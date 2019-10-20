@@ -10,7 +10,7 @@ import { DEFAULT_CURRENCY } from '../shared/currencies'
 import { State } from '../state'
 
 interface LineChartData {
-  amount: string
+  amount: number
   dataIndex: number
   isExpense: boolean
 }
@@ -32,11 +32,13 @@ const RecentBalance = () => {
         end: now,
       }),
     )
-    .map((tx) => ({
-      amount: tx.amount,
-      isExpense: tx.isExpense,
-      dataIndex: days.indexOf(format(tx.dateTime, 'MM-dd')),
-    }))
+    .map(
+      (tx): LineChartData => ({
+        amount: tx.amount,
+        isExpense: tx.isExpense,
+        dataIndex: days.indexOf(format(tx.dateTime, 'MM-dd')),
+      }),
+    )
     .reduce(
       (acc, tx) => update(acc, [tx.dataIndex], (d) => [...d, tx]),
       range(DAYS_TO_DISPLAY).map(() => [] as LineChartData[]),
@@ -57,9 +59,7 @@ const RecentBalance = () => {
 
   groupedTransactions.forEach((txs, dataInd) => {
     txs.forEach((tx) => {
-      data[tx.isExpense ? 0 : 1].data[dataInd].y += Number.parseFloat(
-        tx.amount,
-      )
+      data[tx.isExpense ? 0 : 1].data[dataInd].y += tx.amount
     })
   })
 

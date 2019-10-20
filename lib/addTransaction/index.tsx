@@ -42,6 +42,7 @@ import {
   setTagInputValue,
   setUseCurrentTime
 } from './actions'
+import { addTransactionSel, isInvalidAmountSel } from './selectors'
 import { Tag } from './state'
 
 const animatedComponents = makeAnimated()
@@ -103,7 +104,9 @@ const AddTransaction = () => {
     note,
     dateTime,
     useCurrentTime,
-  } = useSelector((state: State) => state.addTransaction)
+    shouldValidateAmount,
+  } = useSelector(addTransactionSel)
+  const isInvalidAmount = useSelector(isInvalidAmountSel)
   const tags = useSelector((state: State) => state.tags)
   const allTags = { ...tags, ...newTags }
   const suggestedTags: ReactSelectTag[] = Object.values(tags).map(
@@ -188,7 +191,10 @@ const AddTransaction = () => {
 
           <Grid container className={classes.row}>
             <Grid item className={classes.amount}>
-              <FormControl>
+              <FormControl
+                aria-label="amount"
+                error={shouldValidateAmount && isInvalidAmount}
+              >
                 <InputLabel htmlFor="amount-id">Transaction amount</InputLabel>
                 <Input
                   id="amount-id"
@@ -269,6 +275,7 @@ const AddTransaction = () => {
               fullWidth
               // TODO: validate we can add transaction
               onClick={() => dispatch(addTransaction())}
+              aria-label="add transaction"
             >
               Add transaction
             </Button>

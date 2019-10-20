@@ -1,7 +1,7 @@
 import { PieDatum, ResponsivePie } from '@nivo/pie'
 import { useSelector } from 'react-redux'
 
-import { tagSharesSel } from './chart'
+import { tagSharesSel } from './selectors'
 
 const NUMBER_OF_TAGS_SHOWN = 10
 
