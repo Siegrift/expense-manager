@@ -135,7 +135,6 @@ describe('Add transaction tests', () => {
       mockdate.reset()
     })
 
-    // TODO: mock firebase and test correctly
     test('adds a transaction to transactions', () => {
       const id = 'uuid1'
       const newState = resetAddTransaction().reducer(state)

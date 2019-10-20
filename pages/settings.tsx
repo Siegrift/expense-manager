@@ -1,3 +1,3 @@
-import Settings from '../lib/components/settings'
+import Settings from '../lib/settings'
 
 export default Settings

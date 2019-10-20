@@ -48,3 +48,5 @@ export const initializeFirebase = async (store: Store) => {
     store.dispatch(authChangeAction(user ? 'loggedIn' : 'loggedOut') as any)
   })
 }
+
+export default firebase
