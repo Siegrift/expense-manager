@@ -12,6 +12,8 @@ import { ListChildComponentProps } from 'react-window'
 import { getCurrencySymbol } from '../shared/currencies'
 import { State } from '../state'
 
+import { sortedTransactionsSel } from './selectors'
+
 const formatAmount = (amount: string, isExpense: boolean, currency: string) =>
   `${isExpense ? '-' : '+'}${amount}${getCurrencySymbol(currency)}`
 
@@ -41,9 +43,7 @@ const Transaction = (props: ListChildComponentProps) => {
   const { index, style } = props
   const classes = useStyles()
   // TODO: memoize
-  const sortedTransactions = Object.values(
-    useSelector((state: State) => state.transactions),
-  ).sort((tx1, tx2) => tx1.dateTime.getTime() - tx2.dateTime.getTime())
+  const sortedTransactions = useSelector(sortedTransactionsSel)
   const tags = useSelector((state: State) => state.tags)
   const tx = sortedTransactions[index]
 
