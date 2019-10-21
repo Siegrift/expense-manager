@@ -5,7 +5,7 @@ import { uploadTags, uploadTransactions } from '../actions'
 import { Tag, Transaction } from '../addTransaction/state'
 import firebase from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
-import { DEFAULT_CURRENCY } from '../shared/currencies'
+import { currencies } from '../shared/currencies'
 import { downloadFile, isValidDate } from '../shared/utils'
 import { State } from '../state'
 import { ObjectOf } from '../types'
@@ -48,6 +48,7 @@ export const importFromCSV = (
  *  2. amount - 2 decimal places, negative values means expenses, positive are incomes
  *  3. tags - separated by '|' (pipe)
  *  4. note - optional
+ *  5. currency - currency value of transaction (see list of available currency values)
  *  other columns are ignored
  */
 export const processImportedCSV = (state: State, importedCsv: string) => {
@@ -73,6 +74,8 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
         errorReason = `${t[1]} is not in a valid amount format`
       } else if (rawTags.length === 0) {
         errorReason = `There must be at least one tag in a transaction`
+      } else if (!currencies.find((c) => c.value === t[4])) {
+        errorReason = `Invalid currency of a transaction`
       }
 
       // there mustn't be any error when importing
@@ -91,8 +94,7 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
         id: uuid(),
         amount: Math.abs(amount),
         transactionType: 'imported',
-        // TODO: support currency
-        currency: DEFAULT_CURRENCY.value,
+        currency: t[4],
         dateTime: dt,
         isExpense: amount < 0,
         note: t[3],

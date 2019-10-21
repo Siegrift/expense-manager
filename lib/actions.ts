@@ -1,5 +1,6 @@
 import { set } from '@siegrift/tsfunct'
 import { firestore } from 'firebase/app'
+import { chunk } from 'lodash'
 
 import { Tag, Transaction } from './addTransaction/state'
 import { Action, Thunk } from './redux/types'
@@ -18,7 +19,19 @@ export const uploadTransactions = (txs: Transaction[]): Thunk => (
   { logger },
 ) => {
   logger.log('Upload multiple transactions to firestone')
-  return Promise.all(txs.map((tx) => dispatch(uploadTransaction(tx))))
+
+  const coll = firestore().collection('transactions')
+  const uploads = chunk(txs, 500).map((ch) => {
+    const batch = firestore().batch()
+    ch.forEach((tx) => {
+      const ref = coll.doc(tx.id)
+      batch.set(ref, tx)
+    })
+
+    return batch.commit()
+  })
+
+  return Promise.all(uploads)
 }
 
 export const uploadTransaction = (tx: Transaction): Thunk => (
@@ -46,15 +59,15 @@ export const uploadTags = (tags: ObjectOf<Tag>): Thunk => (
   logger.log('Upload tags to firestone')
 
   const coll = firestore().collection('tags')
-  const uploads = Object.values(tags).map((tag) =>
-    coll
-      .doc(tag.id)
-      .set(tag)
-      .catch((error) => {
-        // TODO: handle errors
-        console.error('Error writing new message to Firebase Database', error)
-      }),
-  )
+  const uploads = chunk(Object.values(tags), 500).map((ch) => {
+    const batch = firestore().batch()
+    ch.forEach((tag) => {
+      const ref = coll.doc(tag.id)
+      batch.set(ref, tag)
+    })
+
+    return batch.commit()
+  })
 
   return Promise.all(uploads)
 }
