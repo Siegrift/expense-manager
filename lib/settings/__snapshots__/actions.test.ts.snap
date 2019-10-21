@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`settings actions import/export processing imported txs creates new tags and txs 1`] = `
+Object {
+  "errorReason": undefined,
+  "tags": Map {
+    "Tickets" => Object {
+      "id": "uuid0",
+      "name": "Tickets",
+    },
+    "Shopping" => Object {
+      "id": "uuid2",
+      "name": "Shopping",
+    },
+  },
+  "txs": Array [
+    Object {
+      "amount": 1,
+      "currency": "EUR",
+      "dateTime": 2017-08-19T00:00:00.000Z,
+      "id": "uuid1",
+      "isExpense": true,
+      "note": "",
+      "tagIds": Array [
+        "id1",
+        "uuid0",
+      ],
+      "transactionType": "imported",
+    },
+    Object {
+      "amount": 0.7,
+      "currency": "EUR",
+      "dateTime": 2017-08-16T00:00:00.000Z,
+      "id": "uuid3",
+      "isExpense": true,
+      "note": "",
+      "tagIds": Array [
+        "uuid2",
+      ],
+      "transactionType": "imported",
+    },
+  ],
+}
+`;
+
+exports[`settings actions import/export processing imported txs creates new tags and txs 2`] = `
+Object {
+  "errorReason": undefined,
+  "tags": Map {
+    "A" => Object {
+      "id": "uuid4",
+      "name": "A",
+    },
+    "B" => Object {
+      "id": "uuid5",
+      "name": "B",
+    },
+    "C" => Object {
+      "id": "uuid6",
+      "name": "C",
+    },
+  },
+  "txs": Array [
+    Object {
+      "amount": 1.56,
+      "currency": "EUR",
+      "dateTime": 2016-02-16T00:00:00.000Z,
+      "id": "uuid7",
+      "isExpense": true,
+      "note": "",
+      "tagIds": Array [
+        "uuid4",
+        "uuid5",
+        "uuid6",
+      ],
+      "transactionType": "imported",
+    },
+  ],
+}
+`;

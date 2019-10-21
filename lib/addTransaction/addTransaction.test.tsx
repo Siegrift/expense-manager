@@ -85,7 +85,7 @@ describe('add transaction', () => {
         setAmountValidationAndMatchSnapshot('-13.3')
       })
 
-      test.only("doesn't allow to submit with invalid amount", () => {
+      test("doesn't allow to submit with invalid amount", () => {
         comp
           .find(byAriaLabel('add transaction'))
           .hostNodes()

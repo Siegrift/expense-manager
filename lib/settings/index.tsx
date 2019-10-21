@@ -6,14 +6,18 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import React from 'react'
+import { useDispatch } from 'react-redux'
 
+import { setCurrentScreen } from '../actions'
 import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
 import firebase from '../firebase/firebase'
 import { useRedirectIfNotSignedIn } from '../shared/hooks'
 
+import { exportToCSV, importFromCSV } from './actions'
+
 function signOut() {
-  // Sign out of Firebase.
+  // Sign out of Firebase
   firebase.auth().signOut()
 }
 
@@ -36,6 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const Settings = () => {
   const classes = useStyles()
   const [expanded, setExpanded] = React.useState<SettingsPanel>('none')
+  const dispatch = useDispatch()
   const togglePanel = (panel: SettingsPanel) => () => {
     if (expanded === panel) {
       setExpanded('none')
@@ -43,6 +48,8 @@ const Settings = () => {
       setExpanded(panel)
     }
   }
+
+  dispatch(setCurrentScreen('settings'))
 
   if (useRedirectIfNotSignedIn() !== 'loggedIn') {
     return <LoadingScreen />
@@ -71,6 +78,7 @@ const Settings = () => {
                 id="choose-import-file"
                 type="file"
                 style={{ display: 'none' }}
+                onChange={(e) => dispatch(importFromCSV(e))}
               />
               <label htmlFor="choose-import-file">
                 <Button
@@ -78,10 +86,10 @@ const Settings = () => {
                   className={classes.importExportButton}
                   fullWidth
                   color="primary"
-                  aria-label="import from file"
+                  aria-label="import from csv file"
                   component="span"
                 >
-                  Import from file
+                  Import from csv file
                 </Button>
               </label>
 
@@ -90,8 +98,10 @@ const Settings = () => {
                 className={classes.importExportButton}
                 fullWidth
                 color="secondary"
+                aria-label="export to csv file"
+                onClick={() => dispatch(exportToCSV())}
               >
-                Export to file
+                Export to csv file
               </Button>
             </ExpansionPanelDetails>
           </ExpansionPanel>
