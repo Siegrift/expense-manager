@@ -1,13 +1,13 @@
 import { omit, pick, set, update } from '@siegrift/tsfunct'
-import { firestore } from 'firebase/app'
 import uuid from 'uuid/v4'
 
+import { uploadTags, uploadTransaction } from '../actions'
 import { Action, Thunk } from '../redux/types'
 import { State } from '../state'
 import { ObjectOf } from '../types'
 
 import { isInvalidAmountSel } from './selectors'
-import { createDefaultAddTransactionState, Tag, Transaction } from './state'
+import { createDefaultAddTransactionState, Tag } from './state'
 
 export const setAmount = (amount: string): Action<string> => ({
   type: 'Set amount in add transaction',
@@ -144,44 +144,6 @@ export const addTransaction = (): Thunk => (dispatch, getState, { logger }) => {
   ]
 
   dispatch(resetAddTransaction())
-  return Promise.all(uploads)
-}
-
-export const uploadTransaction = (tx: Transaction): Thunk => (
-  dispatch,
-  getState,
-  { logger },
-) => {
-  logger.log('Upload transaction to firestone')
-
-  return firestore()
-    .collection('transactions')
-    .doc(tx.id)
-    .set(tx)
-    .catch((error) => {
-      // TODO: handle errors
-      console.error('Error writing new message to Firebase Database', error)
-    })
-}
-
-export const uploadTags = (tags: ObjectOf<Tag>): Thunk => (
-  dispatch,
-  getState,
-  { logger },
-) => {
-  logger.log('Upload tags to firestone')
-
-  const coll = firestore().collection('tags')
-  const uploads = Object.values(tags).map((tag) =>
-    coll
-      .doc(tag.id)
-      .set(tag)
-      .catch((error) => {
-        // TODO: handle errors
-        console.error('Error writing new message to Firebase Database', error)
-      }),
-  )
-
   return Promise.all(uploads)
 }
 

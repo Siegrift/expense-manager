@@ -1,8 +1,7 @@
 import { DEFAULT_CURRENCY } from '../shared/currencies'
 import { ObjectOf } from '../types'
 
-// TODO: later create 'imported', 'automatic'
-export type TransactionType = 'fromUser'
+export type TransactionType = 'fromUser' | 'imported'
 
 export interface Tag {
   id: string
