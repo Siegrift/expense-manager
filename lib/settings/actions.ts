@@ -3,6 +3,7 @@ import uuid from 'uuid/v4'
 
 import { uploadTags, uploadTransactions } from '../actions'
 import { Tag, Transaction } from '../addTransaction/state'
+import firebase from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
 import { DEFAULT_CURRENCY } from '../shared/currencies'
 import { downloadFile, isValidDate } from '../shared/utils'
@@ -119,3 +120,31 @@ export const exportToCSV = (): Action => ({
     return state
   },
 })
+
+export const clearAllData = (): Thunk => async (
+  dispatch,
+  getState,
+  { logger },
+) => {
+  logger.log('Clear all data')
+  const removeColl = async (name: string) => {
+    let stopRemove = false
+    while (!stopRemove) {
+      const batch = firebase.firestore().batch()
+
+      const q = await firebase
+        .firestore()
+        .collection(name)
+        .limit(500)
+        .get()
+
+      if (q.size > 0) {
+        q.docs.forEach((d) => batch.delete(d.ref))
+        batch.commit()
+      } else {
+        stopRemove = true
+      }
+    }
+  }
+  return Promise.all([removeColl('transactions'), removeColl('tags')])
+}
