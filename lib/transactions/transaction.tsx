@@ -42,7 +42,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 const Transaction = (props: ListChildComponentProps) => {
   const { index, style } = props
   const classes = useStyles()
-  // TODO: memoize
   const sortedTransactions = useSelector(sortedTransactionsSel)
   const tags = useSelector((state: State) => state.tags)
   const tx = sortedTransactions[index]
