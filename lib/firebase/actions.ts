@@ -49,7 +49,9 @@ export const initializeFirestore = (): Thunk => (dispatch) => {
     const q = query.createFirestoneQuery()
     initialQueries.push(
       q
-        .get()
+        .get({
+          source: 'cache',
+        })
         .then((snapshot) =>
           dispatch(firestoneChangeAction(query, snapshot, true)),
         ),
