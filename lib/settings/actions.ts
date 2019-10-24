@@ -4,6 +4,7 @@ import uuid from 'uuid/v4'
 import { uploadTags, uploadTransactions } from '../actions'
 import { Tag, Transaction } from '../addTransaction/state'
 import firebase from '../firebase/firebase'
+import { getCurrentUserId } from '../firebase/util'
 import { Action, Thunk } from '../redux/types'
 import { currencies } from '../shared/currencies'
 import { downloadFile, isValidDate } from '../shared/utils'
@@ -87,7 +88,7 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
       const splitTags = rawTags.split('|')
       splitTags.forEach((tag) => {
         if (!stateTagsByName[tag] && !tags.has(tag)) {
-          tags.set(tag, { id: uuid(), name: tag })
+          tags.set(tag, { id: uuid(), name: tag, uid: getCurrentUserId() })
         }
       })
       txs.push({
@@ -105,6 +106,7 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
             return stateTagsByName[tag].id
           }
         }),
+        uid: getCurrentUserId(),
       })
     }
   } catch (e) {

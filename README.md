@@ -22,7 +22,7 @@ _We use canary version of next, because deploying with firebase works only after
 which is at this time in canary. [Reference
 link](https://github.com/zeit/next.js/issues/6073#issuecomment-467589586)_
 
-## Conventions
+## Conventions and reminders
 
 1. **Lower case filenames** - Nextjs uses predefined routing _(pages directory is automatically
    routed)_ and the url name must match the page filename. I want URL parts _(e.g. /login)_ to be

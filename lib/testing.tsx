@@ -49,6 +49,7 @@ type ExtendedGlobal = NodeJS.Global & { mockFirebase: firebase.app.App }
 
 export const initializeMockFirebase = () => {
   const mockauth = new firebasemock.MockAuthentication()
+  mockauth.currentUser = { uid: 'mockedUserId' }
   mockauth.autoFlush()
   const mockfirestore = new firebasemock.MockFirestore()
   mockfirestore.autoFlush()

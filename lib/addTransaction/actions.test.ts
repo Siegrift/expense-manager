@@ -1,6 +1,7 @@
 import mockdate from 'mockdate'
 
 import { getInitialState, State } from '../state'
+import { initializeMockFirebase } from '../testing'
 import { ObjectOf } from '../types'
 
 import {
@@ -17,17 +18,18 @@ import {
 } from './actions'
 import { Tag } from './state'
 
-const createTestTagsObject = (ids: string[]): ObjectOf<Tag> =>
-  ids.reduce((acc, id) => ({ ...acc, [id]: { id, name: 'name' + id } }), {})
-
 // https://github.com/facebook/jest/issues/2172
 jest.mock('uuid/v4', () => {
   let uuid = 0
   return jest.fn(() => `uuid${uuid++}`)
 })
 
+jest.mock('../firebase/firebase', () => initializeMockFirebase())
+
 describe('Add transaction tests', () => {
   let state: State
+  const createTestTagsObject = (ids: string[]): ObjectOf<Tag> =>
+    ids.reduce((acc, id) => ({ ...acc, [id]: { id, name: 'name' + id } }), {})
 
   beforeEach(() => {
     state = getInitialState()
@@ -55,7 +57,7 @@ describe('Add transaction tests', () => {
       const newState = createNewTag('tagName').reducer(state)
       const id = 'uuid0'
       expect(newState.addTransaction.newTags).toEqual({
-        [id]: { id, name: 'tagName' },
+        [id]: { id, name: 'tagName', uid: 'mockedUserId' },
       })
     })
   })

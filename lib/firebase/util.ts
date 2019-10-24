@@ -1,4 +1,4 @@
-import * as firebase from 'firebase/app'
+import firebase from '../firebase/firebase'
 
 export function signIn() {
   // Sign into Firebase using popup auth & Google as the identity provider.
@@ -25,3 +25,5 @@ export const convertTimestampsToDates = (value: any): any => {
     return value
   }
 }
+
+export const getCurrentUserId = () => firebase.auth().currentUser!.uid

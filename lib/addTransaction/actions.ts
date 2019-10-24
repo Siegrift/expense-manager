@@ -2,6 +2,7 @@ import { omit, pick, set, update } from '@siegrift/tsfunct'
 import uuid from 'uuid/v4'
 
 import { uploadTags, uploadTransaction } from '../actions'
+import { getCurrentUserId } from '../firebase/util'
 import { Action, Thunk } from '../redux/types'
 import { State } from '../state'
 import { ObjectOf } from '../types'
@@ -42,6 +43,7 @@ export const createNewTag = (tagName: string): Action<string> => ({
         [id]: {
           id,
           name: tagName,
+          uid: getCurrentUserId(),
         },
       },
     }))
@@ -136,6 +138,7 @@ export const addTransaction = (): Thunk => (dispatch, getState, { logger }) => {
     ...omit(addTx, ['newTags', 'tagInputValue', 'useCurrentTime']),
     amount: Number.parseFloat(addTx.amount),
     dateTime: addTx.useCurrentTime ? new Date() : addTx.dateTime!,
+    uid: getCurrentUserId(),
   }
 
   const uploads = [

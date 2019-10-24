@@ -1,8 +1,8 @@
 import { set } from '@siegrift/tsfunct'
-import { firestore } from 'firebase/app'
 import { chunk } from 'lodash'
 
 import { Tag, Transaction } from './addTransaction/state'
+import firebase from './firebase/firebase'
 import { Action, Thunk } from './redux/types'
 import { ScreenTitle } from './state'
 import { ObjectOf } from './types'
@@ -20,9 +20,9 @@ export const uploadTransactions = (txs: Transaction[]): Thunk => (
 ) => {
   logger.log('Upload multiple transactions to firestone')
 
-  const coll = firestore().collection('transactions')
+  const coll = firebase.firestore().collection('transactions')
   const uploads = chunk(txs, 500).map((ch) => {
-    const batch = firestore().batch()
+    const batch = firebase.firestore().batch()
     ch.forEach((tx) => {
       const ref = coll.doc(tx.id)
       batch.set(ref, tx)
@@ -41,7 +41,8 @@ export const uploadTransaction = (tx: Transaction): Thunk => (
 ) => {
   logger.log('Upload transaction to firestone')
 
-  return firestore()
+  return firebase
+    .firestore()
     .collection('transactions')
     .doc(tx.id)
     .set(tx)
@@ -58,9 +59,9 @@ export const uploadTags = (tags: ObjectOf<Tag>): Thunk => (
 ) => {
   logger.log('Upload tags to firestone')
 
-  const coll = firestore().collection('tags')
+  const coll = firebase.firestore().collection('tags')
   const uploads = chunk(Object.values(tags), 500).map((ch) => {
-    const batch = firestore().batch()
+    const batch = firebase.firestore().batch()
     ch.forEach((tag) => {
       const ref = coll.doc(tag.id)
       batch.set(ref, tag)
