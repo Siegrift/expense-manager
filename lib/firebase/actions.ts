@@ -34,7 +34,6 @@ export const authChangeAction = (status: SignInStatus): Thunk => async (
   logger.log(`Auth changed: ${status}`)
   if (status === 'loggedIn') {
     await dispatch(initializeFirestore())
-    console.log('initialized')
   }
   dispatch(changeSignInStatus(status))
 }
