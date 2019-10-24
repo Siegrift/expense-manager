@@ -12,16 +12,12 @@ export const setCurrentScreen = (screen: ScreenTitle): Action<ScreenTitle> => ({
   reducer: (state) => set(state, ['currentScreen'], screen),
 })
 
-export const uploadToFirebase = (txs: Transaction[], tags: Tag[]): Thunk => (
-  dispatch,
-  getState,
-  { logger },
-) => {
-  logger.log('Upload transactions and tags to firestone')
-  const data = [...tags, ...txs]
+const MAX_WRITES_IN_BATCH = 500
 
-  const coll = firebase.firestore().collection('transactions')
-  const uploads = chunk(data, 500).map((ch) => {
+const privateUpload = (data: Array<Transaction | Tag>, collection: string) => {
+  const coll = firebase.firestore().collection(collection)
+
+  return chunk(data, MAX_WRITES_IN_BATCH).map((ch) => {
     const batch = firebase.firestore().batch()
     ch.forEach((tx) => {
       const ref = coll.doc(tx.id)
@@ -30,6 +26,14 @@ export const uploadToFirebase = (txs: Transaction[], tags: Tag[]): Thunk => (
 
     return batch.commit()
   })
+}
 
-  return Promise.all(uploads)
+export const uploadToFirebase = (
+  txs: Transaction[],
+  tags: Tag[],
+): Thunk => async (dispatch, getState, { logger }) => {
+  logger.log('Upload transactions and tags to firestone')
+  // NOTE: upload tags first to prevent transactions missing tags
+  await privateUpload(tags, 'tags')
+  await privateUpload(txs, 'transactions')
 }

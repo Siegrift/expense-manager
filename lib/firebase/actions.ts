@@ -34,16 +34,15 @@ export const authChangeAction = (status: SignInStatus): Thunk => async (
   logger.log(`Auth changed: ${status}`)
   if (status === 'loggedIn') {
     await dispatch(initializeFirestore())
+    console.log('initialized')
   }
   dispatch(changeSignInStatus(status))
 }
 
 export const initializeFirestore = (): Thunk => (dispatch) => {
-  // TODO: solve how to dispatch state change to avoid inconsistencies
-  // https://stackoverflow.com/questions/57982742/how-to-use-firebase-onsnapshot-and-maintain-consistency
-  // For now just debounce the value for a short time and wait for initial data loading
-
   const initialQueries: Array<Promise<unknown>> = []
+  let actions: Array<Parameters<typeof firestoneChangeAction>> = []
+
   getQueries().forEach((query) => {
     const q = query.createFirestoneQuery()
     initialQueries.push(
@@ -55,11 +54,14 @@ export const initializeFirestore = (): Thunk => (dispatch) => {
           dispatch(firestoneChangeAction(query, snapshot, true)),
         ),
     )
+    firebase.firestore().onSnapshotsInSync(() => {
+      actions.forEach((a) => dispatch(firestoneChangeAction(a[0], a[1])))
+      actions = []
+    })
     q.onSnapshot((change) => {
-      dispatch(firestoneChangeAction(query, change))
+      actions.push([query, change])
     })
   })
 
-  console.log('Now I am just waiting for initial data...')
   return Promise.all(initialQueries)
 }
