@@ -16,8 +16,6 @@ export const firestoneChangeAction = (
   }`,
   payload,
   reducer: (state) => {
-    console.log(payload.docChanges())
-    return state
     return query.reducer(state, payload)
   },
 })

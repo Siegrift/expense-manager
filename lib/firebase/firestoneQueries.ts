@@ -3,7 +3,7 @@ import { omit, set, update } from '@siegrift/tsfunct'
 import { State } from '../state'
 
 import firebase from './firebase'
-import { convertTimestampsToDates } from './util'
+import { convertTimestampsToDates, getCurrentUserId } from './util'
 
 export type QueryReducer = (
   state: State,
@@ -44,8 +44,10 @@ const createQueryReducer = (
 const allTransactionsQuery: FirestoneQuery = {
   type: 'All transactions query',
   createFirestoneQuery: () => {
-    const q = firebase.firestore().collection('transactions')
-    console.log(q.path)
+    const q = firebase
+      .firestore()
+      .collection('transactions')
+      .where('uid', '==', getCurrentUserId())
     return q
   },
   reducer: createQueryReducer('transactions'),
@@ -53,7 +55,11 @@ const allTransactionsQuery: FirestoneQuery = {
 
 const allTags: FirestoneQuery = {
   type: 'All tags query',
-  createFirestoneQuery: () => firebase.firestore().collection('tags'),
+  createFirestoneQuery: () =>
+    firebase
+      .firestore()
+      .collection('tags')
+      .where('uid', '==', getCurrentUserId()),
   reducer: createQueryReducer('tags'),
 }
 

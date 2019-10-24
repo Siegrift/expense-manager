@@ -1,7 +1,6 @@
-import { keyBy } from 'lodash'
 import uuid from 'uuid/v4'
 
-import { uploadTags, uploadTransactions } from '../actions'
+import { uploadToFirebase } from '../actions'
 import { Tag, Transaction } from '../addTransaction/state'
 import firebase from '../firebase/firebase'
 import { getCurrentUserId } from '../firebase/util'
@@ -32,8 +31,7 @@ export const importFromCSV = (
         console.log(errorReason)
       } else {
         // TODO: display success notification
-        await dispatch(uploadTags(keyBy([...tags.values()], 'id')))
-        await dispatch(uploadTransactions(txs))
+        await uploadToFirebase(txs, [...tags.values()])
       }
 
       res()
@@ -139,6 +137,7 @@ export const clearAllData = (): Thunk => async (
       const q = await firebase
         .firestore()
         .collection(name)
+        .where('uid', '==', getCurrentUserId())
         .limit(500)
         .get()
 

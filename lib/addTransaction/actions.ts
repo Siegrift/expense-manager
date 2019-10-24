@@ -1,7 +1,7 @@
 import { omit, pick, set, update } from '@siegrift/tsfunct'
 import uuid from 'uuid/v4'
 
-import { uploadTags, uploadTransaction } from '../actions'
+import { uploadToFirebase } from '../actions'
 import { getCurrentUserId } from '../firebase/util'
 import { Action, Thunk } from '../redux/types'
 import { State } from '../state'
@@ -121,7 +121,11 @@ export const resetAddTransaction = (): Action => ({
   },
 })
 
-export const addTransaction = (): Thunk => (dispatch, getState, { logger }) => {
+export const addTransaction = (): Thunk => async (
+  dispatch,
+  getState,
+  { logger },
+) => {
   logger.log('Add transaction')
 
   // some fields were not filled correctly. Show incorrect and return.
@@ -141,13 +145,10 @@ export const addTransaction = (): Thunk => (dispatch, getState, { logger }) => {
     uid: getCurrentUserId(),
   }
 
-  const uploads = [
-    dispatch(uploadTransaction(tx)),
-    dispatch(uploadTags(getState().addTransaction.newTags)),
-  ]
-
+  await dispatch(
+    uploadToFirebase([tx], Object.values(getState().addTransaction.newTags)),
+  )
   dispatch(resetAddTransaction())
-  return Promise.all(uploads)
 }
 
 export const setUseCurrentTime = (
