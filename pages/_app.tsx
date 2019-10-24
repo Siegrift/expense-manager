@@ -28,7 +28,7 @@ class ExpenseManagerApp extends App {
             </Head>
             <CssBaseline />
             {/* Custom global styles */}
-            <style jsx global>
+            <style>
               {`
                 body {
                   background-color: blanchedalmond !important;
