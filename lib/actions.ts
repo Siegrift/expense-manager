@@ -34,6 +34,6 @@ export const uploadToFirebase = (
 ): Thunk => async (dispatch, getState, { logger }) => {
   logger.log('Upload transactions and tags to firestone')
   // NOTE: upload tags first to prevent transactions missing tags
-  await privateUpload(tags, 'tags')
-  await privateUpload(txs, 'transactions')
+  await Promise.all(privateUpload(tags, 'tags'))
+  await Promise.all(privateUpload(txs, 'transactions'))
 }

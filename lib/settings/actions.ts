@@ -31,7 +31,7 @@ export const importFromCSV = (
         console.log(errorReason)
       } else {
         // TODO: display success notification
-        await uploadToFirebase(txs, [...tags.values()])
+        await dispatch(uploadToFirebase(txs, [...tags.values()]))
       }
 
       res()
