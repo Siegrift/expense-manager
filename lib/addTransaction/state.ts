@@ -6,6 +6,7 @@ export type TransactionType = 'fromUser' | 'imported'
 export interface Tag {
   id: string
   name: string
+  uid: string
 }
 
 export interface BaseTransaction {
@@ -21,6 +22,7 @@ export interface Transaction extends BaseTransaction {
   id: string
   dateTime: Date
   amount: number
+  uid: string
 }
 
 export interface AddTransaction extends BaseTransaction {

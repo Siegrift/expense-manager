@@ -18,11 +18,11 @@ issue](https://github.com/zeit/now/issues/2711).
 1. Download [now](https://zeit.co/download) and create an account
 2. Run `yarn deploy`
 
-_We use canary version of next, because deploying with firebase works only after version 9.0.4,
-which is at this time in canary. [Reference
-link](https://github.com/zeit/next.js/issues/6073#issuecomment-467589586)_
+_We use fixed version of next, because deploying with firebase works only after version 9.0.4, but breaks after 9.0.6.
+[issue1](https://github.com/zeit/next.js/issues/6073#issuecomment-467589586)
+[issue2](https://github.com/zeit/next.js/issues/7894)_
 
-## Conventions
+## Conventions and reminders
 
 1. **Lower case filenames** - Nextjs uses predefined routing _(pages directory is automatically
    routed)_ and the url name must match the page filename. I want URL parts _(e.g. /login)_ to be

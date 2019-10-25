@@ -7,10 +7,12 @@ Object {
     "Tickets" => Object {
       "id": "uuid0",
       "name": "Tickets",
+      "uid": "mockedUserId",
     },
     "Shopping" => Object {
       "id": "uuid2",
       "name": "Shopping",
+      "uid": "mockedUserId",
     },
   },
   "txs": Array [
@@ -26,6 +28,7 @@ Object {
         "uuid0",
       ],
       "transactionType": "imported",
+      "uid": "mockedUserId",
     },
     Object {
       "amount": 0.7,
@@ -38,6 +41,7 @@ Object {
         "uuid2",
       ],
       "transactionType": "imported",
+      "uid": "mockedUserId",
     },
   ],
 }
@@ -50,14 +54,17 @@ Object {
     "A" => Object {
       "id": "uuid4",
       "name": "A",
+      "uid": "mockedUserId",
     },
     "B" => Object {
       "id": "uuid5",
       "name": "B",
+      "uid": "mockedUserId",
     },
     "C" => Object {
       "id": "uuid6",
       "name": "C",
+      "uid": "mockedUserId",
     },
   },
   "txs": Array [
@@ -74,7 +81,13 @@ Object {
         "uuid6",
       ],
       "transactionType": "imported",
+      "uid": "mockedUserId",
     },
   ],
 }
+`;
+
+exports[`settings actions import/export processing imported txs exporting imported txs yields identity 1`] = `
+"2017-08-19T00:00:00.000Z,-1,Travel|Tickets,,EUR
+2017-08-16T00:00:00.000Z,-0.7,Shopping,,EUR"
 `;

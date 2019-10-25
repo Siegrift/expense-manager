@@ -1,9 +1,9 @@
-import { keyBy } from 'lodash'
 import uuid from 'uuid/v4'
 
-import { uploadTags, uploadTransactions } from '../actions'
+import { uploadToFirebase } from '../actions'
 import { Tag, Transaction } from '../addTransaction/state'
 import firebase from '../firebase/firebase'
+import { getCurrentUserId } from '../firebase/util'
 import { Action, Thunk } from '../redux/types'
 import { currencies } from '../shared/currencies'
 import { downloadFile, isValidDate } from '../shared/utils'
@@ -31,8 +31,7 @@ export const importFromCSV = (
         console.log(errorReason)
       } else {
         // TODO: display success notification
-        await dispatch(uploadTags(keyBy([...tags.values()], 'id')))
-        await dispatch(uploadTransactions(txs))
+        await dispatch(uploadToFirebase(txs, [...tags.values()]))
       }
 
       res()
@@ -87,7 +86,7 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
       const splitTags = rawTags.split('|')
       splitTags.forEach((tag) => {
         if (!stateTagsByName[tag] && !tags.has(tag)) {
-          tags.set(tag, { id: uuid(), name: tag })
+          tags.set(tag, { id: uuid(), name: tag, uid: getCurrentUserId() })
         }
       })
       txs.push({
@@ -105,6 +104,7 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
             return stateTagsByName[tag].id
           }
         }),
+        uid: getCurrentUserId(),
       })
     }
   } catch (e) {
@@ -137,6 +137,7 @@ export const clearAllData = (): Thunk => async (
       const q = await firebase
         .firestore()
         .collection(name)
+        .where('uid', '==', getCurrentUserId())
         .limit(500)
         .get()
 

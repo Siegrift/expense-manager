@@ -1,7 +1,8 @@
 import { omit, pick, set, update } from '@siegrift/tsfunct'
 import uuid from 'uuid/v4'
 
-import { uploadTags, uploadTransaction } from '../actions'
+import { uploadToFirebase } from '../actions'
+import { getCurrentUserId } from '../firebase/util'
 import { Action, Thunk } from '../redux/types'
 import { State } from '../state'
 import { ObjectOf } from '../types'
@@ -14,7 +15,11 @@ export const setAmount = (amount: string): Action<string> => ({
   payload: amount,
   reducer: (state) => {
     const newState = set(state, ['addTransaction', 'amount'], amount)
-    return set(newState, ['addTransaction', 'shouldValidateAmount'], true)
+    return set(
+      newState,
+      ['addTransaction', 'shouldValidateAmount'],
+      true,
+    ) as State
   },
 })
 
@@ -42,6 +47,7 @@ export const createNewTag = (tagName: string): Action<string> => ({
         [id]: {
           id,
           name: tagName,
+          uid: getCurrentUserId(),
         },
       },
     }))
@@ -50,14 +56,15 @@ export const createNewTag = (tagName: string): Action<string> => ({
 
 export const clearInputValue = (): Action => ({
   type: 'Clear input value',
-  reducer: (state) => set(state, ['addTransaction', 'tagInputValue'], ''),
+  reducer: (state) => set(state, ['addTransaction', 'tagInputValue'], '') as State,
 })
 
 export const selectNewTag = (tagId: string): Action<string> => ({
   type: 'Add tag to selection (if not already selected)',
   payload: tagId,
   reducer: (state) =>
-    update(state, ['addTransaction', 'tagIds'], (ids) =>
+    // FIXME: fix tsfunct
+    update(state, ['addTransaction', 'tagIds'], (ids: any) =>
       ids.includes(tagId) ? ids : [...ids, tagId],
     ) as State,
 })
@@ -119,7 +126,11 @@ export const resetAddTransaction = (): Action => ({
   },
 })
 
-export const addTransaction = (): Thunk => (dispatch, getState, { logger }) => {
+export const addTransaction = (): Thunk => async (
+  dispatch,
+  getState,
+  { logger },
+) => {
   logger.log('Add transaction')
 
   // some fields were not filled correctly. Show incorrect and return.
@@ -136,15 +147,13 @@ export const addTransaction = (): Thunk => (dispatch, getState, { logger }) => {
     ...omit(addTx, ['newTags', 'tagInputValue', 'useCurrentTime']),
     amount: Number.parseFloat(addTx.amount),
     dateTime: addTx.useCurrentTime ? new Date() : addTx.dateTime!,
+    uid: getCurrentUserId(),
   }
 
-  const uploads = [
-    dispatch(uploadTransaction(tx)),
-    dispatch(uploadTags(getState().addTransaction.newTags)),
-  ]
-
+  await dispatch(
+    uploadToFirebase([tx], Object.values(getState().addTransaction.newTags)),
+  )
   dispatch(resetAddTransaction())
-  return Promise.all(uploads)
 }
 
 export const setUseCurrentTime = (
@@ -162,5 +171,6 @@ export const setUseCurrentTime = (
 
 export const triggerValidation = (): Action => ({
   type: 'Trigger validation',
-  reducer: (state) => set(state, ['addTransaction', 'shouldValidateAmount'], true),
+  reducer: (state) =>
+    set(state, ['addTransaction', 'shouldValidateAmount'], true) as State,
 })

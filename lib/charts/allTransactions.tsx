@@ -97,8 +97,6 @@ const AllTransactions = () => {
 
   const data = createRecData(transactions, tagShares, 0, [])
 
-  console.log('aaa', data)
-
   return (
     <ResponsiveSunburst
       data={{ name: 'root', children: data }}

@@ -1,7 +1,6 @@
 import { set } from '@siegrift/tsfunct'
-import { firestore } from 'firebase'
-import debounce from 'lodash/debounce'
 
+import firebase from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
 import { SignInStatus } from '../state'
 
@@ -9,14 +8,16 @@ import { getQueries, FirestoneQuery } from './firestoneQueries'
 
 export const firestoneChangeAction = (
   query: FirestoneQuery,
-  payload: firestore.QuerySnapshot,
+  payload: firebase.firestore.QuerySnapshot,
   isInitial: boolean = false,
-): Action<firestore.QuerySnapshot> => ({
+): Action<firebase.firestore.QuerySnapshot> => ({
   type: `${isInitial ? 'Initial firestore' : 'Firestore'} query change: ${
     query.type
   }`,
   payload,
-  reducer: (state) => query.reducer(state, payload),
+  reducer: (state) => {
+    return query.reducer(state, payload)
+  },
 })
 
 const changeSignInStatus = (status: SignInStatus): Action<SignInStatus> => ({
@@ -37,29 +38,26 @@ export const authChangeAction = (status: SignInStatus): Thunk => async (
   dispatch(changeSignInStatus(status))
 }
 
-const FIRESTONE_STATE_UPDATE_DEBOUNCE_TIME = 500
-
-export const initializeFirestore = (): Thunk => (dispatch) => {
-  // TODO: solve how to dispatch state change to avoid inconsistencies
-  // https://stackoverflow.com/questions/57982742/how-to-use-firebase-onsnapshot-and-maintain-consistency
-  // For now just debounce the value for a short time and wait for initial data loading
-
-  const initialQueries: Array<Promise<unknown>> = []
-  getQueries().forEach((query) => {
-    const q = query.createFirestoneQuery()
-    initialQueries.push(
-      q
-        .get()
-        .then((snapshot) =>
-          dispatch(firestoneChangeAction(query, snapshot, true)),
-        ),
-    )
-    q.onSnapshot((change) => {
-      debounce(() => {
-        dispatch(firestoneChangeAction(query, change))
-      }, FIRESTONE_STATE_UPDATE_DEBOUNCE_TIME)()
-    })
+export const initializeFirestore = (): Thunk => async (dispatch) => {
+  let actions: Array<Parameters<typeof firestoneChangeAction>> = []
+  firebase.firestore().onSnapshotsInSync(() => {
+    actions.forEach((a) => dispatch(firestoneChangeAction(a[0], a[1])))
+    actions = []
   })
 
-  return Promise.all(initialQueries)
+  const initialQueries: Array<Promise<unknown>> = getQueries().map((query) => {
+    return query
+      .createFirestoneQuery()
+      .get({
+        source: 'cache',
+      })
+      .then((snapshot) => dispatch(firestoneChangeAction(query, snapshot, true)))
+  })
+
+  await Promise.all(initialQueries)
+  getQueries().forEach((q) => {
+    q.createFirestoneQuery().onSnapshot((change) => {
+      actions.push([q, change])
+    })
+  })
 }

@@ -1,18 +1,18 @@
 import { omit, set, update } from '@siegrift/tsfunct'
-import { firestore } from 'firebase/app'
 
 import { State } from '../state'
 
-import { convertTimestampsToDates } from './util'
+import firebase from './firebase'
+import { convertTimestampsToDates, getCurrentUserId } from './util'
 
 export type QueryReducer = (
   state: State,
-  payload: firestore.QuerySnapshot,
+  payload: firebase.firestore.QuerySnapshot,
 ) => State
 
 export interface FirestoneQuery {
   type: string
-  createFirestoneQuery: () => firestore.Query
+  createFirestoneQuery: () => firebase.firestore.Query
   reducer: QueryReducer
 }
 
@@ -43,13 +43,23 @@ const createQueryReducer = (
 
 const allTransactionsQuery: FirestoneQuery = {
   type: 'All transactions query',
-  createFirestoneQuery: () => firestore().collection('transactions'),
+  createFirestoneQuery: () => {
+    const q = firebase
+      .firestore()
+      .collection('transactions')
+      .where('uid', '==', getCurrentUserId())
+    return q
+  },
   reducer: createQueryReducer('transactions'),
 }
 
 const allTags: FirestoneQuery = {
   type: 'All tags query',
-  createFirestoneQuery: () => firestore().collection('tags'),
+  createFirestoneQuery: () =>
+    firebase
+      .firestore()
+      .collection('tags')
+      .where('uid', '==', getCurrentUserId()),
   reducer: createQueryReducer('tags'),
 }
 

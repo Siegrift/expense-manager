@@ -1,6 +1,7 @@
 import { keyBy } from 'lodash'
 
 import { getInitialState, State } from '../state'
+import { initializeMockFirebase } from '../testing'
 
 import { processImportedCSV } from './actions'
 import { exportedCsvSel } from './selectors'
@@ -9,6 +10,8 @@ jest.mock('uuid/v4', () => {
   let uuid = 0
   return jest.fn(() => `uuid${uuid++}`)
 })
+
+jest.mock('../firebase/firebase', () => initializeMockFirebase())
 
 describe('settings actions', () => {
   describe('import/export', () => {
@@ -75,7 +78,7 @@ describe('settings actions', () => {
           transactions: keyBy(imp.txs, 'id'),
           tags: { ...state.tags, ...keyBy([...imp.tags.values()], 'id') },
         }
-        expect(exportedCsvSel(newState)).toBe(csv)
+        expect(exportedCsvSel(newState)).toMatchSnapshot()
       })
     })
   })
