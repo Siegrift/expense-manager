@@ -90,6 +90,7 @@ export const setTags = (tags: Tag[]): Action<Tag[]> => ({
         newTags: pick(
           state.addTransaction.newTags,
           tagIds.filter((t) => !available.hasOwnProperty(t)),
+          // TODO: tsfunct error
         ) as ObjectOf<Tag>,
       },
     }

@@ -5,6 +5,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import formatDistance from 'date-fns/formatDistance'
+import Router from 'next/router'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
@@ -47,7 +48,15 @@ const Transaction = (props: ListChildComponentProps) => {
   const tx = sortedTransactions[index]
 
   return (
-    <ListItem button style={style} key={index} className={classes.listItem}>
+    <ListItem
+      button
+      style={style}
+      key={index}
+      className={classes.listItem}
+      onClick={() =>
+        Router.push('/transactions/[id]', `/transactions/${tx.id}`)
+      }
+    >
       <div className={classes.listItemFirstRow}>
         <ListItemText
           primary={
