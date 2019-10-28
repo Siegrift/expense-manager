@@ -32,6 +32,7 @@ import { getCurrentUserId } from '../firebase/util'
 import { tagsSel } from '../settings/selectors'
 import { currencies } from '../shared/currencies'
 import { useRedirectIfNotSignedIn } from '../shared/hooks'
+import { isAmountInValidFormat } from '../shared/utils'
 
 import { removeTx, saveTxEdit } from './actions'
 import { transactionByIdSel } from './selectors'
@@ -76,6 +77,7 @@ const Transactions = () => {
   const [tagIds, setTagIds] = useState(reduxTx.tagIds)
   const [newTags, setNewTags] = useState<ObjectOf<Tag>>({})
   const [tagInputValue, setTagInputValue] = useState('')
+  const [shouldValidate, setShouldValidate] = useState(false)
   const dispatch = useDispatch()
   // TODO: validate that txId is a valid txs id
   const editedTxId = router.query.id as string
@@ -101,17 +103,21 @@ const Transactions = () => {
             <IconButton
               color="inherit"
               onClick={() => {
-                dispatch(
-                  saveTxEdit(editedTxId, newTags, {
-                    amount: Number.parseFloat(amount),
-                    isExpense,
-                    note,
-                    currency,
-                    dateTime,
-                    tagIds,
-                  }),
-                )
-                Router.push('/transactions')
+                if (isAmountInValidFormat(amount)) {
+                  dispatch(
+                    saveTxEdit(editedTxId, newTags, {
+                      amount: Number.parseFloat(amount),
+                      isExpense,
+                      note,
+                      currency,
+                      dateTime,
+                      tagIds,
+                    }),
+                  )
+                  Router.push('/transactions')
+                } else {
+                  setShouldValidate(true)
+                }
               }}
             >
               <DoneIcon />
@@ -119,6 +125,7 @@ const Transactions = () => {
             <IconButton
               color="inherit"
               onClick={() => {
+                // TODO: confirm dialog
                 dispatch(removeTx(editedTxId))
                 Router.push('/transactions')
               }}
@@ -181,8 +188,10 @@ const Transactions = () => {
 
             <Grid container className={classes.row}>
               <Grid item className={classes.amount}>
-                {/* TODO: error */}
-                <FormControl aria-label="amount" error={false}>
+                <FormControl
+                  aria-label="amount"
+                  error={shouldValidate && !isAmountInValidFormat(amount)}
+                >
                   <InputLabel htmlFor="amount-id">
                     Transaction amount
                   </InputLabel>
@@ -191,7 +200,10 @@ const Transactions = () => {
                     type="number"
                     placeholder="0.00"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={(e) => {
+                      setShouldValidate(true)
+                      setAmount(e.target.value)
+                    }}
                     endAdornment={
                       <InputAdornment position="end">
                         <CancelIcon

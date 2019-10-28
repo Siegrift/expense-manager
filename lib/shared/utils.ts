@@ -23,3 +23,6 @@ export function downloadFile(filename: string, text: string) {
 export function isValidDate(date: unknown) {
   return date instanceof Date && !isNaN(date as any)
 }
+
+export const isAmountInValidFormat = (amount: string) =>
+  amount.match(/^\d+(\.\d{1,2})?$/) != null
