@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
-const Transactions = () => {
+const EditTransaction = () => {
   const router = useRouter()
   const classes = useStyles()
   const availableTags = useSelector(tagsSel)
@@ -259,4 +259,4 @@ const Transactions = () => {
   }
 }
 
-export default Transactions
+export default EditTransaction
