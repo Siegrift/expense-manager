@@ -66,9 +66,13 @@ const EditTransaction = () => {
   const router = useRouter()
   const classes = useStyles()
   const availableTags = useSelector(tagsSel)
-  // TODO: this is needed because hooks need to be called on each render
+  // TODO: including all of these is needed because hooks need to be called on each render
   // can be fixed by making useRedirectIfNotSignedIn a HOC
   const reduxTx = useSelector(transactionByIdSel(router.query.id as string))
+  // FIXME: next build prerenders these and the router id is not valid and build fails on next line
+  if (!reduxTx) {
+    return null
+  }
   const [amount, setAmount] = useState('' + reduxTx.amount)
   const [isExpense, setIsExpense] = useState(reduxTx.isExpense)
   const [note, setNote] = useState(reduxTx.note)
