@@ -4,6 +4,12 @@ import { State } from '../state'
 
 export const transactionsSel = (state: State) => state.transactions
 
+export const transactionByIdSel = (id: string) =>
+  createSelector(
+    transactionsSel,
+    (txs) => txs[id],
+  )
+
 export const sortedTransactionsSel = createSelector(
   transactionsSel,
   (txs) =>

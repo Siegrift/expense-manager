@@ -14,18 +14,15 @@ import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
 import CancelIcon from '@material-ui/icons/Cancel'
 import { DateTimePicker } from '@material-ui/pickers'
-import { find } from 'lodash'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import Select from 'react-select'
-import makeAnimated from 'react-select/animated'
 
 import { setCurrentScreen } from '../../lib/actions'
 import { useRedirectIfNotSignedIn } from '../../lib/shared/hooks'
 import { State } from '../../lib/state'
-import { ObjectOf } from '../../lib/types'
 import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
+import TagField from '../components/tagField'
 import { currencies } from '../shared/currencies'
 
 import {
@@ -43,9 +40,6 @@ import {
   setUseCurrentTime
 } from './actions'
 import { addTransactionSel, isInvalidAmountSel } from './selectors'
-import { Tag } from './state'
-
-const animatedComponents = makeAnimated()
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,23 +65,6 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface ReactSelectTag {
-  value: string
-  label: string
-  tagId: string
-}
-
-const convertTagToReactSelectTag = (tag: Tag): ReactSelectTag => ({
-  value: tag.name,
-  label: tag.name,
-  tagId: tag.id,
-})
-
-const convertReactSelectTagToTag = (
-  allTags: ObjectOf<Tag>,
-  tag: ReactSelectTag,
-): Tag => allTags[tag.tagId]
-
 const AddTransaction = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
@@ -108,13 +85,6 @@ const AddTransaction = () => {
   } = useSelector(addTransactionSel)
   const isInvalidAmount = useSelector(isInvalidAmountSel)
   const tags = useSelector((state: State) => state.tags)
-  const allTags = { ...tags, ...newTags }
-  const suggestedTags: ReactSelectTag[] = Object.values(tags).map(
-    convertTagToReactSelectTag,
-  )
-  const currentTags: ReactSelectTag[] = tagIds.map((id) =>
-    convertTagToReactSelectTag(allTags[id]),
-  )
 
   if (useRedirectIfNotSignedIn() !== 'loggedIn') {
     return <LoadingScreen />
@@ -148,44 +118,20 @@ const AddTransaction = () => {
           </Grid>
 
           <Grid className={classes.row}>
-            <Select
-              closeMenuOnSelect={false}
-              components={animatedComponents}
+            <TagField
               placeholder="Transaction tags..."
-              isMulti
-              options={suggestedTags}
+              availableTags={tags}
+              newTags={newTags}
               className={classes.chipField}
-              onKeyDown={(e) => {
-                switch (e.key) {
-                  case 'Enter':
-                  case 'Tab':
-                    const foundTag = find(
-                      allTags,
-                      (tag) => tag.name === tagInputValue,
-                    )
-                    if (foundTag) {
-                      dispatch(selectNewTag(foundTag.id))
-                    } else {
-                      dispatch(createNewTag(tagInputValue))
-                    }
-                    dispatch(clearInputValue())
-                    e.preventDefault()
-                }
-              }}
-              onChange={(changedTags: any) =>
-                dispatch(
-                  setTags(
-                    changedTags === null
-                      ? []
-                      : (changedTags as ReactSelectTag[]).map((tag) =>
-                          convertReactSelectTagToTag(allTags, tag),
-                        ),
-                  ),
-                )
+              onSelectExistingTag={(id) => selectNewTag(id)}
+              onCreateTag={(label) => dispatch(createNewTag(label))}
+              onClearInputValue={() => dispatch(clearInputValue())}
+              onChangeTags={(changedTags) => dispatch(setTags(changedTags))}
+              onSetTagInputValue={(newValue) =>
+                dispatch(setTagInputValue(newValue))
               }
-              onInputChange={(newValue) => dispatch(setTagInputValue(newValue))}
               inputValue={tagInputValue}
-              value={currentTags}
+              currentTagIds={tagIds}
             />
           </Grid>
 
