@@ -1,7 +1,8 @@
-import { DEFAULT_REQUEST_TIMEOUT } from '../constants'
 import { Logger, ObjectOf } from '../types'
 
 import { ApiError } from './apiError'
+
+const DEFAULT_REQUEST_TIMEOUT = 5000
 
 export interface RequestOptions {
   body?: any

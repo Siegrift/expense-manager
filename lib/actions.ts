@@ -7,6 +7,7 @@ import { Action, Thunk } from './redux/types'
 import { ScreenTitle } from './state'
 
 type CollectionType = 'tags' | 'transactions'
+type Entry<C extends CollectionType, T> = { coll: C; data: T }
 
 export const setCurrentScreen = (screen: ScreenTitle): Action<ScreenTitle> => ({
   type: 'Set current screen',
@@ -17,29 +18,36 @@ export const setCurrentScreen = (screen: ScreenTitle): Action<ScreenTitle> => ({
 const MAX_WRITES_IN_BATCH = 500
 
 const privateUpload = (
-  data: Array<Transaction | Tag>,
-  collection: CollectionType,
+  entries: Array<Entry<'tags', Tag> | Entry<'transactions', Transaction>>,
 ) => {
-  const coll = firebase.firestore().collection(collection)
+  const colls = {
+    tags: firebase.firestore().collection('tags'),
+    transactions: firebase.firestore().collection('transactions'),
+  }
 
-  return chunk(data, MAX_WRITES_IN_BATCH).map((ch) => {
+  return chunk(entries, MAX_WRITES_IN_BATCH).map((ch) => {
     const batch = firebase.firestore().batch()
-    ch.forEach((tx) => {
-      const ref = coll.doc(tx.id)
-      batch.set(ref, tx)
+    ch.forEach(({ data, coll }) => {
+      const ref = colls[coll].doc(data.id)
+      batch.set(ref, data)
     })
 
     return batch.commit()
   })
 }
 
-const privateRemove = (data: string[], collection: CollectionType) => {
-  const coll = firebase.firestore().collection(collection)
+const privateRemove = (
+  entries: Array<Entry<'tags', string> | Entry<'transactions', string>>,
+) => {
+  const colls = {
+    tags: firebase.firestore().collection('tags'),
+    transactions: firebase.firestore().collection('transactions'),
+  }
 
-  return chunk(data, MAX_WRITES_IN_BATCH).map((ch) => {
+  return chunk(entries, MAX_WRITES_IN_BATCH).map((ch) => {
     const batch = firebase.firestore().batch()
-    ch.forEach((id) => {
-      const ref = coll.doc(id)
+    ch.forEach(({ data, coll }) => {
+      const ref = colls[coll].doc(data)
       batch.delete(ref)
     })
 
@@ -52,9 +60,19 @@ export const uploadToFirebase = (
   tags: Tag[],
 ): Thunk => async (dispatch, getState, { logger }) => {
   logger.log('Upload transactions and tags to firestone')
-  // NOTE: upload tags first to prevent transactions missing tags
-  await Promise.all(privateUpload(tags, 'tags'))
-  await Promise.all(privateUpload(txs, 'transactions'))
+  // NOTE: do not wait for this promise because it will never resolve when offline
+  // see: https://www.youtube.com/watch?v=XrltP8bOHT0&feature=youtu.be&t=673
+  // FIXME: why typescript infers coll as string type and not 'tags'???
+  privateUpload([
+    ...tags.map((t): Entry<'tags', Tag> => ({ coll: 'tags', data: t })),
+    ...txs.map(
+      (t): Entry<'transactions', Transaction> => ({
+        coll: 'transactions',
+        data: t,
+      }),
+    ),
+  ])
+  return Promise.resolve()
 }
 
 export const removeFromFirebase = (
@@ -62,7 +80,13 @@ export const removeFromFirebase = (
   tagIds: string[],
 ): Thunk => async (dispatch, getState, { logger }) => {
   logger.log('Remove transactions and tags from firestone')
-  // NOTE: upload tags first to prevent transactions missing tags
-  await Promise.all(privateRemove(tagIds, 'tags'))
-  await Promise.all(privateRemove(txIds, 'transactions'))
+  // NOTE: do not wait for this promise because it will never resolve when offline
+  // see: https://www.youtube.com/watch?v=XrltP8bOHT0&feature=youtu.be&t=673
+  privateRemove([
+    ...tagIds.map((t): Entry<'tags', string> => ({ coll: 'tags', data: t })),
+    ...txIds.map(
+      (t): Entry<'transactions', string> => ({ coll: 'transactions', data: t }),
+    ),
+  ])
+  return Promise.resolve()
 }

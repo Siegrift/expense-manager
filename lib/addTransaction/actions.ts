@@ -118,7 +118,7 @@ export const setDateTime = (dateTime: Date): Action<Date> => ({
 })
 
 export const resetAddTransaction = (): Action => ({
-  type: 'Add transaction',
+  type: 'Reset transaction',
   reducer: (state) => {
     return {
       ...state,
