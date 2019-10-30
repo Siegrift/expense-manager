@@ -32,6 +32,8 @@ class ExpenseManagerApp extends App {
               {`
                 body {
                   background-color: blanchedalmond !important;
+                  /* Disables pull-to-refresh but allows overscroll glow effects. */
+                  overscroll-behavior-y: contain;
                 }
               `}
             </style>

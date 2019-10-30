@@ -28,7 +28,7 @@ const RecentBalance = () => {
     .filter((tx) =>
       // isWithinInterval is inclusive
       isWithinInterval(tx.dateTime, {
-        start: subDays(now, DAYS_TO_DISPLAY),
+        start: subDays(now, DAYS_TO_DISPLAY - 1),
         end: now,
       }),
     )
