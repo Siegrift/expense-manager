@@ -1,18 +1,22 @@
+import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+import AddIcon from '@material-ui/icons/Add'
+import Router from 'next/router'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
+import uuid from 'uuid/v4'
 
 import { setCurrentScreen } from '../actions'
 import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
 import { useRedirectIfNotSignedIn } from '../shared/hooks'
-import { State } from '../state'
 
-import Transaction from './transaction'
+import { tagsSel } from './selectors'
+import TagItem from './tagItem'
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -25,21 +29,25 @@ const useStyles = makeStyles((theme: Theme) => ({
     flex: 1,
     margin: theme.spacing(2),
   },
-  noTransactionsWrapper: {
+  noTagsWrapper: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     height: '100%',
   },
   noTransactions: { textAlign: 'center' },
+  createTag: {
+    margin: theme.spacing(2),
+    marginTop: 0,
+  },
 }))
 
 const Transactions = () => {
-  const transactions = useSelector((state: State) => state.transactions)
+  const tagsLength = Object.values(useSelector(tagsSel)).length
   const dispatch = useDispatch()
   const classes = useStyles()
 
-  dispatch(setCurrentScreen('transactions'))
+  dispatch(setCurrentScreen('tags'))
 
   if (useRedirectIfNotSignedIn() !== 'loggedIn') {
     return <LoadingScreen />
@@ -47,15 +55,15 @@ const Transactions = () => {
     return (
       <div className={classes.wrapper}>
         <Paper className={classes.paper}>
-          {Object.keys(transactions).length === 0 ? (
-            <div className={classes.noTransactionsWrapper}>
+          {tagsLength === 0 ? (
+            <div className={classes.noTagsWrapper}>
               <Typography
                 variant="overline"
                 display="block"
                 gutterBottom
                 className={classes.noTransactions}
               >
-                You have no transactions...
+                You have no tags...
               </Typography>
             </div>
           ) : (
@@ -65,16 +73,27 @@ const Transactions = () => {
                   <FixedSizeList
                     height={height}
                     width={width}
-                    itemSize={100}
-                    itemCount={Object.keys(transactions).length}
+                    itemSize={60}
+                    itemCount={tagsLength}
                   >
-                    {Transaction}
+                    {TagItem}
                   </FixedSizeList>
                 )
               }}
             </AutoSizer>
           )}
         </Paper>
+
+        <Button
+          variant="contained"
+          color="primary"
+          aria-label="create tag"
+          className={classes.createTag}
+          onClick={() => Router.push('/tags/[id]', `/tags/${uuid()}`)}
+          startIcon={<AddIcon />}
+        >
+          Create new tag
+        </Button>
         <Navigation />
       </div>
     )

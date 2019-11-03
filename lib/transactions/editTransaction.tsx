@@ -179,7 +179,12 @@ const EditTransaction = () => {
                   const id = uuid()
                   setNewTags({
                     ...newTags,
-                    [id]: { id, name: label, uid: getCurrentUserId() },
+                    [id]: {
+                      id,
+                      name: label,
+                      uid: getCurrentUserId(),
+                      automatic: false,
+                    },
                   })
                   setTagIds([...tagIds, id])
                 }}

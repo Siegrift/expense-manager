@@ -57,7 +57,7 @@ describe('Add transaction tests', () => {
       const newState = createNewTag('tagName').reducer(state)
       const id = 'uuid0'
       expect(newState.addTransaction.newTags).toEqual({
-        [id]: { id, name: 'tagName', uid: 'mockedUserId' },
+        [id]: { id, name: 'tagName', uid: 'mockedUserId', automatic: false },
       })
     })
   })
@@ -81,7 +81,9 @@ describe('Add transaction tests', () => {
     })
 
     test('correctly updates tags', () => {
-      const newState = setTags([{ id: 'id1', name: 'id1' }]).reducer(state)
+      const newState = setTags([
+        { id: 'id1', name: 'id1', automatic: false, uid: 'user_id' },
+      ]).reducer(state)
       expect(newState.tags).toEqual(createTestTagsObject(['id3']))
       expect(newState.addTransaction.newTags).toEqual(
         createTestTagsObject(['id1']),
@@ -125,6 +127,7 @@ describe('Add transaction tests', () => {
           transactionType: 'fromUser',
           useCurrentTime: true,
           shouldValidateAmount: false,
+          repeating: 'none',
         },
         tags: createTestTagsObject(['id1']),
       }

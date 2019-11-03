@@ -6,7 +6,7 @@ import { getCurrentUserId } from '../firebase/util'
 import { Action, Thunk } from '../redux/types'
 import { State } from '../state'
 
-import { isInvalidAmountSel } from './selectors'
+import { automaticTagIdsSel, isInvalidAmountSel } from './selectors'
 import {
   createDefaultAddTransactionState,
   RepeatingOption,
@@ -46,6 +46,7 @@ export const createNewTag = (tagName: string): Action<string> => ({
           id,
           name: tagName,
           uid: getCurrentUserId(),
+          automatic: false,
         },
       },
     }))
@@ -111,11 +112,13 @@ export const setDateTime = (dateTime: Date): Action<Date> => ({
 })
 
 export const resetAddTransaction = (): Action => ({
-  type: 'Reset transaction',
+  type: 'Reset add transaction state',
   reducer: (state) => {
     return {
       ...state,
-      addTransaction: createDefaultAddTransactionState(),
+      addTransaction: createDefaultAddTransactionState(
+        automaticTagIdsSel(state),
+      ),
     }
   },
 })

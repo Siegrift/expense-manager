@@ -247,7 +247,6 @@ const AddTransaction = () => {
               variant="contained"
               color="primary"
               fullWidth
-              // TODO: validate we can add transaction
               onClick={() => dispatch(addTransaction())}
               aria-label="add transaction"
             >

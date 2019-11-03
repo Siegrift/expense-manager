@@ -55,7 +55,6 @@ const Transaction = (props: ListChildComponentProps) => {
     <ListItem
       button
       style={style}
-      key={index}
       className={classes.listItem}
       onClick={() =>
         Router.push('/transactions/[id]', `/transactions/${tx.id}`)

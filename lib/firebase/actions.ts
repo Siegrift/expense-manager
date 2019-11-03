@@ -1,6 +1,7 @@
 import { set } from '@siegrift/tsfunct'
 
 import { addRepeatingTxs } from '../actions'
+import { resetAddTransaction } from '../addTransaction/actions'
 import firebase from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
 import { SignInStatus } from '../state'
@@ -35,6 +36,8 @@ export const authChangeAction = (status: SignInStatus): Thunk => async (
   logger.log(`Auth changed: ${status}`)
   if (status === 'loggedIn') {
     await dispatch(initializeFirestore())
+    // TODO: maybe remove add transaction from state
+    dispatch(resetAddTransaction())
     dispatch(addRepeatingTxs())
   }
   dispatch(changeSignInStatus(status))

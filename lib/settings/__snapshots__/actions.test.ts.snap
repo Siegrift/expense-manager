@@ -5,11 +5,13 @@ Object {
   "errorReason": undefined,
   "tags": Map {
     "Tickets" => Object {
+      "automatic": false,
       "id": "uuid0",
       "name": "Tickets",
       "uid": "mockedUserId",
     },
     "Shopping" => Object {
+      "automatic": false,
       "id": "uuid2",
       "name": "Shopping",
       "uid": "mockedUserId",
@@ -54,16 +56,19 @@ Object {
   "errorReason": undefined,
   "tags": Map {
     "A" => Object {
+      "automatic": false,
       "id": "uuid4",
       "name": "A",
       "uid": "mockedUserId",
     },
     "B" => Object {
+      "automatic": false,
       "id": "uuid5",
       "name": "B",
       "uid": "mockedUserId",
     },
     "C" => Object {
+      "automatic": false,
       "id": "uuid6",
       "name": "C",
       "uid": "mockedUserId",
