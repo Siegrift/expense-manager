@@ -62,7 +62,11 @@ const Navigation = () => {
           label={screen}
           value={screen}
           icon={<Icon />}
-          style={{ textTransform: 'capitalize' }}
+          style={{
+            textTransform: 'capitalize',
+            minWidth: 'unset',
+            padding: 'unset',
+          }}
           key={screen}
         />
       ))}
