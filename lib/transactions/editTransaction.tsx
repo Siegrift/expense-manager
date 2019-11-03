@@ -78,6 +78,7 @@ const EditTransaction = () => {
   if (!reduxTx) {
     return null
   }
+  // NOTE: don't forget to add the property to save tx
   const [amount, setAmount] = useState('' + reduxTx.amount)
   const [isExpense, setIsExpense] = useState(reduxTx.isExpense)
   const [note, setNote] = useState(reduxTx.note)
@@ -122,6 +123,7 @@ const EditTransaction = () => {
                       currency,
                       dateTime,
                       tagIds,
+                      repeating,
                     }),
                   )
                   Router.push('/transactions')
