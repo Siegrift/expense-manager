@@ -123,7 +123,7 @@ const AddTransaction = () => {
               availableTags={tags}
               newTags={newTags}
               className={classes.chipField}
-              onSelectExistingTag={(id) => selectNewTag(id)}
+              onSelectExistingTag={(id) => dispatch(selectNewTag(id))}
               onCreateTag={(label) => dispatch(createNewTag(label))}
               onClearInputValue={() => dispatch(clearInputValue())}
               onChangeTags={(changedTags) => dispatch(setTags(changedTags))}
