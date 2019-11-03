@@ -7,7 +7,11 @@ import { Action, Thunk } from '../redux/types'
 import { State } from '../state'
 
 import { isInvalidAmountSel } from './selectors'
-import { createDefaultAddTransactionState, Tag } from './state'
+import {
+  createDefaultAddTransactionState,
+  RepeatingOption,
+  Tag
+} from './state'
 
 export const setAmount = (amount: string): Action<string> => ({
   type: 'Set amount in add transaction',
@@ -162,4 +166,12 @@ export const setUseCurrentTime = (
 export const triggerValidation = (): Action => ({
   type: 'Trigger validation',
   reducer: (state) => set(state, ['addTransaction', 'shouldValidateAmount'], true),
+})
+
+export const setRepeating = (
+  repeating: RepeatingOption,
+): Action<RepeatingOption> => ({
+  type: 'Trigger validation',
+  payload: repeating,
+  reducer: (state) => set(state, ['addTransaction', 'repeating'], repeating),
 })

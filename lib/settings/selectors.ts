@@ -18,6 +18,7 @@ export const exportedCsvSel = createSelector(
         tx.tagIds.map((id) => tags[id].name).join('|'),
         tx.note,
         tx.currency,
+        tx.repeating,
       ].join(','),
     )
 

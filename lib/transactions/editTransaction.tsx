@@ -9,6 +9,7 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import Paper from '@material-ui/core/Paper'
+import Select from '@material-ui/core/Select'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -25,7 +26,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import uuid from 'uuid/v4'
 
 import { ObjectOf } from '../../lib/types'
-import { Tag } from '../addTransaction/state'
+import {
+  RepeatingOption,
+  RepeatingOptions,
+  Tag
+} from '../addTransaction/state'
 import { LoadingScreen } from '../components/loading'
 import TagField from '../components/tagField'
 import { getCurrentUserId } from '../firebase/util'
@@ -78,6 +83,7 @@ const EditTransaction = () => {
   const [note, setNote] = useState(reduxTx.note)
   const [currency, setCurrency] = useState(reduxTx.currency)
   const [dateTime, setDateTime] = useState(reduxTx.dateTime)
+  const [repeating, setRepeating] = useState(reduxTx.repeating)
   const [tagIds, setTagIds] = useState(reduxTx.tagIds)
   const [newTags, setNewTags] = useState<ObjectOf<Tag>>({})
   const [tagInputValue, setTagInputValue] = useState('')
@@ -129,7 +135,7 @@ const EditTransaction = () => {
             <IconButton
               color="inherit"
               onClick={() => {
-                // TODO: confirm dialog
+                // TODO: confirm dialog (use different text when removing repeating tx)
                 dispatch(removeTx(editedTxId))
                 Router.push('/transactions')
               }}
@@ -246,6 +252,28 @@ const EditTransaction = () => {
                 label="Transaction date"
                 style={{ flex: 1 }}
               />
+            </Grid>
+
+            <Grid className={classes.row}>
+              <FormControl style={{ flex: 1 }}>
+                <InputLabel htmlFor="tx-repeating">Repeating</InputLabel>
+                <Select
+                  value={repeating}
+                  onChange={(e) =>
+                    setRepeating(e.target.value as RepeatingOption)
+                  }
+                  inputProps={{
+                    name: 'repeating',
+                    id: 'tx-repeating',
+                  }}
+                >
+                  {Object.keys(RepeatingOptions).map((op) => (
+                    <MenuItem key={op} value={op}>
+                      {op}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
 
             <Grid className={classes.row}>

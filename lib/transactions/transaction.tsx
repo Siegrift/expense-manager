@@ -4,6 +4,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+import RepeatOneIcon from '@material-ui/icons/RepeatOne'
 import formatDistance from 'date-fns/formatDistance'
 import Router from 'next/router'
 import React from 'react'
@@ -37,6 +38,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flex: 1,
     width: '100%',
+  },
+  iconPanel: {
+    alignSelf: 'center',
   },
 }))
 
@@ -76,13 +80,20 @@ const Transaction = (props: ListChildComponentProps) => {
           </Typography>
         </div>
       </div>
-      <div className={classes.chipField}>
-        {tx.tagIds.map((id) => {
-          if (!tags[id]) {
-            console.log(id, tx.id)
-          }
-          return <Chip key={id} label={tags[id].name} onDelete={null as any} />
-        })}
+
+      <div style={{ display: 'flex', width: '100%' }}>
+        <div className={classes.chipField}>
+          {tx.tagIds.map((id) => (
+            <Chip key={id} label={tags[id].name} onDelete={null as any} />
+          ))}
+        </div>
+        <div className={classes.iconPanel}>
+          {tx.repeating !== 'none' && (
+            <RepeatOneIcon
+              color={tx.repeating === 'inactive' ? 'disabled' : 'primary'}
+            />
+          )}
+        </div>
       </div>
       <Divider className={classes.divider} />
     </ListItem>

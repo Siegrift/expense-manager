@@ -23,6 +23,7 @@ Object {
       "id": "uuid1",
       "isExpense": true,
       "note": "",
+      "repeating": "none",
       "tagIds": Array [
         "id1",
         "uuid0",
@@ -37,6 +38,7 @@ Object {
       "id": "uuid3",
       "isExpense": true,
       "note": "",
+      "repeating": "annually",
       "tagIds": Array [
         "uuid2",
       ],
@@ -75,6 +77,7 @@ Object {
       "id": "uuid7",
       "isExpense": true,
       "note": "",
+      "repeating": "monthly",
       "tagIds": Array [
         "uuid4",
         "uuid5",
@@ -88,6 +91,6 @@ Object {
 `;
 
 exports[`settings actions import/export processing imported txs exporting imported txs yields identity 1`] = `
-"2017-08-19T00:00:00.000Z,-1,Travel|Tickets,,EUR
-2017-08-16T00:00:00.000Z,-0.7,Shopping,,EUR"
+"2017-08-19T00:00:00.000Z,-1,Travel|Tickets,,EUR,none
+2017-08-16T00:00:00.000Z,-0.7,Shopping,,EUR,monthly"
 `;

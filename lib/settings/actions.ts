@@ -1,7 +1,12 @@
 import uuid from 'uuid/v4'
 
 import { uploadToFirebase } from '../actions'
-import { Tag, Transaction } from '../addTransaction/state'
+import {
+  RepeatingOption,
+  RepeatingOptions,
+  Tag,
+  Transaction
+} from '../addTransaction/state'
 import firebase from '../firebase/firebase'
 import { getCurrentUserId } from '../firebase/util'
 import { Action, Thunk } from '../redux/types'
@@ -48,6 +53,7 @@ export const importFromCSV = (
  *  3. tags - separated by '|' (pipe)
  *  4. note - optional
  *  5. currency - currency value of transaction (see list of available currency values)
+ *  6. repeating - one of the supported repeating modes
  *  other columns are ignored
  */
 export const processImportedCSV = (state: State, importedCsv: string) => {
@@ -75,6 +81,10 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
         errorReason = `There must be at least one tag in a transaction`
       } else if (!currencies.find((c) => c.value === t[4])) {
         errorReason = `Invalid currency of a transaction`
+      } else if (
+        !Object.keys(RepeatingOptions).includes(t[5] as RepeatingOption)
+      ) {
+        errorReason = `Invalid repeating mode ${t[5]}`
       }
 
       // there mustn't be any error when importing
@@ -92,6 +102,7 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
       txs.push({
         id: uuid(),
         amount: Math.abs(amount),
+        // TODO: preserve this for our exports
         transactionType: 'imported',
         currency: t[4],
         dateTime: dt,
@@ -105,6 +116,7 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
           }
         }),
         uid: getCurrentUserId(),
+        repeating: t[5] as RepeatingOption,
       })
     }
   } catch (e) {

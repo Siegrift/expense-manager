@@ -30,37 +30,43 @@ describe('settings actions', () => {
           'Unknown error. Check whether the data are in correct format.',
         )
 
-        expect(checkError('invalid_date,-1,Travel|Tickets,,EUR')).toBe(
+        expect(checkError('invalid_date,-1,Travel|Tickets,,EUR,none')).toBe(
           'invalid_date is not a valid date',
         )
-        expect(checkError('21.11.1999,-1,Travel|Tickets,,EUR')).toBe(
+        expect(checkError('21.11.1999,-1,Travel|Tickets,,EUR,none')).toBe(
           '21.11.1999 is not a valid date',
         )
-        expect(checkError('2017.08.19T00:00:00Z,-1,Travel|Tickets,,EUR')).toBe(
-          '2017.08.19T00:00:00Z is not a valid date',
-        )
-
-        expect(checkError('2017-08-19T00:00:00Z,+2,Travel|Tickets,,EUR')).toBe(
-          '+2 is not in a valid amount format',
-        )
         expect(
-          checkError('2017-08-19T00:00:00Z,-1.345,Travel|Tickets,,EUR'),
+          checkError('2017.08.19T00:00:00Z,-1,Travel|Tickets,,EUR,none'),
+        ).toBe('2017.08.19T00:00:00Z is not a valid date')
+
+        expect(
+          checkError('2017-08-19T00:00:00Z,+2,Travel|Tickets,,EUR,none'),
+        ).toBe('+2 is not in a valid amount format')
+        expect(
+          checkError('2017-08-19T00:00:00Z,-1.345,Travel|Tickets,,EUR,none'),
         ).toBe('-1.345 is not in a valid amount format')
 
-        expect(checkError('2017-08-19T00:00:00Z,2,,,EUR')).toBe(
+        expect(checkError('2017-08-19T00:00:00Z,2,,,EUR,none')).toBe(
           'There must be at least one tag in a transaction',
         )
 
-        expect(checkError('2017-08-19T00:00:00Z,2,Travel,note,$')).toBe(
+        expect(checkError('2017-08-19T00:00:00Z,2,Travel,note,$,none')).toBe(
           'Invalid currency of a transaction',
         )
+
+        expect(
+          checkError(
+            '2017-08-19T00:00:00Z,-1,Travel|Tickets,,EUR,invalid_repeating',
+          ),
+        ).toBe('Invalid repeating mode invalid_repeating')
       })
 
       test('creates new tags and txs', () => {
-        state.tags = { id1: { id: 'id1', name: 'Travel' } }
+        state.tags = { id1: { id: 'id1', name: 'Travel', uid: 'user_id' } }
         const csv1 =
-          '2017-08-19T00:00:00Z,-1,Travel|Tickets,,EUR\n2017-08-16T00:00:00Z,-0.7,Shopping,,EUR'
-        const csv2 = '2016-02-16T00:00:00Z,-1.56,A|B|C,,EUR'
+          '2017-08-19T00:00:00Z,-1,Travel|Tickets,,EUR,none\n2017-08-16T00:00:00Z,-0.7,Shopping,,EUR,annually'
+        const csv2 = '2016-02-16T00:00:00Z,-1.56,A|B|C,,EUR,monthly'
 
         // Travel tag should be reused from state
         expect(processImportedCSV(state, csv1)).toMatchSnapshot()
@@ -68,9 +74,9 @@ describe('settings actions', () => {
       })
 
       test('exporting imported txs yields identity', () => {
-        state.tags = { id1: { id: 'id1', name: 'Travel' } }
+        state.tags = { id1: { id: 'id1', name: 'Travel', uid: 'user_id' } }
         const csv =
-          '2017-08-19T00:00:00.000Z,-1,Travel|Tickets,,EUR\n2017-08-16T00:00:00.000Z,-0.7,Shopping,,EUR'
+          '2017-08-19T00:00:00.000Z,-1,Travel|Tickets,,EUR,none\n2017-08-16T00:00:00.000Z,-0.7,Shopping,,EUR,monthly'
 
         const imp = processImportedCSV(state, csv)
         const newState: State = {

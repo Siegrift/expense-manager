@@ -9,6 +9,7 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import Paper from '@material-ui/core/Paper'
+import Select from '@material-ui/core/Select'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
@@ -35,11 +36,13 @@ import {
   setDateTime,
   setIsExpense,
   setNote,
+  setRepeating,
   setTags,
   setTagInputValue,
   setUseCurrentTime
 } from './actions'
 import { addTransactionSel, isInvalidAmountSel } from './selectors'
+import { RepeatingOption, RepeatingOptions } from './state'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -81,6 +84,7 @@ const AddTransaction = () => {
     note,
     dateTime,
     useCurrentTime,
+    repeating,
     shouldValidateAmount,
   } = useSelector(addTransactionSel)
   const isInvalidAmount = useSelector(isInvalidAmountSel)
@@ -204,6 +208,30 @@ const AddTransaction = () => {
               />
             </Grid>
           </Collapse>
+
+          <Grid className={classes.row}>
+            <FormControl style={{ flex: 1 }}>
+              <InputLabel htmlFor="tx-repeating">Repeating</InputLabel>
+              <Select
+                value={repeating}
+                onChange={(e) =>
+                  dispatch(setRepeating(e.target.value as RepeatingOption))
+                }
+                inputProps={{
+                  name: 'repeating',
+                  id: 'tx-repeating',
+                }}
+              >
+                {Object.keys(RepeatingOptions)
+                  .filter((op) => op !== RepeatingOptions.inactive)
+                  .map((op) => (
+                    <MenuItem key={op} value={op}>
+                      {op}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
           <Grid className={classes.row}>
             <TextField

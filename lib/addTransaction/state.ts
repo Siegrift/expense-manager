@@ -1,13 +1,30 @@
 import { DEFAULT_CURRENCY } from '../shared/currencies'
 import { ObjectOf } from '../types'
 
-export type TransactionType = 'fromUser' | 'imported'
+export enum TransactionTypes {
+  fromUser = 'fromUser',
+  imported = 'imported',
+  repeated = 'repeated',
+}
+
+export type TransactionType = keyof typeof TransactionTypes
 
 export interface Tag {
   id: string
   name: string
   uid: string
 }
+
+export enum RepeatingOptions {
+  none = 'none',
+  inactive = 'inactive',
+  daily = 'daily',
+  weekly = 'weekly',
+  monthly = 'monthly',
+  annually = 'annually',
+}
+
+export type RepeatingOption = keyof typeof RepeatingOptions
 
 export interface BaseTransaction {
   transactionType: TransactionType
@@ -16,6 +33,7 @@ export interface BaseTransaction {
   currency: string
   isExpense: boolean
   note: string
+  repeating: RepeatingOption
 }
 
 export interface Transaction extends BaseTransaction {
@@ -35,7 +53,7 @@ export interface AddTransaction extends BaseTransaction {
 }
 
 export const createDefaultAddTransactionState = (): AddTransaction => ({
-  transactionType: 'fromUser',
+  transactionType: TransactionTypes.fromUser,
   amount: '',
   tagIds: [],
   newTags: {},
@@ -46,4 +64,5 @@ export const createDefaultAddTransactionState = (): AddTransaction => ({
   dateTime: undefined,
   useCurrentTime: true,
   shouldValidateAmount: false,
+  repeating: RepeatingOptions.none,
 })
