@@ -77,9 +77,12 @@ const Transaction = (props: ListChildComponentProps) => {
         </div>
       </div>
       <div className={classes.chipField}>
-        {tx.tagIds.map((id) => (
-          <Chip key={id} label={tags[id].name} onDelete={null as any} />
-        ))}
+        {tx.tagIds.map((id) => {
+          if (!tags[id]) {
+            console.log(id, tx.id)
+          }
+          return <Chip key={id} label={tags[id].name} onDelete={null as any} />
+        })}
       </div>
       <Divider className={classes.divider} />
     </ListItem>

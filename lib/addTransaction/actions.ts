@@ -5,7 +5,6 @@ import { uploadToFirebase } from '../actions'
 import { getCurrentUserId } from '../firebase/util'
 import { Action, Thunk } from '../redux/types'
 import { State } from '../state'
-import { ObjectOf } from '../types'
 
 import { isInvalidAmountSel } from './selectors'
 import { createDefaultAddTransactionState, Tag } from './state'
@@ -14,20 +13,15 @@ export const setAmount = (amount: string): Action<string> => ({
   type: 'Set amount in add transaction',
   payload: amount,
   reducer: (state) => {
-    const newState = set(state, ['addTransaction', 'amount'], amount)
-    return set(
-      newState,
-      ['addTransaction', 'shouldValidateAmount'],
-      true,
-    ) as State
+    const newState: State = set(state, ['addTransaction', 'amount'], amount)
+    return set(newState, ['addTransaction', 'shouldValidateAmount'], true)
   },
 })
 
 export const setCurrency = (currency: string): Action<string> => ({
   type: 'Set currency in add transaction',
   payload: currency,
-  reducer: (state) =>
-    set(state, ['addTransaction', 'currency'], currency) as State,
+  reducer: (state) => set(state, ['addTransaction', 'currency'], currency),
 })
 
 export const createNewTag = (tagName: string): Action<string> => ({
@@ -56,24 +50,22 @@ export const createNewTag = (tagName: string): Action<string> => ({
 
 export const clearInputValue = (): Action => ({
   type: 'Clear input value',
-  reducer: (state) => set(state, ['addTransaction', 'tagInputValue'], '') as State,
+  reducer: (state) => set(state, ['addTransaction', 'tagInputValue'], ''),
 })
 
 export const selectNewTag = (tagId: string): Action<string> => ({
   type: 'Add tag to selection (if not already selected)',
   payload: tagId,
   reducer: (state) =>
-    // FIXME: fix tsfunct
     update(state, ['addTransaction', 'tagIds'], (ids: any) =>
       ids.includes(tagId) ? ids : [...ids, tagId],
-    ) as State,
+    ),
 })
 
 export const setTagInputValue = (value: string): Action<string> => ({
   type: 'Set tag input value',
   payload: value,
-  reducer: (state) =>
-    set(state, ['addTransaction', 'tagInputValue'], value) as State,
+  reducer: (state) => set(state, ['addTransaction', 'tagInputValue'], value),
 })
 
 export const setTags = (tags: Tag[]): Action<Tag[]> => ({
@@ -90,8 +82,7 @@ export const setTags = (tags: Tag[]): Action<Tag[]> => ({
         newTags: pick(
           state.addTransaction.newTags,
           tagIds.filter((t) => !available.hasOwnProperty(t)),
-          // TODO: tsfunct error
-        ) as ObjectOf<Tag>,
+        ),
       },
     }
   },
@@ -100,21 +91,19 @@ export const setTags = (tags: Tag[]): Action<Tag[]> => ({
 export const setIsExpense = (isExpense: boolean): Action<boolean> => ({
   type: 'Set is expense',
   payload: isExpense,
-  reducer: (state) =>
-    set(state, ['addTransaction', 'isExpense'], isExpense) as State,
+  reducer: (state) => set(state, ['addTransaction', 'isExpense'], isExpense),
 })
 
 export const setNote = (note: string): Action<string> => ({
   type: 'Set note in add transaction',
   payload: note,
-  reducer: (state) => set(state, ['addTransaction', 'note'], note) as State,
+  reducer: (state) => set(state, ['addTransaction', 'note'], note),
 })
 
 export const setDateTime = (dateTime: Date): Action<Date> => ({
   type: 'Set date time in add transaction',
   payload: dateTime,
-  reducer: (state) =>
-    set(state, ['addTransaction', 'dateTime'], dateTime) as State,
+  reducer: (state) => set(state, ['addTransaction', 'dateTime'], dateTime),
 })
 
 export const resetAddTransaction = (): Action => ({
@@ -167,11 +156,10 @@ export const setUseCurrentTime = (
       ...state.addTransaction,
       useCurrentTime,
       dateTime: useCurrentTime ? new Date() : undefined,
-    }) as State,
+    }),
 })
 
 export const triggerValidation = (): Action => ({
   type: 'Trigger validation',
-  reducer: (state) =>
-    set(state, ['addTransaction', 'shouldValidateAmount'], true) as State,
+  reducer: (state) => set(state, ['addTransaction', 'shouldValidateAmount'], true),
 })

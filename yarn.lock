@@ -1661,10 +1661,10 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
-"@siegrift/tsfunct@^1.3.2":
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/@siegrift/tsfunct/-/tsfunct-1.3.2.tgz#1e1a9525b5e5e02054b29a406aea815d43e2f93e"
-  integrity sha512-+CXn0DDT8AMdbkiwF9TNKa1xZ0+8vaXXL17fFIs0MNi8pfUcXjnUhAMG1tWfXtbH5tr92hDvwXyYaY/uYqwnwA==
+"@siegrift/tsfunct@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@siegrift/tsfunct/-/tsfunct-1.4.1.tgz#13f739eb81faec14f158801a51e5f8be315e5a3a"
+  integrity sha512-MOAjsmJ/4o6kIMTt43bT98P3LiNjNRmpfuEheaRaanM448GOapoAF+XKYMnXPIbYfJxGSr6URfK5ltq5xsw6Hw==
 
 "@surma/rollup-plugin-off-main-thread@^1.1.1":
   version "1.1.1"
@@ -8865,10 +8865,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^3.6.4:
-  version "3.6.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.4.tgz#b18752bb3792bc1a0281335f7f6ebf1bbfc5b91d"
-  integrity sha512-unoCll1+l+YK4i4F8f22TaNVPRHcD9PA3yCuZ8g5e0qGqlVlJ/8FSateOLLSagn+Yg5+ZwuPkL8LFUc0Jcvksg==
+typescript@^3.7.0-beta:
+  version "3.7.0-beta"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.0-beta.tgz#4ad556e0eee14b90ecc39261001690e16e5eeba9"
+  integrity sha512-4jyCX+IQamrPJxgkABPq9xf+hUN+GWHVxoj+oey1TadCPa4snQl1RKwUba+1dyzYCamwlCxKvZQ3TjyWLhMGBA==
 
 ua-parser-js@^0.7.18:
   version "0.7.20"

@@ -38,7 +38,7 @@ const createQueryReducer = (
       }
     })
     return newStatePart
-  }) as State
+  })
 }
 
 const allTransactionsQuery: FirestoneQuery = {

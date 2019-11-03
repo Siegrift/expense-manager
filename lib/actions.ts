@@ -62,14 +62,14 @@ export const uploadToFirebase = (
   logger.log('Upload transactions and tags to firestone')
   // NOTE: do not wait for this promise because it will never resolve when offline
   // see: https://www.youtube.com/watch?v=XrltP8bOHT0&feature=youtu.be&t=673
-  // FIXME: why typescript infers coll as string type and not 'tags'???
   privateUpload([
-    ...tags.map((t): Entry<'tags', Tag> => ({ coll: 'tags', data: t })),
+    ...tags.map((t) => ({ coll: 'tags', data: t } as const)),
     ...txs.map(
-      (t): Entry<'transactions', Transaction> => ({
-        coll: 'transactions',
-        data: t,
-      }),
+      (t) =>
+        ({
+          coll: 'transactions',
+          data: t,
+        } as const),
     ),
   ])
   return Promise.resolve()
