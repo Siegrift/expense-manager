@@ -1,6 +1,7 @@
 import { filter, map, reduce } from 'lodash'
 import { createSelector } from 'reselect'
 
+import { sorted } from '../shared/utils'
 import { State } from '../state'
 
 export const tagsSel = (state: State) => state.tags
@@ -32,7 +33,6 @@ export const tagSharesSel = createSelector(
     })
 
     // descending sort
-    tagShares.sort((t1, t2) => t2.value - t1.value)
-    return tagShares
+    return sorted(tagShares, (t1, t2) => t2.value - t1.value)
   },
 )

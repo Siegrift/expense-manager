@@ -6,7 +6,12 @@ import {
 } from './addTransaction/state'
 import { ObjectOf } from './types'
 
-export type ScreenTitle = 'add' | 'transactions' | 'charts' | 'settings'
+export type ScreenTitle =
+  | 'add'
+  | 'transactions'
+  | 'charts'
+  | 'tags'
+  | 'settings'
 
 export type SignInStatus = 'loggedIn' | 'loggingIn' | 'loggedOut' | 'unknown'
 
@@ -24,7 +29,7 @@ const state: State = {
   cnt: 0,
   signInStatus: 'unknown',
   currentScreen: 'add',
-  addTransaction: createDefaultAddTransactionState(),
+  addTransaction: createDefaultAddTransactionState([]),
   tags: {},
   transactions: {},
 }

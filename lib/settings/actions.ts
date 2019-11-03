@@ -96,7 +96,13 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
       const splitTags = rawTags.split('|')
       splitTags.forEach((tag) => {
         if (!stateTagsByName[tag] && !tags.has(tag)) {
-          tags.set(tag, { id: uuid(), name: tag, uid: getCurrentUserId() })
+          tags.set(tag, {
+            id: uuid(),
+            name: tag,
+            uid: getCurrentUserId(),
+            // TODO: make it importable
+            automatic: false,
+          })
         }
       })
       txs.push({

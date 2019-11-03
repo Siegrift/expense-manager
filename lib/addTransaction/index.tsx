@@ -15,8 +15,10 @@ import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
 import CancelIcon from '@material-ui/icons/Cancel'
 import { DateTimePicker } from '@material-ui/pickers'
-import React from 'react'
+import { pick, set, update } from '@siegrift/tsfunct'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import uuid from 'uuid/v4'
 
 import { setCurrentScreen } from '../../lib/actions'
 import { useRedirectIfNotSignedIn } from '../../lib/shared/hooks'
@@ -24,25 +26,18 @@ import { State } from '../../lib/state'
 import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
 import TagField from '../components/tagField'
+import { getCurrentUserId } from '../firebase/util'
 import { currencies } from '../shared/currencies'
+import { isAmountInValidFormat } from '../shared/utils'
 
+import { addTransaction } from './actions'
+import { automaticTagIdsSel } from './selectors'
 import {
-  addTransaction,
-  clearInputValue,
-  createNewTag,
-  selectNewTag,
-  setAmount,
-  setCurrency,
-  setDateTime,
-  setIsExpense,
-  setNote,
-  setRepeating,
-  setTags,
-  setTagInputValue,
-  setUseCurrentTime
-} from './actions'
-import { addTransactionSel, isInvalidAmountSel } from './selectors'
-import { RepeatingOption, RepeatingOptions } from './state'
+  createDefaultAddTransactionState,
+  AddTransaction as AddTransactionType,
+  RepeatingOption,
+  RepeatingOptions
+} from './state'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -68,12 +63,19 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
+const allFieldsAreValid = (addTx: AddTransactionType) =>
+  isAmountInValidFormat(addTx.amount)
+
 const AddTransaction = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
 
   dispatch(setCurrentScreen('add'))
 
+  const automaticTagIds = useSelector(automaticTagIdsSel)
+  const [addTx, setAddTx] = useState(
+    createDefaultAddTransactionState(automaticTagIds),
+  )
   const {
     amount,
     currency,
@@ -86,8 +88,8 @@ const AddTransaction = () => {
     useCurrentTime,
     repeating,
     shouldValidateAmount,
-  } = useSelector(addTransactionSel)
-  const isInvalidAmount = useSelector(isInvalidAmountSel)
+  } = addTx
+
   const tags = useSelector((state: State) => state.tags)
 
   if (useRedirectIfNotSignedIn() !== 'loggedIn') {
@@ -105,14 +107,18 @@ const AddTransaction = () => {
           <Grid container className={classes.row}>
             <ButtonGroup variant="contained" fullWidth>
               <Button
-                onClick={() => dispatch(setIsExpense(true))}
+                onClick={() =>
+                  setAddTx((currAddTx) => set(currAddTx, ['isExpense'], true))
+                }
                 variant="contained"
                 color={isExpense ? 'primary' : 'default'}
               >
                 Expense
               </Button>
               <Button
-                onClick={() => dispatch(setIsExpense(false))}
+                onClick={() =>
+                  setAddTx((currAddTx) => set(currAddTx, ['isExpense'], false))
+                }
                 variant="contained"
                 color={!isExpense ? 'primary' : 'default'}
               >
@@ -127,12 +133,54 @@ const AddTransaction = () => {
               availableTags={tags}
               newTags={newTags}
               className={classes.chipField}
-              onSelectExistingTag={(id) => dispatch(selectNewTag(id))}
-              onCreateTag={(label) => dispatch(createNewTag(label))}
-              onClearInputValue={() => dispatch(clearInputValue())}
-              onChangeTags={(changedTags) => dispatch(setTags(changedTags))}
+              onSelectExistingTag={(id) => {
+                setAddTx((currAddTx) => {
+                  // FIXME: tsfunct error
+                  return update(currAddTx, ['tagIds'], (ids: any) =>
+                    ids.includes(id) ? ids : [...ids, id],
+                  )
+                })
+              }}
+              onClearInputValue={() =>
+                setAddTx((currAddTx) => set(currAddTx, ['tagInputValue'], ''))
+              }
+              onCreateTag={(tagName) => {
+                if (tagName === '') {
+                  return
+                }
+
+                const id = uuid()
+                setAddTx((currAddTx) => ({
+                  ...currAddTx,
+                  tagIds: [...currAddTx.tagIds, id],
+                  newTags: {
+                    ...currAddTx.newTags,
+                    [id]: {
+                      id,
+                      name: tagName,
+                      uid: getCurrentUserId(),
+                      automatic: false,
+                    },
+                  },
+                  note: 'adasdasd',
+                  tagInputValue: '',
+                }))
+              }}
+              onChangeTags={(changedTags) => {
+                const changedTagIds = changedTags.map((t) => t.id)
+                setAddTx((currAddTx) => ({
+                  ...currAddTx,
+                  tagIds: changedTagIds,
+                  newTags: pick(
+                    currAddTx.newTags,
+                    changedTagIds.filter((t) => !tags.hasOwnProperty(t)),
+                  ),
+                }))
+              }}
               onSetTagInputValue={(newValue) =>
-                dispatch(setTagInputValue(newValue))
+                setAddTx((currAddTx) =>
+                  set(currAddTx, ['tagInputValue'], newValue),
+                )
               }
               inputValue={tagInputValue}
               currentTagIds={tagIds}
@@ -143,7 +191,7 @@ const AddTransaction = () => {
             <Grid item className={classes.amount}>
               <FormControl
                 aria-label="amount"
-                error={shouldValidateAmount && isInvalidAmount}
+                error={shouldValidateAmount && !allFieldsAreValid(addTx)}
               >
                 <InputLabel htmlFor="amount-id">Transaction amount</InputLabel>
                 <Input
@@ -151,12 +199,24 @@ const AddTransaction = () => {
                   type="number"
                   placeholder="0.00"
                   value={amount}
-                  onChange={(e) => dispatch(setAmount(e.target.value))}
+                  onChange={(e) =>
+                    setAddTx((currAddTx) => ({
+                      ...currAddTx,
+                      amount: e.target.value,
+                      shouldValidateAmount: true,
+                    }))
+                  }
                   endAdornment={
                     <InputAdornment position="end">
                       <CancelIcon
                         color="primary"
-                        onClick={() => dispatch(setAmount(''))}
+                        onClick={() =>
+                          setAddTx((currAddTx) => ({
+                            ...currAddTx,
+                            amount: '',
+                            shouldValidateAmount: true,
+                          }))
+                        }
                         style={{ visibility: amount ? 'visible' : 'hidden' }}
                       />
                     </InputAdornment>
@@ -169,7 +229,11 @@ const AddTransaction = () => {
                 label="Currecy"
                 value={currency}
                 className={classes.currency}
-                onChange={(e) => dispatch(setCurrency(e.target.value))}
+                onChange={(e) =>
+                  setAddTx((currAddTx) =>
+                    set(currAddTx, ['currency'], e.target.value),
+                  )
+                }
               >
                 {currencies.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
@@ -185,7 +249,13 @@ const AddTransaction = () => {
               control={
                 <Switch
                   checked={useCurrentTime}
-                  onChange={() => dispatch(setUseCurrentTime(!useCurrentTime))}
+                  onChange={() =>
+                    setAddTx((currAddTx) => ({
+                      ...currAddTx,
+                      useCurrentTime: !useCurrentTime,
+                      dateTime: !useCurrentTime ? new Date() : undefined,
+                    }))
+                  }
                   color="primary"
                 />
               }
@@ -201,7 +271,9 @@ const AddTransaction = () => {
                 disableFuture
                 value={dateTime}
                 onChange={(newDateTime) =>
-                  dispatch(setDateTime(newDateTime as Date))
+                  setAddTx((currAddTx) =>
+                    set(currAddTx, ['dateTime'], newDateTime as Date),
+                  )
                 }
                 label="Transaction date"
                 style={{ flex: 1 }}
@@ -215,7 +287,10 @@ const AddTransaction = () => {
               <Select
                 value={repeating}
                 onChange={(e) =>
-                  dispatch(setRepeating(e.target.value as RepeatingOption))
+                  setAddTx((currAddTx) =>
+                    set(currAddTx, ['repeating'], e.target
+                      .value as RepeatingOption),
+                  )
                 }
                 inputProps={{
                   name: 'repeating',
@@ -238,7 +313,9 @@ const AddTransaction = () => {
               fullWidth
               label="Additional note"
               value={note}
-              onChange={(e) => dispatch(setNote(e.target.value))}
+              onChange={(e) =>
+                setAddTx((currAddTx) => set(currAddTx, ['note'], e.target.value))
+              }
             />
           </Grid>
 
@@ -247,8 +324,18 @@ const AddTransaction = () => {
               variant="contained"
               color="primary"
               fullWidth
-              // TODO: validate we can add transaction
-              onClick={() => dispatch(addTransaction())}
+              onClick={() => {
+                // some fields were not filled correctly. Show incorrect and return.
+                if (!allFieldsAreValid(addTx)) {
+                  setAddTx((currAddTx) =>
+                    set(currAddTx, ['shouldValidateAmount'], true),
+                  )
+                  return
+                }
+
+                dispatch(addTransaction(addTx))
+                setAddTx(createDefaultAddTransactionState(automaticTagIds))
+              }}
               aria-label="add transaction"
             >
               Add transaction

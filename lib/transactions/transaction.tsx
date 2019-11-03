@@ -55,7 +55,6 @@ const Transaction = (props: ListChildComponentProps) => {
     <ListItem
       button
       style={style}
-      key={index}
       className={classes.listItem}
       onClick={() =>
         Router.push('/transactions/[id]', `/transactions/${tx.id}`)
@@ -83,9 +82,11 @@ const Transaction = (props: ListChildComponentProps) => {
 
       <div style={{ display: 'flex', width: '100%' }}>
         <div className={classes.chipField}>
-          {tx.tagIds.map((id) => (
-            <Chip key={id} label={tags[id].name} onDelete={null as any} />
-          ))}
+          {tx.tagIds.map((id) => {
+            return (
+              <Chip key={id} label={tags[id].name} onDelete={null as any} />
+            )
+          })}
         </div>
         <div className={classes.iconPanel}>
           {tx.repeating !== 'none' && (

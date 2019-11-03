@@ -1,5 +1,7 @@
 import Router from 'next/router'
 
+import { ObjectOf } from '../types'
+
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, 1000))
 
 export const redirectTo = (target: string) => {
@@ -26,3 +28,17 @@ export function isValidDate(date: unknown) {
 
 export const isAmountInValidFormat = (amount: string) =>
   amount.match(/^\d+(\.\d{1,2})?$/) != null
+
+export const sorted = <T>(
+  coll: T[] | ObjectOf<T>,
+  sortFn?: (a: T, b: T) => number,
+) => {
+  let copy: T[]
+  if (Array.isArray(coll)) {
+    copy = [...coll]
+  } else {
+    copy = Object.values(coll)
+  }
+  copy.sort(sortFn)
+  return copy
+}

@@ -5,6 +5,7 @@ import { SvgIconProps } from '@material-ui/core/SvgIcon'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import BarChartIcon from '@material-ui/icons/BarChart'
 import ListIcon from '@material-ui/icons/List'
+import TagIcon from '@material-ui/icons/LocalOffer'
 import SettingsIcon from '@material-ui/icons/Settings'
 import React, { ComponentType } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -36,6 +37,7 @@ const navigationItems: NavigationItem[] = [
   { screen: 'add', Icon: AddCircleOutlineIcon },
   { screen: 'transactions', Icon: ListIcon },
   { screen: 'charts', Icon: BarChartIcon },
+  { screen: 'tags', Icon: TagIcon },
   { screen: 'settings', Icon: SettingsIcon },
 ]
 

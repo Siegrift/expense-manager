@@ -13,6 +13,7 @@ export interface Tag {
   id: string
   name: string
   uid: string
+  automatic: boolean
 }
 
 export enum RepeatingOptions {
@@ -52,10 +53,12 @@ export interface AddTransaction extends BaseTransaction {
   shouldValidateAmount: boolean
 }
 
-export const createDefaultAddTransactionState = (): AddTransaction => ({
+export const createDefaultAddTransactionState = (
+  initialTagIds: string[],
+): AddTransaction => ({
   transactionType: TransactionTypes.fromUser,
   amount: '',
-  tagIds: [],
+  tagIds: initialTagIds,
   newTags: {},
   currency: DEFAULT_CURRENCY.value,
   tagInputValue: '',

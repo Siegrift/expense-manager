@@ -51,14 +51,12 @@ describe('add transaction', () => {
             .find('input')
             .prop('value'),
         ).toBe(amount)
-        expect(store.getState().addTransaction.amount).toBe(amount)
         expect(
           comp
             .find(byAriaLabel('amount'))
             .hostNodes()
             .html(),
         ).toMatchSnapshot()
-        expect(store.getState().addTransaction.shouldValidateAmount).toBe(true)
       }
 
       test('not validated initially', () => {
@@ -92,7 +90,6 @@ describe('add transaction', () => {
           .simulate('click')
 
         const state = store.getState()
-        expect(state.addTransaction.shouldValidateAmount).toBe(true)
         expect(Object.keys(state.transactions)).toHaveLength(0)
       })
     })
