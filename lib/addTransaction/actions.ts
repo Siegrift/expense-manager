@@ -1,10 +1,9 @@
-import { omit } from '@siegrift/tsfunct'
+import { pick } from '@siegrift/tsfunct'
 import uuid from 'uuid/v4'
 
 import { uploadToFirebase } from '../actions'
 import { getCurrentUserId } from '../firebase/util'
 import { Thunk } from '../redux/types'
-
 import { AddTransaction } from './state'
 
 export const addTransaction = (addTx: AddTransaction): Thunk => async (
@@ -17,13 +16,18 @@ export const addTransaction = (addTx: AddTransaction): Thunk => async (
   const id = uuid()
   const tx = {
     id,
-    ...omit(addTx, ['newTags', 'tagInputValue', 'useCurrentTime']),
+    ...pick(addTx, [
+      'transactionType',
+      'tagIds',
+      'currency',
+      'isExpense',
+      'note',
+      'repeating',
+    ]),
     amount: Number.parseFloat(addTx.amount),
     dateTime: addTx.useCurrentTime ? new Date() : addTx.dateTime!,
     uid: getCurrentUserId(),
   }
 
-  await dispatch(
-    uploadToFirebase([tx], Object.values(getState().addTransaction.newTags)),
-  )
+  await dispatch(uploadToFirebase([tx], Object.values(addTx.newTags)))
 }

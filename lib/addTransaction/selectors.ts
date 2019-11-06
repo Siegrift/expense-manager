@@ -2,7 +2,6 @@ import { createSelector } from 'reselect'
 
 import { State } from '../state'
 
-export const addTransactionSel = (state: State) => state.addTransaction
 export const tagsSel = (state: State) => state.tags
 
 export const automaticTagIdsSel = createSelector(

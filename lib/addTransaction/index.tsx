@@ -29,14 +29,13 @@ import TagField from '../components/tagField'
 import { getCurrentUserId } from '../firebase/util'
 import { currencies } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
-
 import { addTransaction } from './actions'
 import { automaticTagIdsSel } from './selectors'
 import {
-  createDefaultAddTransactionState,
   AddTransaction as AddTransactionType,
+  createDefaultAddTransactionState,
   RepeatingOption,
-  RepeatingOptions
+  RepeatingOptions,
 } from './state'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -162,7 +161,7 @@ const AddTransaction = () => {
                       automatic: false,
                     },
                   },
-                  note: 'adasdasd',
+                  note: '',
                   tagInputValue: '',
                 }))
               }}
@@ -207,8 +206,7 @@ const AddTransaction = () => {
                       amount: value,
                       shouldValidateAmount: true,
                     }))
-                  }
-                  }
+                  }}
                   endAdornment={
                     <InputAdornment position="end">
                       <CancelIcon
@@ -235,11 +233,8 @@ const AddTransaction = () => {
                 onChange={(e) => {
                   // NOTE: we need to save the value, because it might not exist when the callback is called
                   const value = e.target.value
-                  setAddTx((currAddTx) =>
-                    set(currAddTx, ['currency'], value),
-                  )
-                }
-                }
+                  setAddTx((currAddTx) => set(currAddTx, ['currency'], value))
+                }}
               >
                 {currencies.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
@@ -298,8 +293,7 @@ const AddTransaction = () => {
                   setAddTx((currAddTx) =>
                     set(currAddTx, ['repeating'], value as RepeatingOption),
                   )
-                }
-                }
+                }}
                 inputProps={{
                   name: 'repeating',
                   id: 'tx-repeating',
@@ -325,8 +319,7 @@ const AddTransaction = () => {
                 // NOTE: we need to save the value, because it might not exist when the callback is called
                 const value = e.target.value
                 setAddTx((currAddTx) => set(currAddTx, ['note'], value))
-              }
-              }
+              }}
             />
           </Grid>
 

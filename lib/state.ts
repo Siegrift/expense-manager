@@ -1,9 +1,4 @@
-import {
-  createDefaultAddTransactionState,
-  AddTransaction,
-  Tag,
-  Transaction
-} from './addTransaction/state'
+import { Tag, Transaction } from './addTransaction/state'
 import { ObjectOf } from './types'
 
 export type ScreenTitle =
@@ -20,7 +15,6 @@ export interface State {
   // use firebase.auth().currentUser to get the current user
   signInStatus: SignInStatus
   currentScreen: ScreenTitle
-  addTransaction: AddTransaction
   tags: ObjectOf<Tag>
   transactions: ObjectOf<Transaction>
 }
@@ -29,7 +23,6 @@ const state: State = {
   cnt: 0,
   signInStatus: 'unknown',
   currentScreen: 'add',
-  addTransaction: createDefaultAddTransactionState([]),
   tags: {},
   transactions: {},
 }

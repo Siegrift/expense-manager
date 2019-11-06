@@ -6,8 +6,7 @@ import { useSelector } from 'react-redux'
 
 import { Transaction } from '../addTransaction/state'
 import { State } from '../state'
-
-import { tagSharesSel, TagShare } from './selectors'
+import { TagShare, tagSharesSel } from './selectors'
 
 const MAX_LEVELS = 4
 const MAX_BRANCHING_PER_LEVEL = [8, 6, 4, 2]

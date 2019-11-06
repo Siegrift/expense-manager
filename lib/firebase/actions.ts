@@ -4,8 +4,7 @@ import { addRepeatingTxs } from '../actions'
 import firebase from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
 import { SignInStatus } from '../state'
-
-import { getQueries, FirestoneQuery } from './firestoneQueries'
+import { FirestoneQuery, getQueries } from './firestoneQueries'
 
 export const firestoneChangeAction = (
   query: FirestoneQuery,

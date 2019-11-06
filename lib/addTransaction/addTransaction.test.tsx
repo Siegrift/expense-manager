@@ -1,10 +1,9 @@
 import { mount } from 'enzyme'
 import mockdate from 'mockdate'
 
+import AddTransaction from '.'
 import { getInitialState } from '../state'
 import { byAriaLabel, configureTestStore, reduxify } from '../testing'
-
-import AddTransaction from './index'
 
 describe('add transaction', () => {
   test('shows loading page', () => {
@@ -66,9 +65,6 @@ describe('add transaction', () => {
             .hostNodes()
             .html(),
         ).toMatchSnapshot()
-        expect(store.getState().addTransaction.shouldValidateAmount).toBe(
-          false,
-        )
       })
 
       test('allows floats with 2 decimal places', () => {
