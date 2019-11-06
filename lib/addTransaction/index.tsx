@@ -199,12 +199,15 @@ const AddTransaction = () => {
                   type="number"
                   placeholder="0.00"
                   value={amount}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    // NOTE: we need to save the value, because it might not exist when the callback is called
+                    const value = e.target.value
                     setAddTx((currAddTx) => ({
                       ...currAddTx,
-                      amount: e.target.value,
+                      amount: value,
                       shouldValidateAmount: true,
                     }))
+                  }
                   }
                   endAdornment={
                     <InputAdornment position="end">
@@ -229,10 +232,13 @@ const AddTransaction = () => {
                 label="Currecy"
                 value={currency}
                 className={classes.currency}
-                onChange={(e) =>
+                onChange={(e) => {
+                  // NOTE: we need to save the value, because it might not exist when the callback is called
+                  const value = e.target.value
                   setAddTx((currAddTx) =>
-                    set(currAddTx, ['currency'], e.target.value),
+                    set(currAddTx, ['currency'], value),
                   )
+                }
                 }
               >
                 {currencies.map((option) => (
@@ -286,11 +292,13 @@ const AddTransaction = () => {
               <InputLabel htmlFor="tx-repeating">Repeating</InputLabel>
               <Select
                 value={repeating}
-                onChange={(e) =>
+                onChange={(e) => {
+                  // NOTE: we need to save the value, because it might not exist when the callback is called
+                  const value = e.target.value
                   setAddTx((currAddTx) =>
-                    set(currAddTx, ['repeating'], e.target
-                      .value as RepeatingOption),
+                    set(currAddTx, ['repeating'], value as RepeatingOption),
                   )
+                }
                 }
                 inputProps={{
                   name: 'repeating',
@@ -313,8 +321,11 @@ const AddTransaction = () => {
               fullWidth
               label="Additional note"
               value={note}
-              onChange={(e) =>
-                setAddTx((currAddTx) => set(currAddTx, ['note'], e.target.value))
+              onChange={(e) => {
+                // NOTE: we need to save the value, because it might not exist when the callback is called
+                const value = e.target.value
+                setAddTx((currAddTx) => set(currAddTx, ['note'], value))
+              }
               }
             />
           </Grid>
