@@ -11,10 +11,13 @@ import Typography from '@material-ui/core/Typography'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import DeleteIcon from '@material-ui/icons/Delete'
 import DoneIcon from '@material-ui/icons/Done'
+import { map } from '@siegrift/tsfunct'
 import Router from 'next/router'
 import React, { useState } from 'react'
 
 import { Tag } from '../addTransaction/state'
+import AmountField from '../components/amountField'
+import { isAmountInValidFormat } from '../shared/utils'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -23,19 +26,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     flexDirection: 'column',
   },
-  chipField: { flex: 1 },
-  amountInput: { marginLeft: theme.spacing(1) },
   row: {
     marginTop: '16px',
     display: 'flex',
     justifyContent: 'center',
     alignSelf: 'stretch',
   },
-  amount: {
-    display: 'flex',
-    alignSelf: 'stretch',
-  },
-  currency: { width: 105, marginLeft: theme.spacing(2) },
+  amount: { width: '100%' },
   paper: {
     padding: theme.spacing(2),
   },
@@ -46,9 +43,14 @@ interface AddOrEditTagProps {
   appBarTitle: string
   initialTagName: string
   initialIsAutotag: boolean
-  onSave: (tag: Pick<Tag, 'name' | 'automatic'>) => void
+  initialDefaultAmount?: string
+  onSave: (tag: Pick<Tag, 'name' | 'automatic' | 'defaultAmount'>) => void
   onRemove?: () => void
   onReturnBack?: () => void
+}
+
+const isValidDefaultAmount = (amount: string) => {
+  return !amount || isAmountInValidFormat(amount)
 }
 
 const AddOrEditTag = (props: AddOrEditTagProps) => {
@@ -58,6 +60,7 @@ const AddOrEditTag = (props: AddOrEditTagProps) => {
     appBarTitle,
     initialTagName,
     initialIsAutotag,
+    initialDefaultAmount,
     onSave,
     onRemove,
   } = props
@@ -65,7 +68,11 @@ const AddOrEditTag = (props: AddOrEditTagProps) => {
 
   const [tagName, setTagName] = useState(initialTagName)
   const [isAutotag, setIsAutotag] = useState(initialIsAutotag)
-  const [shouldValidate, setShouldValidate] = useState(false)
+  const [amount, setAmount] = useState('' + initialDefaultAmount)
+  const [shouldValidate, setShouldValidate] = useState({
+    tagName: false,
+    amount: false,
+  })
 
   return (
     <>
@@ -90,11 +97,22 @@ const AddOrEditTag = (props: AddOrEditTagProps) => {
           <IconButton
             color="inherit"
             onClick={() => {
-              if (tagName) {
-                onSave({ name: tagName, automatic: isAutotag })
+              if (isValidDefaultAmount(amount) && tagName) {
+                onSave({
+                  name: tagName,
+                  automatic: isAutotag,
+                  defaultAmount: amount,
+                })
                 Router.push(returnUrl)
               } else {
-                setShouldValidate(true)
+                // FIXME: tsfunct feature
+                setShouldValidate(
+                  // @ts-ignore
+                  map(shouldValidate, (_, key) => ({
+                    key,
+                    value: true,
+                  })),
+                )
               }
             }}
           >
@@ -122,10 +140,10 @@ const AddOrEditTag = (props: AddOrEditTagProps) => {
               label="Tag name"
               value={tagName}
               onChange={(e) => {
-                setShouldValidate(true)
+                setShouldValidate((obj) => ({ ...obj, tagName: true }))
                 setTagName(e.target.value)
               }}
-              error={shouldValidate && tagName === ''}
+              error={shouldValidate.tagName && tagName === ''}
             />
           </Grid>
 
@@ -143,6 +161,20 @@ const AddOrEditTag = (props: AddOrEditTagProps) => {
                 />
               }
               label="Automatic tag"
+            />
+          </Grid>
+
+          <Grid container className={classes.row}>
+            <AmountField
+              isValidAmount={isValidDefaultAmount}
+              shouldValidateAmount={shouldValidate.amount}
+              value={amount}
+              onChange={(newAmount) => {
+                setAmount(newAmount)
+                setShouldValidate((obj) => ({ ...obj, amount: true }))
+              }}
+              label="Default transaction amount"
+              className={classes.amount}
             />
           </Grid>
         </Paper>

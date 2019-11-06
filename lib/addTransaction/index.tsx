@@ -4,8 +4,6 @@ import Collapse from '@material-ui/core/Collapse'
 import FormControl from '@material-ui/core/FormControl'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Grid from '@material-ui/core/Grid'
-import Input from '@material-ui/core/Input'
-import InputAdornment from '@material-ui/core/InputAdornment'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import Paper from '@material-ui/core/Paper'
@@ -13,7 +11,6 @@ import Select from '@material-ui/core/Select'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
-import CancelIcon from '@material-ui/icons/Cancel'
 import { DateTimePicker } from '@material-ui/pickers'
 import { pick, set, update } from '@siegrift/tsfunct'
 import React, { useState } from 'react'
@@ -23,6 +20,7 @@ import uuid from 'uuid/v4'
 import { setCurrentScreen } from '../../lib/actions'
 import { useRedirectIfNotSignedIn } from '../../lib/shared/hooks'
 import { State } from '../../lib/state'
+import AmountField from '../components/amountField'
 import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
 import TagField from '../components/tagField'
@@ -36,6 +34,7 @@ import {
   createDefaultAddTransactionState,
   RepeatingOption,
   RepeatingOptions,
+  Tag,
 } from './state'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -64,6 +63,11 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const allFieldsAreValid = (addTx: AddTransactionType) =>
   isAmountInValidFormat(addTx.amount)
+
+const maybeApplyDefaultAmount = (tags: Tag[], amount: string) => {
+  if (amount) return amount
+  return tags.find((tag) => tag.defaultAmount)?.defaultAmount ?? amount
+}
 
 const AddTransaction = () => {
   const classes = useStyles()
@@ -134,9 +138,15 @@ const AddTransaction = () => {
               className={classes.chipField}
               onSelectExistingTag={(id) => {
                 setAddTx((currAddTx) => {
-                  // FIXME: tsfunct error
-                  return update(currAddTx, ['tagIds'], (ids: any) =>
+                  const newAddTx = update(currAddTx, ['tagIds'], (ids) =>
+                    // TODO: why we need this check?
                     ids.includes(id) ? ids : [...ids, id],
+                  )
+                  return update(newAddTx, ['amount'], (am) =>
+                    maybeApplyDefaultAmount(
+                      newAddTx.tagIds.map((i) => tags[i]),
+                      am,
+                    ),
                   )
                 })
               }}
@@ -174,6 +184,10 @@ const AddTransaction = () => {
                     currAddTx.newTags,
                     changedTagIds.filter((t) => !tags.hasOwnProperty(t)),
                   ),
+                  amount: maybeApplyDefaultAmount(
+                    changedTagIds.map((id) => tags[id]),
+                    currAddTx.amount,
+                  ),
                 }))
               }}
               onSetTagInputValue={(newValue) =>
@@ -188,42 +202,19 @@ const AddTransaction = () => {
 
           <Grid container className={classes.row}>
             <Grid item className={classes.amount}>
-              <FormControl
-                aria-label="amount"
-                error={shouldValidateAmount && !allFieldsAreValid(addTx)}
-              >
-                <InputLabel htmlFor="amount-id">Transaction amount</InputLabel>
-                <Input
-                  id="amount-id"
-                  type="number"
-                  placeholder="0.00"
-                  value={amount}
-                  onChange={(e) => {
-                    // NOTE: we need to save the value, because it might not exist when the callback is called
-                    const value = e.target.value
-                    setAddTx((currAddTx) => ({
-                      ...currAddTx,
-                      amount: value,
-                      shouldValidateAmount: true,
-                    }))
-                  }}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <CancelIcon
-                        color="primary"
-                        onClick={() =>
-                          setAddTx((currAddTx) => ({
-                            ...currAddTx,
-                            amount: '',
-                            shouldValidateAmount: true,
-                          }))
-                        }
-                        style={{ visibility: amount ? 'visible' : 'hidden' }}
-                      />
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
+              <AmountField
+                isValidAmount={isAmountInValidFormat}
+                shouldValidateAmount={shouldValidateAmount}
+                label="Transaction amount"
+                value={amount}
+                onChange={(newAmount) => {
+                  setAddTx((currAddTx) => ({
+                    ...currAddTx,
+                    amount: newAmount,
+                    shouldValidateAmount: true,
+                  }))
+                }}
+              />
 
               <TextField
                 select
