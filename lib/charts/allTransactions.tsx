@@ -12,13 +12,13 @@ const MAX_LEVELS = 4
 const MAX_BRANCHING_PER_LEVEL = [8, 6, 4, 2]
 
 type ChartDataLeaf = {
-  name: string;
-  amount: number;
+  name: string
+  amount: number
 }
 
 type ChartDataNode = {
-  name: string;
-  children: Array<ChartDataNode | ChartDataLeaf>;
+  name: string
+  children: Array<ChartDataNode | ChartDataLeaf>
 }
 
 const createDataLeaf = (

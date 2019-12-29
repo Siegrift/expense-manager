@@ -7,7 +7,7 @@ import {
   configureTestStore,
   getMockedFirebase,
   initializeMockFirebase,
-  reduxify
+  reduxify,
 } from '../testing'
 
 import Settings from './index'

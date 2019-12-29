@@ -1,7 +1,6 @@
 import DateFnsUtils from '@date-io/date-fns'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import { ThemeProvider } from '@material-ui/styles'
-// @ts-ignore FIXME: firebase-mock types
 import firebasemock from 'firebase-mock'
 import React from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
@@ -13,6 +12,7 @@ import rootReducer from './redux/rootReducer'
 import { getInitialState, State } from './state'
 import theme from './theme'
 
+// @ts-ignore FIXME: firebase-mock types
 export const reduxify = (Component: () => JSX.Element, store: Store) => {
   return (
     <ReduxProvider store={store}>
@@ -60,8 +60,8 @@ export const initializeMockFirebase = () => {
     null, // storage
     null, // messaging
   )
-  const firebase = mockSdk.initializeApp();
-  (global as ExtendedGlobal).mockFirebase = firebase
+  const firebase = mockSdk.initializeApp()
+  ;(global as ExtendedGlobal).mockFirebase = firebase
   return firebase
 }
 

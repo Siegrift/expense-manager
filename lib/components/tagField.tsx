@@ -69,7 +69,9 @@ const TagField = ({
         switch (e.key) {
           case 'Enter':
           case 'Tab':
-            const found = availableTagsArr.find((tag) => tag.name === inputValue)
+            const found = availableTagsArr.find(
+              (tag) => tag.name === inputValue,
+            )
             if (found) {
               onSelectExistingTag(found.id)
             } else {

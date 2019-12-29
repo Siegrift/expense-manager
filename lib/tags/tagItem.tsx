@@ -19,7 +19,7 @@ import {
   isRecurringTagSel,
   tagFromSortedTagsByIndex,
   totalExpenseInTransactionsSel,
-  totalTransactionsSel
+  totalTransactionsSel,
 } from './selectors'
 
 const useStyles = makeStyles((theme: Theme) => ({
