@@ -14,6 +14,7 @@ export interface Tag {
   name: string
   uid: string
   automatic: boolean
+  defaultAmount?: string // can be empty
 }
 
 export enum RepeatingOptions {

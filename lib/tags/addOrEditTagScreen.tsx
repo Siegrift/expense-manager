@@ -4,7 +4,6 @@ import uuid from 'uuid/v4'
 
 import { removeFromFirebase, uploadToFirebase } from '../actions'
 import { getCurrentUserId } from '../firebase/util'
-
 import AddOrEditTag from './addOrEditTag'
 import { tagByIdSel } from './selectors'
 
@@ -19,8 +18,11 @@ const AddOrEditTagScreen = () => {
         appBarTitle="Edit tag"
         initialIsAutotag={reduxTx.automatic}
         initialTagName={reduxTx.name}
+        initialDefaultAmount={reduxTx.defaultAmount}
         returnUrl={'/tags'}
-        onSave={(tag) => dispatch(uploadToFirebase([], [{ ...reduxTx, ...tag }]))}
+        onSave={(tag) =>
+          dispatch(uploadToFirebase([], [{ ...reduxTx, ...tag }]))
+        }
         onRemove={() => dispatch(removeFromFirebase([], [reduxTx.id]))}
       />
     )
@@ -35,7 +37,14 @@ const AddOrEditTagScreen = () => {
           dispatch(
             uploadToFirebase(
               [],
-              [{ uid: getCurrentUserId(), id: uuid(), ...tag }],
+              [
+                {
+                  uid: getCurrentUserId(),
+                  id: uuid(),
+                  ...tag,
+                  defaultAmount: tag.defaultAmount,
+                },
+              ],
             ),
           )
         }

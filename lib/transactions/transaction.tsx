@@ -13,7 +13,6 @@ import { ListChildComponentProps } from 'react-window'
 
 import { getCurrencySymbol } from '../shared/currencies'
 import { State } from '../state'
-
 import { sortedTransactionsSel } from './selectors'
 
 const formatAmount = (amount: string, isExpense: boolean, currency: string) =>
@@ -83,6 +82,10 @@ const Transaction = (props: ListChildComponentProps) => {
       <div style={{ display: 'flex', width: '100%' }}>
         <div className={classes.chipField}>
           {tx.tagIds.map((id) => {
+            if (!tags[id]) {
+              console.log(tx.id, id)
+              return
+            }
             return (
               <Chip key={id} label={tags[id].name} onDelete={null as any} />
             )

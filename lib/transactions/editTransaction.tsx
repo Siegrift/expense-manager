@@ -26,11 +26,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import uuid from 'uuid/v4'
 
 import { ObjectOf } from '../../lib/types'
-import {
-  RepeatingOption,
-  RepeatingOptions,
-  Tag
-} from '../addTransaction/state'
+import { RepeatingOption, RepeatingOptions, Tag } from '../addTransaction/state'
 import { LoadingScreen } from '../components/loading'
 import TagField from '../components/tagField'
 import { getCurrentUserId } from '../firebase/util'
@@ -38,7 +34,6 @@ import { tagsSel } from '../settings/selectors'
 import { currencies } from '../shared/currencies'
 import { useRedirectIfNotSignedIn } from '../shared/hooks'
 import { isAmountInValidFormat } from '../shared/utils'
-
 import { removeTx, saveTxEdit } from './actions'
 import { transactionByIdSel } from './selectors'
 
@@ -192,10 +187,12 @@ const EditTransaction = () => {
                 onChangeTags={(changedTags) => {
                   const ids = changedTags.map((t) => t.id)
                   setTagIds(ids)
-                  setNewTags(pick(
-                    newTags,
-                    ids.filter((id) => availableTags[id] == null),
-                  ) as ObjectOf<Tag>)
+                  setNewTags(
+                    pick(
+                      newTags,
+                      ids.filter((id) => availableTags[id] == null),
+                    ) as ObjectOf<Tag>,
+                  )
                 }}
                 onSetTagInputValue={(newValue) => setTagInputValue(newValue)}
                 inputValue={tagInputValue}
