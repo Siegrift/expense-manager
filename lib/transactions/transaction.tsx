@@ -11,12 +11,15 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
 
-import { getCurrencySymbol } from '../shared/currencies'
+import { CURRENCIES } from '../shared/currencies'
 import { State } from '../state'
 import { sortedTransactionsSel } from './selectors'
 
-const formatAmount = (amount: string, isExpense: boolean, currency: string) =>
-  `${isExpense ? '-' : '+'}${amount}${getCurrencySymbol(currency)}`
+const formatAmount = (
+  amount: string,
+  isExpense: boolean,
+  currency: keyof typeof CURRENCIES,
+) => `${isExpense ? '-' : '+'}${amount}${CURRENCIES[currency]}`
 
 const useStyles = makeStyles((theme: Theme) => ({
   listItem: {

@@ -123,7 +123,7 @@ const RecentBalance = () => {
                   {point.serieId === 'income' ? '+' : '-'}
                   {point.data.yFormatted}
                   {/* TODO: not all of amounts are euros */}
-                  {DEFAULT_CURRENCY.label}
+                  {DEFAULT_CURRENCY}
                 </strong>
               </div>
             ))}
