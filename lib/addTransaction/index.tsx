@@ -25,7 +25,7 @@ import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
 import TagField from '../components/tagField'
 import { getCurrentUserId } from '../firebase/util'
-import { currencies } from '../shared/currencies'
+import { CURRENCIES } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
 import { addTransaction } from './actions'
 import { automaticTagIdsSel } from './selectors'
@@ -203,6 +203,7 @@ const AddTransaction = () => {
           <Grid container className={classes.row}>
             <Grid item className={classes.amount}>
               <AmountField
+                currencySymbol={CURRENCIES[currency]}
                 isValidAmount={isAmountInValidFormat}
                 shouldValidateAmount={shouldValidateAmount}
                 label="Transaction amount"
@@ -218,18 +219,19 @@ const AddTransaction = () => {
 
               <TextField
                 select
-                label="Currecy"
+                label="Currency"
                 value={currency}
                 className={classes.currency}
                 onChange={(e) => {
                   // NOTE: we need to save the value, because it might not exist when the callback is called
-                  const value = e.target.value
+                  const value = (e.target
+                    .value as any) as keyof typeof CURRENCIES
                   setAddTx((currAddTx) => set(currAddTx, ['currency'], value))
                 }}
               >
-                {currencies.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                {Object.entries(CURRENCIES).map(([value, label]) => (
+                  <MenuItem key={value} value={value}>
+                    {value}
                   </MenuItem>
                 ))}
               </TextField>

@@ -1,20 +1,14 @@
 import uuid from 'uuid/v4'
 
 import { uploadToFirebase } from '../actions'
-import {
-  RepeatingOption,
-  RepeatingOptions,
-  Tag,
-  Transaction
-} from '../addTransaction/state'
+import { RepeatingOption, RepeatingOptions, Tag, Transaction } from '../addTransaction/state'
 import firebase from '../firebase/firebase'
 import { getCurrentUserId } from '../firebase/util'
 import { Action, Thunk } from '../redux/types'
-import { currencies } from '../shared/currencies'
+import { CURRENCIES } from '../shared/currencies'
 import { downloadFile, isValidDate } from '../shared/utils'
 import { State } from '../state'
 import { ObjectOf } from '../types'
-
 import { exportedCsvSel } from './selectors'
 
 export const importFromCSV = (
@@ -79,7 +73,7 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
         errorReason = `${t[1]} is not in a valid amount format`
       } else if (rawTags.length === 0) {
         errorReason = `There must be at least one tag in a transaction`
-      } else if (!currencies.find((c) => c.value === t[4])) {
+      } else if (!Object.keys(CURRENCIES).find((value) => value === t[4])) {
         errorReason = `Invalid currency of a transaction`
       } else if (
         !Object.keys(RepeatingOptions).includes(t[5] as RepeatingOption)
@@ -110,7 +104,7 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
         amount: Math.abs(amount),
         // TODO: preserve this for our exports
         transactionType: 'imported',
-        currency: t[4],
+        currency: (t[4] as any) as keyof typeof CURRENCIES,
         dateTime: dt,
         isExpense: amount < 0,
         note: t[3],
@@ -126,8 +120,7 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
       })
     }
   } catch (e) {
-    errorReason =
-      'Unknown error. Check whether the data are in correct format.'
+    errorReason = 'Unknown error. Check whether the data are in correct format.'
   }
 
   return { errorReason, txs, tags }

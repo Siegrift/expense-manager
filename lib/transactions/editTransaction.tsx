@@ -31,7 +31,7 @@ import { LoadingScreen } from '../components/loading'
 import TagField from '../components/tagField'
 import { getCurrentUserId } from '../firebase/util'
 import { tagsSel } from '../settings/selectors'
-import { currencies } from '../shared/currencies'
+import { CURRENCIES } from '../shared/currencies'
 import { useRedirectIfNotSignedIn } from '../shared/hooks'
 import { isAmountInValidFormat } from '../shared/utils'
 import { removeTx, saveTxEdit } from './actions'
@@ -235,11 +235,15 @@ const EditTransaction = () => {
                   label="Currecy"
                   value={currency}
                   className={classes.currency}
-                  onChange={(e) => setCurrency(e.target.value)}
+                  onChange={(e) =>
+                    setCurrency(
+                      (e.target.value as any) as keyof typeof CURRENCIES,
+                    )
+                  }
                 >
-                  {currencies.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                  {Object.keys(CURRENCIES).map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
                     </MenuItem>
                   ))}
                 </TextField>

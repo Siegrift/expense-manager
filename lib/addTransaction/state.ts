@@ -1,4 +1,4 @@
-import { DEFAULT_CURRENCY } from '../shared/currencies'
+import { CURRENCIES, DEFAULT_CURRENCY } from '../shared/currencies'
 import { ObjectOf } from '../types'
 
 export enum TransactionTypes {
@@ -32,7 +32,7 @@ export interface BaseTransaction {
   transactionType: TransactionType
   // NOTE: order might be important
   tagIds: string[]
-  currency: string
+  currency: keyof typeof CURRENCIES
   isExpense: boolean
   note: string
   repeating: RepeatingOption
@@ -61,7 +61,7 @@ export const createDefaultAddTransactionState = (
   amount: '',
   tagIds: initialTagIds,
   newTags: {},
-  currency: DEFAULT_CURRENCY.value,
+  currency: DEFAULT_CURRENCY,
   tagInputValue: '',
   isExpense: true,
   note: '',
