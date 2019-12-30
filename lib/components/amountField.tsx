@@ -6,9 +6,10 @@ import CancelIcon from '@material-ui/icons/Cancel'
 // TODO: replace with proper calculator icon when material ui will have it
 import CalculatorIcon from '@material-ui/icons/Functions'
 import { omit } from '@siegrift/tsfunct'
-import React, { useState } from 'react'
+import React, { Suspense, useState } from 'react'
 import NumberFormat from 'react-number-format'
-import CalculatorDialog from './calculatorDialog'
+
+const CalculatorDialog = React.lazy(() => import('./calculatorDialog'))
 
 interface AmountFieldProps {
   shouldValidateAmount: boolean
@@ -68,13 +69,15 @@ const AmountField = ({
   return (
     <>
       {showCalc && (
-        <CalculatorDialog
-          calcExpression={calcExpression}
-          setCalcExpression={setCalcExpression}
-          showCalc={showCalc}
-          setShowCalc={setShowCalc}
-          setAmount={onChange}
-        />
+        <Suspense fallback={null}>
+          <CalculatorDialog
+            calcExpression={calcExpression}
+            setCalcExpression={setCalcExpression}
+            showCalc={showCalc}
+            setShowCalc={setShowCalc}
+            setAmount={onChange}
+          />
+        </Suspense>
       )}
       <FormControl
         aria-label="amount"
