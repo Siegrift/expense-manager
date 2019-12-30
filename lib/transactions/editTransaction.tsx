@@ -210,6 +210,7 @@ const EditTransaction = () => {
                     Transaction amount
                   </InputLabel>
                   <Input
+                    inputProps={{ inputMode: 'numeric' }}
                     id="amount-id"
                     type="number"
                     placeholder="0.00"

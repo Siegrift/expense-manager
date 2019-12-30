@@ -39,6 +39,7 @@ const CalculatorDialog = ({
       <DialogTitle>Calculator</DialogTitle>
       <DialogContent>
         <TextField
+          inputProps={{ inputMode: 'numeric' }}
           fullWidth
           error={exprResult === null}
           label="Expression"

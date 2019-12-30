@@ -30,6 +30,7 @@ const MuiInput = (formatProps: any & MuiInputProps) => {
   return (
     <Input
       {...omit(formatProps, ['clearAmount', 'openCalculator'])}
+      inputProps={{ inputMode: 'numeric' }}
       id="amount-id"
       placeholder="0.00"
       value={formatProps.value}
