@@ -42,3 +42,5 @@ export const sorted = <T>(
   copy.sort(sortFn)
   return copy
 }
+
+export const formatBoolean = (value: boolean) => (value ? 'yes' : 'no')
