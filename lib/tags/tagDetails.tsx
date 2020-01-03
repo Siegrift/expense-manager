@@ -41,7 +41,7 @@ interface TagDetailsProps {
   tag: Tag
   onSave: (tag: Tag) => void
   onRemove?: () => void
-  stats: {
+  stats?: {
     totalTxs: number
     moneyInvolvedInTxs: number
     latestTransaction: Transaction | null
@@ -181,34 +181,38 @@ const TagDetails = ({
             }
           />
         </Paper>
+        {stats && (
+          <Paper
+            className={classnames(classes.paper, classes.row)}
+            style={{ flexDirection: 'column' }}
+          >
+            <Typography color="textSecondary" gutterBottom variant="subtitle1">
+              Usage stats
+            </Typography>
 
-        <Paper
-          className={classnames(classes.paper, classes.row)}
-          style={{ flexDirection: 'column' }}
-        >
-          <Typography color="textSecondary" gutterBottom variant="subtitle1">
-            Usage stats
-          </Typography>
-
-          {/* TODO: icons */}
-          <UsageStatRow label="Transaction occurences" value={stats.totalTxs} />
-          <UsageStatRow
-            label="Money involved"
-            value={stats.moneyInvolvedInTxs}
-          />
-          <UsageStatRow
-            label="In recurring transaction"
-            value={stats.isRecurring}
-          />
-          <UsageStatRow
-            label="Last used in transaction"
-            value={
-              stats.latestTransaction
-                ? format(stats.latestTransaction.dateTime, 'dd/MM/yyyy')
-                : 'never'
-            }
-          />
-        </Paper>
+            {/* TODO: icons */}
+            <UsageStatRow
+              label="Transaction occurences"
+              value={stats.totalTxs}
+            />
+            <UsageStatRow
+              label="Money involved"
+              value={stats.moneyInvolvedInTxs}
+            />
+            <UsageStatRow
+              label="In recurring transaction"
+              value={stats.isRecurring}
+            />
+            <UsageStatRow
+              label="Last used in transaction"
+              value={
+                stats.latestTransaction
+                  ? format(stats.latestTransaction.dateTime, 'dd/MM/yyyy')
+                  : 'never'
+              }
+            />
+          </Paper>
+        )}{' '}
       </div>
     </>
   )
