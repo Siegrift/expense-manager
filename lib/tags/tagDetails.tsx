@@ -54,7 +54,9 @@ const TagDetails = ({
 
   const [tagName, setTagName] = useState(tag.name)
   const [isAutotag, setIsAutotag] = useState(tag.automatic)
-  const [amount, setAmount] = useState('' + tag.defaultAmount)
+  const [amount, setAmount] = useState(
+    tag.defaultAmount ? tag.defaultAmount : '',
+  )
   const [shouldValidate, setShouldValidate] = useState({
     tagName: false,
     amount: false,
@@ -94,7 +96,10 @@ const TagDetails = ({
 
       <div className={classes.root}>
         <Paper className={classes.paper}>
+          <TextField fullWidth disabled label="Id" value={tag.id} />
+
           <TextField
+            className={classes.row}
             fullWidth
             label="Tag name"
             value={tagName}

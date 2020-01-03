@@ -87,14 +87,16 @@ const AmountField = ({
       >
         <InputLabel htmlFor="amount-id">{label}</InputLabel>
         <NumberFormat
-          prefix={`${currencySymbol} `}
+          prefix={currencySymbol && `${currencySymbol} `}
           thousandSeparator=","
           decimalScale={2}
           fixedDecimalScale
           allowNegative={false}
           value={value}
           customInput={MuiInput}
-          onValueChange={(values) => onChange(values.value)}
+          onValueChange={(values) => {
+            if (values.value !== value) onChange(values.value)
+          }}
           clearAmount={() => onChange('')}
           openCalculator={() => {
             setCalcExpression(value)
