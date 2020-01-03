@@ -1,4 +1,5 @@
 import isAfter from 'date-fns/isAfter'
+import subMonths from 'date-fns/subMonths'
 import { createSelector } from 'reselect'
 
 import { Transaction } from '../addTransaction/state'
@@ -55,6 +56,12 @@ export const latestTransactionWithTagSel = (tagId: string) =>
     })
 
     return latest
+  })
+
+export const isRecentlyUsedSel = (tagId: string) =>
+  createSelector(latestTransactionWithTagSel(tagId), (tx) => {
+    const lastMonth = subMonths(new Date(), 1)
+    return !tx || isAfter(tx.dateTime, lastMonth)
   })
 
 export const tagByIdSel = (id: string) =>

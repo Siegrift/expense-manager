@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removeFromFirebase, uploadToFirebase } from '../actions'
 import { Tag } from '../addTransaction/state'
 import {
+  isRecentlyUsedSel,
   isRecurringTagSel,
   latestTransactionWithTagSel,
   tagByIdSel,
@@ -35,6 +36,7 @@ const EditTagScreenContent = ({ tag }: EditTagScreenContentProps) => {
   const moneyInvolvedInTxs = useSelector(totalExpenseInTransactionsSel(tag.id))
   const latestTransaction = useSelector(latestTransactionWithTagSel(tag.id))
   const isRecurring = useSelector(isRecurringTagSel(tag.id))
+  const isRecentlyUsed = useSelector(isRecentlyUsedSel(tag.id))
 
   return (
     <TagDetails
@@ -45,6 +47,7 @@ const EditTagScreenContent = ({ tag }: EditTagScreenContentProps) => {
         moneyInvolvedInTxs,
         latestTransaction,
         isRecurring,
+        isRecentlyUsed,
       }}
       onSave={(modifiedTag) => dispatch(uploadToFirebase([], [modifiedTag]))}
       onRemove={() => dispatch(removeFromFirebase([], [tag.id]))}

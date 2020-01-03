@@ -2,9 +2,15 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Paper from '@material-ui/core/Paper'
 import { makeStyles, Theme } from '@material-ui/core/styles'
+import { SvgIconProps } from '@material-ui/core/SvgIcon'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import AutoIcon from '@material-ui/icons/BrightnessAuto'
+import EuroIcon from '@material-ui/icons/Euro'
+import RecentlyUsedIcon from '@material-ui/icons/EventAvailable'
+import NotRecentlyUsedIcon from '@material-ui/icons/EventBusy'
+import TotalTxsIcon from '@material-ui/icons/PostAddTwoTone'
+import RepeatOneIcon from '@material-ui/icons/RepeatOne'
 import { map } from '@siegrift/tsfunct'
 import classnames from 'classnames'
 import format from 'date-fns/format'
@@ -45,6 +51,7 @@ interface TagDetailsProps {
     totalTxs: number
     moneyInvolvedInTxs: number
     latestTransaction: Transaction | null
+    isRecentlyUsed: boolean
     isRecurring: boolean
   }
 }
@@ -56,11 +63,17 @@ const isValidDefaultAmount = (amount: string) => {
 interface UsageStatRowProps {
   label: string
   value: string | number | boolean
+  Icon: React.ComponentType<SvgIconProps>
+  iconColor?: SvgIconProps['color']
 }
 
-const UsageStatRow = ({ label, value }: UsageStatRowProps) => {
+const UsageStatRow = ({ label, value, Icon, iconColor }: UsageStatRowProps) => {
   return (
     <div style={{ display: 'flex', marginBottom: 2 }}>
+      <Icon
+        style={{ marginRight: 5, width: '0.8em' }}
+        color={iconColor || 'primary'}
+      />
       <Typography
         variant="body2"
         component="span"
@@ -102,7 +115,7 @@ const TagDetails = ({
     <>
       <AppBar
         appBarTitle={appBarTitle}
-        returnUrl={'/tags'}
+        returnUrl="/tags"
         onSave={() => {
           if (isValidDefaultAmount(amount) && tagName) {
             onSave({
@@ -190,18 +203,20 @@ const TagDetails = ({
               Usage stats
             </Typography>
 
-            {/* TODO: icons */}
             <UsageStatRow
               label="Transaction occurences"
               value={stats.totalTxs}
+              Icon={TotalTxsIcon}
             />
             <UsageStatRow
               label="Money involved"
               value={stats.moneyInvolvedInTxs}
+              Icon={EuroIcon}
             />
             <UsageStatRow
               label="In recurring transaction"
               value={stats.isRecurring}
+              Icon={RepeatOneIcon}
             />
             <UsageStatRow
               label="Last used in transaction"
@@ -210,9 +225,13 @@ const TagDetails = ({
                   ? format(stats.latestTransaction.dateTime, 'dd/MM/yyyy')
                   : 'never'
               }
+              Icon={
+                stats.isRecentlyUsed ? RecentlyUsedIcon : NotRecentlyUsedIcon
+              }
+              iconColor={stats.isRecentlyUsed ? 'primary' : 'secondary'}
             />
           </Paper>
-        )}{' '}
+        )}
       </div>
     </>
   )

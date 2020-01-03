@@ -4,22 +4,19 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import AccountBalanceIcon from '@material-ui/icons/AccountBalance'
 import AutoIcon from '@material-ui/icons/BrightnessAuto'
 import EuroIcon from '@material-ui/icons/Euro'
-import EventBusyIcon from '@material-ui/icons/EventBusy'
+import NotRecentlyUsedIcon from '@material-ui/icons/EventBusy'
+import TotalTxsIcon from '@material-ui/icons/PostAddTwoTone'
 import RepeatOneIcon from '@material-ui/icons/RepeatOne'
-import isAfter from 'date-fns/isAfter'
-import subMonths from 'date-fns/subMonths'
 import Router from 'next/router'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
 
-import { Transaction } from '../addTransaction/state'
 import {
+  isRecentlyUsedSel,
   isRecurringTagSel,
-  latestTransactionWithTagSel,
   tagFromSortedTagsByIndex,
   totalExpenseInTransactionsSel,
   totalTransactionsSel,
@@ -56,17 +53,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
-const isRecentlyUsed = (transaction: Transaction | null) => {
-  const lastMonth = subMonths(new Date(), 1)
-  return !transaction || isAfter(transaction.dateTime, lastMonth)
-}
-
 const TagItem = (props: ListChildComponentProps) => {
   const { index, style } = props
   const tag = useSelector(tagFromSortedTagsByIndex(index))
   const totalTxs = useSelector(totalTransactionsSel(tag.id))
   const totalExpenseInTxs = useSelector(totalExpenseInTransactionsSel(tag.id))
-  const latestTransaction = useSelector(latestTransactionWithTagSel(tag.id))
+  const isRecentlyUsed = useSelector(isRecentlyUsedSel(tag.id))
   const isRecurring = useSelector(isRecurringTagSel(tag.id))
   const classes = useStyles()
 
@@ -86,10 +78,10 @@ const TagItem = (props: ListChildComponentProps) => {
           }
         />
         <div className={classes.iconPanel}>
-          {tag.automatic && <AutoIcon />}
+          {tag.automatic && <AutoIcon className={classes.icon} />}
           {isRecurring && <RepeatOneIcon className={classes.icon} />}
-          {!isRecentlyUsed(latestTransaction) && (
-            <EventBusyIcon className={classes.icon} color="secondary" />
+          {!isRecentlyUsed && (
+            <NotRecentlyUsedIcon className={classes.icon} color="secondary" />
           )}
           <Badge
             className={classes.icon}
@@ -97,7 +89,7 @@ const TagItem = (props: ListChildComponentProps) => {
             max={99}
             color="primary"
           >
-            <AccountBalanceIcon />
+            <TotalTxsIcon />
           </Badge>
           <Badge
             className={classes.txsSum}

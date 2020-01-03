@@ -2,11 +2,11 @@ import FormControl from '@material-ui/core/FormControl'
 import Input from '@material-ui/core/Input'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import InputLabel from '@material-ui/core/InputLabel'
+import { useTheme } from '@material-ui/core/styles'
 import CancelIcon from '@material-ui/icons/Cancel'
-// TODO: replace with proper calculator icon when material ui will have it
-import CalculatorIcon from '@material-ui/icons/Functions'
 import { omit } from '@siegrift/tsfunct'
 import React, { Suspense, useState } from 'react'
+import { FaCalculator as CalculatorIcon } from 'react-icons/fa'
 import NumberFormat from 'react-number-format'
 
 const CalculatorDialog = React.lazy(() => import('./calculatorDialog'))
@@ -27,6 +27,8 @@ interface MuiInputProps {
 }
 
 const MuiInput = (formatProps: any & MuiInputProps) => {
+  const theme = useTheme()
+
   return (
     <Input
       {...omit(formatProps, ['clearAmount', 'openCalculator'])}
@@ -42,10 +44,12 @@ const MuiInput = (formatProps: any & MuiInputProps) => {
               onClick={formatProps.clearAmount}
               style={{
                 visibility: formatProps.value ? 'visible' : 'hidden',
+                marginRight: 2,
               }}
             />
             <CalculatorIcon
-              color="primary"
+              color={theme.palette.primary.main}
+              size={20}
               onClick={formatProps.openCalculator}
             />
           </>
