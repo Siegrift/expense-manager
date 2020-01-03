@@ -2,7 +2,6 @@ import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
 import TextField from '@material-ui/core/TextField'
 // @ts-ignore TODO: types
 import math from 'mathjs-expression-parser'
@@ -36,7 +35,6 @@ const CalculatorDialog = ({
       aria-labelledby="simple-dialog-title"
       open={showCalc}
     >
-      <DialogTitle>Calculator</DialogTitle>
       <DialogContent>
         <TextField
           inputProps={{ inputMode: 'numeric' }}

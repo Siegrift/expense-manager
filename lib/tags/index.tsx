@@ -8,7 +8,6 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
-import uuid from 'uuid/v4'
 
 import { setCurrentScreen } from '../actions'
 import { LoadingScreen } from '../components/loading'
@@ -89,7 +88,7 @@ const Transactions = () => {
           color="primary"
           aria-label="create tag"
           className={classes.createTag}
-          onClick={() => Router.push('/tags/[id]', `/tags/${uuid()}`)}
+          onClick={() => Router.push('/tags/create')}
           startIcon={<AddIcon />}
         >
           Create new tag

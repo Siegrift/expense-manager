@@ -1,9 +1,7 @@
-import AppBar from '@material-ui/core/AppBar'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import FormControl from '@material-ui/core/FormControl'
 import Grid from '@material-ui/core/Grid'
-import IconButton from '@material-ui/core/IconButton'
 import Input from '@material-ui/core/Input'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import InputLabel from '@material-ui/core/InputLabel'
@@ -12,12 +10,7 @@ import Paper from '@material-ui/core/Paper'
 import Select from '@material-ui/core/Select'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import CancelIcon from '@material-ui/icons/Cancel'
-import DeleteIcon from '@material-ui/icons/Delete'
-import DoneIcon from '@material-ui/icons/Done'
 import { DateTimePicker } from '@material-ui/pickers'
 import { pick } from '@siegrift/tsfunct'
 import Router, { useRouter } from 'next/router'
@@ -27,6 +20,7 @@ import uuid from 'uuid/v4'
 
 import { ObjectOf } from '../../lib/types'
 import { RepeatingOption, RepeatingOptions, Tag } from '../addTransaction/state'
+import AppBar from '../components/appBar'
 import { LoadingScreen } from '../components/loading'
 import TagField from '../components/tagField'
 import { getCurrentUserId } from '../firebase/util'
@@ -93,54 +87,33 @@ const EditTransaction = () => {
   } else {
     return (
       <>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="back"
-              onClick={() => Router.push('/transactions')}
-            >
-              <ArrowBackIcon />
-            </IconButton>
-            <Typography variant="h6" style={{ flexGrow: 1 }}>
-              Edit transaction
-            </Typography>
-            <IconButton
-              color="inherit"
-              onClick={() => {
-                if (isAmountInValidFormat(amount)) {
-                  dispatch(
-                    saveTxEdit(editedTxId, newTags, {
-                      amount: Number.parseFloat(amount),
-                      isExpense,
-                      note,
-                      currency,
-                      dateTime,
-                      tagIds,
-                      repeating,
-                    }),
-                  )
-                  Router.push('/transactions')
-                } else {
-                  setShouldValidate(true)
-                }
-              }}
-            >
-              <DoneIcon />
-            </IconButton>
-            <IconButton
-              color="inherit"
-              onClick={() => {
-                // TODO: confirm dialog (use different text when removing repeating tx)
-                dispatch(removeTx(editedTxId))
-                Router.push('/transactions')
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
+        <AppBar
+          returnUrl="/transaction"
+          onSave={() => {
+            if (isAmountInValidFormat(amount)) {
+              dispatch(
+                saveTxEdit(editedTxId, newTags, {
+                  amount: Number.parseFloat(amount),
+                  isExpense,
+                  note,
+                  currency,
+                  dateTime,
+                  tagIds,
+                  repeating,
+                }),
+              )
+              Router.push('/transactions')
+            } else {
+              setShouldValidate(true)
+            }
+          }}
+          onRemove={() => {
+            // TODO: confirm dialog (use different text when removing repeating tx)
+            dispatch(removeTx(editedTxId))
+            Router.push('/transactions')
+          }}
+          appBarTitle="Edit transaction"
+        />
 
         <div className={classes.root}>
           <Paper className={classes.paper}>

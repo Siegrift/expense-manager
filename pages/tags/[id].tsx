@@ -1,3 +1,3 @@
-import AddOrEditTagScreen from '../../lib/tags/addOrEditTagScreen'
+import EditTagScreen from '../../lib/tags/editTagScreen'
 
-export default AddOrEditTagScreen
+export default EditTagScreen
