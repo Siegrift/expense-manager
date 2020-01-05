@@ -53,8 +53,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
-const TagItem = (props: ListChildComponentProps) => {
-  const { index, style } = props
+const TagItem: React.FC<ListChildComponentProps> = ({ index, style }) => {
   const tag = useSelector(tagFromSortedTagsByIndex(index))
   const totalTxs = useSelector(totalTransactionsSel(tag.id))
   const totalExpenseInTxs = useSelector(totalExpenseInTransactionsSel(tag.id))

@@ -15,7 +15,12 @@ interface AppBarProps {
   appBarTitle: string
 }
 
-const AppBar = ({ returnUrl, onSave, onRemove, appBarTitle }: AppBarProps) => {
+const AppBar: React.FC<AppBarProps> = ({
+  returnUrl,
+  onSave,
+  onRemove,
+  appBarTitle,
+}) => {
   return (
     <MuiAppBar position="static">
       <Toolbar>

@@ -6,7 +6,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Grid from '@material-ui/core/Grid'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
-import Paper from '@material-ui/core/Paper'
 import Select from '@material-ui/core/Select'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Switch from '@material-ui/core/Switch'
@@ -23,6 +22,7 @@ import { State } from '../../lib/state'
 import AmountField from '../components/amountField'
 import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
+import Paper from '../components/paper'
 import TagField from '../components/tagField'
 import { getCurrentUserId } from '../firebase/util'
 import { CURRENCIES } from '../shared/currencies'
@@ -55,9 +55,6 @@ const useStyles = makeStyles((theme: Theme) =>
       alignSelf: 'stretch',
     },
     currency: { width: 105, marginLeft: theme.spacing(2) },
-    paper: {
-      padding: theme.spacing(2),
-    },
   }),
 )
 
@@ -106,7 +103,7 @@ const AddTransaction = () => {
         alignItems="center"
         className={classes.root}
       >
-        <Paper className={classes.paper}>
+        <Paper>
           <Grid container className={classes.row}>
             <ButtonGroup variant="contained" fullWidth>
               <Button

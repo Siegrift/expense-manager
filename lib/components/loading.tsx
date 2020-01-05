@@ -10,7 +10,12 @@ export interface LoadingProps {
   text?: string
 }
 
-const Loading = ({ imageStyle, text, size, textStyle }: LoadingProps) => {
+const Loading: React.FC<LoadingProps> = ({
+  imageStyle,
+  text,
+  size,
+  textStyle,
+}) => {
   return (
     <>
       <img

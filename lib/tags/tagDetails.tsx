@@ -1,6 +1,5 @@
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Paper from '@material-ui/core/Paper'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import { SvgIconProps } from '@material-ui/core/SvgIcon'
 import TextField from '@material-ui/core/TextField'
@@ -12,7 +11,7 @@ import NotRecentlyUsedIcon from '@material-ui/icons/EventBusy'
 import TotalTxsIcon from '@material-ui/icons/PostAddTwoTone'
 import RepeatOneIcon from '@material-ui/icons/RepeatOne'
 import { map } from '@siegrift/tsfunct'
-import classnames from 'classnames'
+import classNames from 'classnames'
 import format from 'date-fns/format'
 import Router from 'next/router'
 import React, { useState } from 'react'
@@ -20,6 +19,7 @@ import React, { useState } from 'react'
 import { Tag, Transaction } from '../addTransaction/state'
 import AmountField from '../components/amountField'
 import AppBar from '../components/appBar'
+import Paper from '../components/paper'
 import { formatBoolean, isAmountInValidFormat } from '../shared/utils'
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -36,9 +36,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignSelf: 'stretch',
   },
   amount: { width: '100%' },
-  paper: {
-    padding: theme.spacing(2),
-  },
   label: { width: '100%' },
 }))
 
@@ -67,7 +64,12 @@ interface UsageStatRowProps {
   iconColor?: SvgIconProps['color']
 }
 
-const UsageStatRow = ({ label, value, Icon, iconColor }: UsageStatRowProps) => {
+const UsageStatRow: React.FC<UsageStatRowProps> = ({
+  label,
+  value,
+  Icon,
+  iconColor,
+}) => {
   return (
     <div style={{ display: 'flex', marginBottom: 2 }}>
       <Icon
@@ -140,7 +142,7 @@ const TagDetails = ({
       />
 
       <div className={classes.root}>
-        <Paper className={classes.paper}>
+        <Paper>
           <TextField fullWidth disabled label="Id" value={tag.id} />
 
           <TextField
@@ -164,11 +166,11 @@ const TagDetails = ({
               setShouldValidate((obj) => ({ ...obj, amount: true }))
             }}
             label="Default transaction amount"
-            className={classnames(classes.amount, classes.row)}
+            className={classNames(classes.amount, classes.row)}
           />
 
           <FormControlLabel
-            classes={{ root: classnames(classes.row), label: classes.label }}
+            classes={{ root: classNames(classes.row), label: classes.label }}
             style={{ flex: 1, width: '100%' }}
             control={
               <Checkbox
@@ -196,13 +198,10 @@ const TagDetails = ({
         </Paper>
         {stats && (
           <Paper
-            className={classnames(classes.paper, classes.row)}
+            className={classes.row}
             style={{ flexDirection: 'column' }}
+            label="Usage stats"
           >
-            <Typography color="textSecondary" gutterBottom variant="subtitle1">
-              Usage stats
-            </Typography>
-
             <UsageStatRow
               label="Transaction occurences"
               value={stats.totalTxs}

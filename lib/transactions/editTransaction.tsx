@@ -6,7 +6,6 @@ import Input from '@material-ui/core/Input'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
-import Paper from '@material-ui/core/Paper'
 import Select from '@material-ui/core/Select'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
@@ -22,6 +21,7 @@ import { ObjectOf } from '../../lib/types'
 import { RepeatingOption, RepeatingOptions, Tag } from '../addTransaction/state'
 import AppBar from '../components/appBar'
 import { LoadingScreen } from '../components/loading'
+import Paper from '../components/paper'
 import TagField from '../components/tagField'
 import { getCurrentUserId } from '../firebase/util'
 import { tagsSel } from '../settings/selectors'
@@ -51,9 +51,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignSelf: 'stretch',
   },
   currency: { width: 105, marginLeft: theme.spacing(2) },
-  paper: {
-    padding: theme.spacing(2),
-  },
 }))
 
 const EditTransaction = () => {
@@ -116,7 +113,7 @@ const EditTransaction = () => {
         />
 
         <div className={classes.root}>
-          <Paper className={classes.paper}>
+          <Paper>
             <Grid container className={classes.row}>
               <ButtonGroup variant="contained" fullWidth>
                 <Button

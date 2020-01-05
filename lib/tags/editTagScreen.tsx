@@ -30,7 +30,7 @@ interface EditTagScreenContentProps {
   tag: Tag
 }
 
-const EditTagScreenContent = ({ tag }: EditTagScreenContentProps) => {
+const EditTagScreenContent: React.FC<EditTagScreenContentProps> = ({ tag }) => {
   const dispatch = useDispatch()
   const totalTxs = useSelector(totalTransactionsSel(tag.id))
   const moneyInvolvedInTxs = useSelector(totalExpenseInTransactionsSel(tag.id))

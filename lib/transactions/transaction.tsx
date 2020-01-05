@@ -46,8 +46,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
-const Transaction = (props: ListChildComponentProps) => {
-  const { index, style } = props
+const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
   const classes = useStyles()
   const sortedTransactions = useSelector(sortedTransactionsSel)
   const tags = useSelector((state: State) => state.tags)

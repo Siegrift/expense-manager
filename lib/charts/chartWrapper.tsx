@@ -1,7 +1,7 @@
-import Paper from '@material-ui/core/Paper'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
+import Paper from '../components/paper'
 
 const useStyles = makeStyles((theme: Theme) => ({
   chartWrapper: {

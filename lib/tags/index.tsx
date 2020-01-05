@@ -1,5 +1,4 @@
 import Button from '@material-ui/core/Button'
-import Paper from '@material-ui/core/Paper'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import AddIcon from '@material-ui/icons/Add'
@@ -12,6 +11,7 @@ import { FixedSizeList } from 'react-window'
 import { setCurrentScreen } from '../actions'
 import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
+import Paper from '../components/paper'
 import { useRedirectIfNotSignedIn } from '../shared/hooks'
 
 import { tagsSel } from './selectors'
@@ -23,10 +23,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100vw',
     display: 'flex',
     flexDirection: 'column',
-  },
-  paper: {
-    flex: 1,
-    margin: theme.spacing(2),
   },
   noTagsWrapper: {
     display: 'flex',
@@ -53,7 +49,7 @@ const Transactions = () => {
   } else {
     return (
       <div className={classes.wrapper}>
-        <Paper className={classes.paper}>
+        <Paper listContainer>
           {tagsLength === 0 ? (
             <div className={classes.noTagsWrapper}>
               <Typography

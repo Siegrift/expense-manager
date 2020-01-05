@@ -4,7 +4,6 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import InputLabel from '@material-ui/core/InputLabel'
 import { useTheme } from '@material-ui/core/styles'
 import CancelIcon from '@material-ui/icons/Cancel'
-import { omit } from '@siegrift/tsfunct'
 import React, { Suspense, useState } from 'react'
 import { FaCalculator as CalculatorIcon } from 'react-icons/fa'
 import NumberFormat from 'react-number-format'
@@ -24,33 +23,39 @@ interface AmountFieldProps {
 interface MuiInputProps {
   clearAmount: () => void
   openCalculator: () => void
+  value: string
 }
 
-const MuiInput = (formatProps: any & MuiInputProps) => {
+const MuiInput: React.FC<MuiInputProps> = ({
+  clearAmount,
+  openCalculator,
+  value,
+  ...others
+}) => {
   const theme = useTheme()
 
   return (
     <Input
-      {...omit(formatProps, ['clearAmount', 'openCalculator'])}
+      {...others}
       inputProps={{ inputMode: 'numeric' }}
       id="amount-id"
       placeholder="0.00"
-      value={formatProps.value}
+      value={value}
       endAdornment={
         <InputAdornment position="end">
           <>
             <CancelIcon
               color="primary"
-              onClick={formatProps.clearAmount}
+              onClick={clearAmount}
               style={{
-                visibility: formatProps.value ? 'visible' : 'hidden',
+                visibility: value ? 'visible' : 'hidden',
                 marginRight: 2,
               }}
             />
             <CalculatorIcon
               color={theme.palette.primary.main}
               size={20}
-              onClick={formatProps.openCalculator}
+              onClick={openCalculator}
             />
           </>
         </InputAdornment>
