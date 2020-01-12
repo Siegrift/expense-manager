@@ -1,7 +1,12 @@
 import uuid from 'uuid/v4'
 
 import { uploadToFirebase } from '../actions'
-import { RepeatingOption, RepeatingOptions, Tag, Transaction } from '../addTransaction/state'
+import {
+  RepeatingOption,
+  RepeatingOptions,
+  Tag,
+  Transaction,
+} from '../addTransaction/state'
 import firebase from '../firebase/firebase'
 import { getCurrentUserId } from '../firebase/util'
 import { Action, Thunk } from '../redux/types'
@@ -27,7 +32,7 @@ export const importFromCSV = (
 
       if (errorReason) {
         // TODO: add to state and display notification
-        console.log(errorReason)
+        console.error(errorReason)
       } else {
         // TODO: display success notification
         await dispatch(uploadToFirebase(txs, [...tags.values()]))
