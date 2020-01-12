@@ -9,6 +9,7 @@ import { FaCalculator as CalculatorIcon } from 'react-icons/fa'
 import NumberFormat from 'react-number-format'
 
 const CalculatorDialog = React.lazy(() => import('./calculatorDialog'))
+const CALC_OPEN_TRIGGERERS = ['+', '-', '/', '*']
 
 interface AmountFieldProps {
   shouldValidateAmount: boolean
@@ -113,8 +114,15 @@ const AmountField = ({
             setShowCalc(true)
           }}
           onKeyDown={(e) => {
-            if (['+', '-', '/', '*'].includes(e.key)) {
-              setCalcExpression(value + e.key)
+            const key = e.key
+            if (CALC_OPEN_TRIGGERERS.includes(key)) {
+              setCalcExpression((expr) => {
+                if (CALC_OPEN_TRIGGERERS.includes(expr[expr.length - 1])) {
+                  return value
+                } else {
+                  return value + key
+                }
+              })
               setShowCalc(true)
             }
           }}

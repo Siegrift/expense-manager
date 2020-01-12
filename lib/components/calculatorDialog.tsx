@@ -33,6 +33,7 @@ const CalculatorDialog = ({
     <Dialog
       onClose={() => setShowCalc(false)}
       aria-labelledby="simple-dialog-title"
+      disableEnforceFocus
       open={showCalc}
     >
       <DialogContent>
