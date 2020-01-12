@@ -1,9 +1,9 @@
-import React from 'react'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import classnames from 'classnames'
 import { difference } from 'lodash'
+import React from 'react'
 import { Tag } from '../addTransaction/state'
 import { ObjectOf } from '../types'
 
@@ -19,8 +19,8 @@ export interface TagFieldProps {
   inputValue: string
   currentTagIds: string[]
   onSelectTag: (tagId: string) => void
-  // TODO: currently there is no way to create a tag with autocomplete
-  // https://github.com/mui-org/material-ui/issues/19199
+  // TODO: currently there is no way to issue a label for creating a new tag, but it's
+  // being discussed in https://github.com/mui-org/material-ui/issues/18985
   onCreateTag: (tagName: string) => void
   onSetTagInputValue: (tagName: string) => void
   onRemoveTags: (tagIds: string[]) => void
@@ -44,6 +44,7 @@ const TagField = ({
         multiple
         size="small"
         autoComplete
+        freeSolo
         clearOnEscape
         autoHighlight
         options={Object.values(tags)}
@@ -60,13 +61,19 @@ const TagField = ({
         }}
         includeInputInList
         filterSelectedOptions={false}
-        onChange={(_, values: Tag[]) => {
+        // if a new tag is created it will be appended as a string to the end of the array
+        onChange={(_, values: Array<Tag | string>) => {
           if (currentTagIds.length < values.length) {
-            onSelectTag(values[values.length - 1].id)
+            const added = values[values.length - 1]
+            if (typeof added === 'string') {
+              onCreateTag(added)
+            } else {
+              onSelectTag(added.id)
+            }
           } else {
             const removed = difference(
               currentTagIds,
-              values.map((v) => v.id),
+              values.map((v) => (v as Tag).id),
             )
             if (removed.length) onRemoveTags(removed)
           }

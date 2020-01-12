@@ -93,6 +93,7 @@ const AmountField = ({
         aria-label="amount"
         error={shouldValidateAmount && !isValidAmount(value)}
         className={className}
+        style={{ flex: 1 }}
       >
         <InputLabel htmlFor="amount-id">{label}</InputLabel>
         <NumberFormat
