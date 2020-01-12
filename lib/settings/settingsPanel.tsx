@@ -1,18 +1,16 @@
 import ExpansionPanel from '@material-ui/core/ExpansionPanel'
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import { makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import React from 'react'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    importExportContent: {
-      flexDirection: 'column',
-    },
-  }),
-)
+const useStyles = makeStyles((theme: Theme) => ({
+  importExportContent: {
+    flexDirection: 'column',
+  },
+}))
 
 export interface SettingsPanelProps {
   name: string

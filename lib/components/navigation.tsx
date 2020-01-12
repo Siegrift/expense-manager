@@ -1,4 +1,4 @@
-import { createStyles, makeStyles, Theme } from '@material-ui/core'
+import { makeStyles, Theme } from '@material-ui/core'
 import BottomNavigation from '@material-ui/core/BottomNavigation'
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction'
 import { SvgIconProps } from '@material-ui/core/SvgIcon'
@@ -14,19 +14,17 @@ import { setCurrentScreen } from '../actions'
 import { redirectTo } from '../shared/utils'
 import { ScreenTitle, State } from '../state'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    bottomNav: {
-      // hide bottom navigation when keyboard is up
-      ['@media (max-height:500px)']: {
-        display: 'none',
-      },
-      width: '100%',
-      position: 'fixed',
-      bottom: 0,
+const useStyles = makeStyles((theme: Theme) => ({
+  bottomNav: {
+    // hide bottom navigation when keyboard is up
+    ['@media (max-height:500px)']: {
+      display: 'none',
     },
-  }),
-)
+    width: '100%',
+    position: 'fixed',
+    bottom: 0,
+  },
+}))
 
 interface NavigationItem {
   screen: ScreenTitle
