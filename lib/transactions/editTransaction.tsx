@@ -12,6 +12,7 @@ import TextField from '@material-ui/core/TextField'
 import CancelIcon from '@material-ui/icons/Cancel'
 import { DateTimePicker } from '@material-ui/pickers'
 import { pick } from '@siegrift/tsfunct'
+import { difference } from 'lodash'
 import Router, { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -85,7 +86,7 @@ const EditTransaction = () => {
     return (
       <>
         <AppBar
-          returnUrl="/transaction"
+          returnUrl="/transactions"
           onSave={() => {
             if (isAmountInValidFormat(amount)) {
               dispatch(
@@ -135,11 +136,9 @@ const EditTransaction = () => {
 
             <Grid className={classes.row}>
               <TagField
-                placeholder="Transaction tags..."
                 className={classes.chipField}
-                availableTags={availableTags}
-                newTags={newTags}
-                onSelectExistingTag={(id) => setTagIds([...tagIds, id])}
+                tags={{ ...availableTags, ...newTags }}
+                onSelectTag={(id) => setTagIds([...tagIds, id])}
                 onCreateTag={(label) => {
                   const id = uuid()
                   setNewTags({
@@ -153,15 +152,14 @@ const EditTransaction = () => {
                   })
                   setTagIds([...tagIds, id])
                 }}
-                onClearInputValue={() => setTagInputValue('')}
-                onChangeTags={(changedTags) => {
-                  const ids = changedTags.map((t) => t.id)
+                onRemoveTags={(removeTagIds) => {
+                  const ids = difference(tagIds, removeTagIds)
                   setTagIds(ids)
                   setNewTags(
                     pick(
                       newTags,
                       ids.filter((id) => availableTags[id] == null),
-                    ) as ObjectOf<Tag>,
+                    ),
                   )
                 }}
                 onSetTagInputValue={(newValue) => setTagInputValue(newValue)}
