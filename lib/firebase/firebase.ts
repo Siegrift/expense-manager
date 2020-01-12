@@ -34,12 +34,12 @@ export const initializeFirebase = async (store: Store) => {
           // Multiple tabs open, persistence can only be enabled
           // in one tab at a a time.
           // ...
-          console.log(err)
+          console.error(err)
         } else if (err.code === 'unimplemented') {
           // The current browser does not support all of the
           // features required to enable persistence
           // ...
-          console.log(err)
+          console.error(err)
         }
       })
   }

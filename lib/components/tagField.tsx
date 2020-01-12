@@ -1,100 +1,84 @@
 import React from 'react'
-import { ComponentProps } from 'react'
-import Select from 'react-select'
-import makeAnimated from 'react-select/animated'
-
+import { makeStyles, Theme } from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField'
+import Autocomplete from '@material-ui/lab/Autocomplete'
+import classnames from 'classnames'
+import { difference } from 'lodash'
 import { Tag } from '../addTransaction/state'
 import { ObjectOf } from '../types'
 
-const animatedComponents = makeAnimated()
-
-interface InternalSelectTag {
-  value: string
-  label: string
-  tagId: string
-}
-
-const convertTagToReactSelectTag = (tag: Tag): InternalSelectTag => ({
-  value: tag.name,
-  label: tag.name,
-  tagId: tag.id,
-})
-
-const convertReactSelectTagToTag = (
-  allTags: ObjectOf<Tag>,
-  tag: InternalSelectTag,
-): Tag => allTags[tag.tagId]
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    width: '100%',
+  },
+}))
 
 export interface TagFieldProps {
-  placeholder: string
-  availableTags: ObjectOf<Tag>
-  newTags: ObjectOf<Tag>
+  tags: ObjectOf<Tag>
   className?: string
   inputValue: string
   currentTagIds: string[]
-  onSelectExistingTag: (tagId: string) => void
+  onSelectTag: (tagId: string) => void
+  // TODO: currently there is no way to create a tag with autocomplete
+  // https://github.com/mui-org/material-ui/issues/19199
   onCreateTag: (tagName: string) => void
-  onClearInputValue: () => void
   onSetTagInputValue: (tagName: string) => void
-  onChangeTags: (tags: Tag[]) => void
-  other?: Partial<ComponentProps<typeof Select>>
+  onRemoveTags: (tagIds: string[]) => void
 }
 
 const TagField = ({
-  placeholder,
-  newTags,
-  availableTags,
+  tags,
   className,
   inputValue,
   currentTagIds,
-  onSelectExistingTag,
+  onSelectTag,
   onCreateTag,
-  onClearInputValue,
   onSetTagInputValue,
-  onChangeTags,
-  other,
+  onRemoveTags,
 }: TagFieldProps) => {
-  const availableTagsArr = Object.values(availableTags)
-  const allTags = { ...availableTags, ...newTags }
+  const classes = useStyles()
 
   return (
-    <Select
-      closeMenuOnSelect={false}
-      components={animatedComponents}
-      placeholder={placeholder}
-      isMulti
-      options={availableTagsArr.map((t) => convertTagToReactSelectTag(t))}
-      className={className}
-      onKeyDown={(e) => {
-        switch (e.key) {
-          case 'Enter':
-          case 'Tab':
-            const found = availableTagsArr.find(
-              (tag) => tag.name === inputValue,
+    <div className={classnames(classes.root, className)}>
+      <Autocomplete
+        multiple
+        size="small"
+        autoComplete
+        clearOnEscape
+        autoHighlight
+        options={Object.values(tags)}
+        getOptionLabel={(option: Tag) => option.name}
+        renderInput={(params) => {
+          return (
+            <TextField
+              {...params}
+              variant="outlined"
+              label="Transaction tags"
+              fullWidth
+            />
+          )
+        }}
+        includeInputInList
+        filterSelectedOptions={false}
+        onChange={(_, values: Tag[]) => {
+          if (currentTagIds.length < values.length) {
+            onSelectTag(values[values.length - 1].id)
+          } else {
+            const removed = difference(
+              currentTagIds,
+              values.map((v) => v.id),
             )
-            if (found) {
-              onSelectExistingTag(found.id)
-            } else {
-              onCreateTag(inputValue)
-            }
-            onClearInputValue()
-            e.preventDefault()
-        }
-      }}
-      onChange={(changedTags: any) =>
-        onChangeTags(
-          changedTags === null
-            ? []
-            : (changedTags as InternalSelectTag[]).map((t) =>
-                convertReactSelectTagToTag(allTags, t),
-              ),
-        )
-      }
-      onInputChange={(newValue) => onSetTagInputValue(newValue)}
-      inputValue={inputValue}
-      value={currentTagIds.map((id) => convertTagToReactSelectTag(allTags[id]))}
-      {...other}
-    />
+            if (removed.length) onRemoveTags(removed)
+          }
+        }}
+        onInputChange={(event, value) => {
+          // TODO: for some reason this callback fires with null event and resets input value
+          if (event != null) onSetTagInputValue(value)
+        }}
+        inputValue={inputValue}
+        value={currentTagIds.map((t) => tags[t])}
+      />
+    </div>
   )
 }
 

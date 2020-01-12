@@ -12,13 +12,13 @@ import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
 import { DateTimePicker } from '@material-ui/pickers'
 import { pick, set, update } from '@siegrift/tsfunct'
+import { difference } from 'lodash'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import uuid from 'uuid/v4'
 
 import { setCurrentScreen } from '../../lib/actions'
 import { useRedirectIfNotSignedIn } from '../../lib/shared/hooks'
-import { State } from '../../lib/state'
 import AmountField from '../components/amountField'
 import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
@@ -28,7 +28,7 @@ import { getCurrentUserId } from '../firebase/util'
 import { CURRENCIES } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
 import { addTransaction } from './actions'
-import { automaticTagIdsSel } from './selectors'
+import { automaticTagIdsSel, tagsSel } from './selectors'
 import {
   AddTransaction as AddTransactionType,
   createDefaultAddTransactionState,
@@ -90,7 +90,8 @@ const AddTransaction = () => {
     shouldValidateAmount,
   } = addTx
 
-  const tags = useSelector((state: State) => state.tags)
+  const tags = useSelector(tagsSel)
+  const allTags = { ...tags, ...newTags }
 
   if (useRedirectIfNotSignedIn() !== 'loggedIn') {
     return <LoadingScreen />
@@ -129,32 +130,24 @@ const AddTransaction = () => {
 
           <Grid className={classes.row}>
             <TagField
-              placeholder="Transaction tags..."
-              availableTags={tags}
-              newTags={newTags}
-              className={classes.chipField}
-              onSelectExistingTag={(id) => {
+              tags={allTags}
+              onSelectTag={(id: any) => {
                 setAddTx((currAddTx) => {
-                  const newAddTx = update(currAddTx, ['tagIds'], (ids) =>
-                    // TODO: why we need this check?
-                    ids.includes(id) ? ids : [...ids, id],
-                  )
+                  // TODO: next tsfunct feature (lenses, to chain)
+                  const newAddTx = update(currAddTx, ['tagIds'], (ids) => [
+                    ...ids,
+                    id,
+                  ])
+
                   return update(newAddTx, ['amount'], (am) =>
                     maybeApplyDefaultAmount(
-                      newAddTx.tagIds.map((i) => tags[i]),
+                      newAddTx.tagIds.map((i) => allTags[i]),
                       am,
                     ),
                   )
                 })
               }}
-              onClearInputValue={() =>
-                setAddTx((currAddTx) => set(currAddTx, ['tagInputValue'], ''))
-              }
-              onCreateTag={(tagName) => {
-                if (tagName === '') {
-                  return
-                }
-
+              onCreateTag={(tagName: any) => {
                 const id = uuid()
                 setAddTx((currAddTx) => ({
                   ...currAddTx,
@@ -172,26 +165,25 @@ const AddTransaction = () => {
                   tagInputValue: '',
                 }))
               }}
-              onChangeTags={(changedTags) => {
-                const changedTagIds = changedTags.map((t) => t.id)
+              onSetTagInputValue={(newValue: any) => {
+                setAddTx((currAddTx) =>
+                  set(currAddTx, ['tagInputValue'], newValue),
+                )
+              }}
+              onRemoveTags={(removedTagIds) => {
                 setAddTx((currAddTx) => ({
                   ...currAddTx,
-                  tagIds: changedTagIds,
+                  tagIds: difference(currAddTx.tagIds, removedTagIds),
                   newTags: pick(
                     currAddTx.newTags,
-                    changedTagIds.filter((t) => !tags.hasOwnProperty(t)),
+                    removedTagIds.filter((t) => !tags.hasOwnProperty(t)),
                   ),
                   amount: maybeApplyDefaultAmount(
-                    changedTagIds.map((id) => tags[id]),
+                    removedTagIds.map((id) => tags[id]),
                     currAddTx.amount,
                   ),
                 }))
               }}
-              onSetTagInputValue={(newValue) =>
-                setAddTx((currAddTx) =>
-                  set(currAddTx, ['tagInputValue'], newValue),
-                )
-              }
               inputValue={tagInputValue}
               currentTagIds={tagIds}
             />
