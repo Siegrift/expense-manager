@@ -15,13 +15,6 @@ import Settings from './index'
 jest.mock('../firebase/firebase', () => initializeMockFirebase())
 
 describe('settings', () => {
-  test('shows loading page', () => {
-    const comp = mount(
-      reduxify(Settings, configureTestStore(getInitialState())),
-    )
-    expect(comp.html()).toMatchSnapshot()
-  })
-
   describe('logged in', () => {
     let state: State
     let store: Store
@@ -35,11 +28,6 @@ describe('settings', () => {
       firebase.auth().currentUser = {
         uid: 'userId',
       } as firebase.User
-    })
-
-    test('shows settings page', () => {
-      const comp = mount(reduxify(Settings, store))
-      expect(comp.html()).toMatchSnapshot()
     })
 
     test('signs out', () => {

@@ -6,13 +6,6 @@ import { getInitialState } from '../state'
 import { byAriaLabel, configureTestStore, reduxify } from '../testing'
 
 describe('add transaction', () => {
-  test('shows loading page', () => {
-    const comp = mount(
-      reduxify(AddTransaction, configureTestStore(getInitialState())),
-    )
-    expect(comp.html()).toMatchSnapshot()
-  })
-
   describe('logged in', () => {
     let mockedDate
     let store: ReturnType<typeof configureTestStore>
@@ -32,21 +25,7 @@ describe('add transaction', () => {
       mockdate.reset()
     })
 
-    test('shows add transaction page', () => {
-      comp = mount(reduxify(AddTransaction, store))
-      expect(comp.html()).toMatchSnapshot()
-    })
-
     describe('amount validation', () => {
-      test('not validated initially', () => {
-        expect(
-          comp
-            .find(byAriaLabel('amount'))
-            .hostNodes()
-            .html(),
-        ).toMatchSnapshot()
-      })
-
       test("doesn't allow to submit with invalid amount", () => {
         comp
           .find(byAriaLabel('add transaction'))
