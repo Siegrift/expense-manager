@@ -47,16 +47,16 @@ const Navigation = () => {
   return (
     <BottomNavigation
       value={currentScreen}
-      onChange={(event, newValue) => {
-        dispatch(setCurrentScreen(newValue))
-      }}
       showLabels
       className={classes.bottomNav}
     >
       {navigationItems.map(({ screen, Icon }) => (
         // NOTE: BottomNavigationAction must be a direct child of BottomNavigation
         <BottomNavigationAction
-          onClick={() => redirectTo(`/${screen}`)}
+          onClick={() => {
+            redirectTo(`/${screen}`)
+            dispatch(setCurrentScreen(screen))
+          }}
           label={screen}
           value={screen}
           icon={<Icon />}

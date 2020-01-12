@@ -4,11 +4,10 @@ import Typography from '@material-ui/core/Typography'
 import AddIcon from '@material-ui/icons/Add'
 import Router from 'next/router'
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 
-import { setCurrentScreen } from '../actions'
 import Navigation from '../components/navigation'
 import Paper from '../components/paper'
 import withSignedUser from '../hoc/withSignedUser'
@@ -38,10 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Transactions = () => {
   const tagsLength = Object.values(useSelector(tagsSel)).length
-  const dispatch = useDispatch()
   const classes = useStyles()
-
-  dispatch(setCurrentScreen('tags'))
 
   return (
     <div className={classes.wrapper}>

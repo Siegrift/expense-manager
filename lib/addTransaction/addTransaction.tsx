@@ -17,7 +17,6 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import uuid from 'uuid/v4'
 
-import { setCurrentScreen } from '../../lib/actions'
 import AmountField from '../components/amountField'
 import Navigation from '../components/navigation'
 import Paper from '../components/paper'
@@ -66,8 +65,6 @@ const maybeApplyDefaultAmount = (tags: Tag[], amount: string) => {
 const AddTransaction = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
-
-  dispatch(setCurrentScreen('add'))
 
   const automaticTagIds = useSelector(automaticTagIdsSel)
   const [addTx, setAddTx] = useState(

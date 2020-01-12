@@ -3,7 +3,6 @@ import { makeStyles, Theme } from '@material-ui/core/styles'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 
-import { setCurrentScreen } from '../actions'
 import Navigation from '../components/navigation'
 import firebase from '../firebase/firebase'
 import withSignedUser from '../hoc/withSignedUser'
@@ -28,8 +27,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 const Settings = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
-
-  dispatch(setCurrentScreen('settings'))
 
   return (
     <>

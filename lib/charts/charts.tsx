@@ -1,9 +1,7 @@
 import Grid from '@material-ui/core/Grid'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import React from 'react'
-import { useDispatch } from 'react-redux'
 
-import { setCurrentScreen } from '../actions'
 import Navigation from '../components/navigation'
 import withSignedUser from '../hoc/withSignedUser'
 
@@ -24,10 +22,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 const Charts = () => {
-  const dispatch = useDispatch()
   const classes = useStyles()
-
-  dispatch(setCurrentScreen('charts'))
 
   return (
     <>
