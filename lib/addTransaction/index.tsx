@@ -179,7 +179,7 @@ const AddTransaction = () => {
                     removedTagIds.filter((t) => !tags.hasOwnProperty(t)),
                   ),
                   amount: maybeApplyDefaultAmount(
-                    removedTagIds.map((id) => tags[id]),
+                    removedTagIds.map((id) => allTags[id]),
                     currAddTx.amount,
                   ),
                 }))
