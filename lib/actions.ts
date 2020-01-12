@@ -4,7 +4,7 @@ import addMonths from 'date-fns/addMonths'
 import addWeeks from 'date-fns/addWeeks'
 import addYears from 'date-fns/addYears'
 import isBefore from 'date-fns/isBefore'
-import { chunk } from 'lodash'
+import chunk from 'lodash/chunk'
 import uuid from 'uuid/v4'
 
 import { Tag, Transaction } from './addTransaction/state'

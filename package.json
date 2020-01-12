@@ -15,7 +15,8 @@
     "test": "yarn jest",
     "test:coverage": "jest --coverage",
     "test:update-snapshots": "jest --updateSnapshot",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "analyze": "cross-env ANALYZE=true next build"
   },
   "husky": {
     "hooks": {
@@ -61,6 +62,7 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^9.1.7",
     "@types/classnames": "^2.2.9",
     "@types/enzyme": "^3.10.4",
     "@types/jest": "^24.0.25",
@@ -77,6 +79,7 @@
     "@types/react-window": "^1.8.1",
     "@types/redux-logger": "^3.0.7",
     "@types/uuid": "^3.4.6",
+    "cross-env": "^6.0.3",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
     "enzyme-to-json": "^3.4.3",

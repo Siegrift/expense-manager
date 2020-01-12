@@ -1,4 +1,4 @@
-import { keyBy } from 'lodash'
+import keyBy from 'lodash/keyBy'
 
 import { getInitialState, State } from '../state'
 import { initializeMockFirebase } from '../testing'
@@ -63,7 +63,9 @@ describe('settings actions', () => {
       })
 
       test('creates new tags and txs', () => {
-        state.tags = { id1: { id: 'id1', name: 'Travel', uid: 'user_id' } }
+        state.tags = {
+          id1: { id: 'id1', name: 'Travel', uid: 'user_id', automatic: false },
+        }
         const csv1 =
           '2017-08-19T00:00:00Z,-1,Travel|Tickets,,EUR,none\n2017-08-16T00:00:00Z,-0.7,Shopping,,EUR,annually'
         const csv2 = '2016-02-16T00:00:00Z,-1.56,A|B|C,,EUR,monthly'
@@ -74,7 +76,9 @@ describe('settings actions', () => {
       })
 
       test('exporting imported txs yields identity', () => {
-        state.tags = { id1: { id: 'id1', name: 'Travel', uid: 'user_id' } }
+        state.tags = {
+          id1: { id: 'id1', name: 'Travel', uid: 'user_id', automatic: false },
+        }
         const csv =
           '2017-08-19T00:00:00.000Z,-1,Travel|Tickets,,EUR,none\n2017-08-16T00:00:00.000Z,-0.7,Shopping,,EUR,monthly'
 

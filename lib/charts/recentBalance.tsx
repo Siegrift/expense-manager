@@ -3,7 +3,7 @@ import { update } from '@siegrift/tsfunct'
 import format from 'date-fns/format'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import subDays from 'date-fns/subDays'
-import { range } from 'lodash'
+import range from 'lodash/range'
 import { useSelector } from 'react-redux'
 
 import { DEFAULT_CURRENCY } from '../shared/currencies'

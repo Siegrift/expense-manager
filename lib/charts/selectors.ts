@@ -1,4 +1,6 @@
-import { filter, map, reduce } from 'lodash'
+import filter from 'lodash/filter'
+import map from 'lodash/map'
+import reduce from 'lodash/reduce'
 import { createSelector } from 'reselect'
 
 import { sorted } from '../shared/utils'

@@ -1,7 +1,7 @@
 // TODO: fix this
 // @ts-ignore
 import { ResponsiveSunburst } from '@nivo/sunburst'
-import { reduce } from 'lodash'
+import reduce from 'lodash/reduce'
 import { useSelector } from 'react-redux'
 
 import { Transaction } from '../addTransaction/state'
