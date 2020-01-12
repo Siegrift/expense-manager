@@ -1,19 +1,19 @@
 import Typography from '@material-ui/core/Typography'
 import Router from 'next/router'
 import GoogleButton from 'react-google-button'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { LoadingScreen } from './loading'
 
 import AddTransaction from '../../pages/add'
 import { authChangeAction } from '../firebase/actions'
 import { signIn } from '../firebase/util'
 import { PROJECT_TITLE } from '../shared/constants'
-import { useRedirectIfNotSignedIn } from '../shared/hooks'
-
-import { LoadingScreen } from './loading'
+import { State } from '../state'
 
 const Login = () => {
   const dispatch = useDispatch()
-  const signInStatus = useRedirectIfNotSignedIn()
+  const signInStatus = useSelector((state: State) => state.signInStatus)
   switch (signInStatus) {
     case 'loggedIn':
       Router.push('/add')

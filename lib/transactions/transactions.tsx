@@ -6,10 +6,9 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 
 import { setCurrentScreen } from '../actions'
-import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
 import Paper from '../components/paper'
-import { useRedirectIfNotSignedIn } from '../shared/hooks'
+import WithSignedUser from '../components/withSignedUser'
 import { State } from '../state'
 
 import Transaction from './transaction'
@@ -37,10 +36,8 @@ const Transactions = () => {
 
   dispatch(setCurrentScreen('transactions'))
 
-  if (useRedirectIfNotSignedIn() !== 'loggedIn') {
-    return <LoadingScreen />
-  } else {
-    return (
+  return (
+    <WithSignedUser>
       <div className={classes.wrapper}>
         <Paper listContainer>
           {Object.keys(transactions).length === 0 ? (
@@ -73,8 +70,8 @@ const Transactions = () => {
         </Paper>
         <Navigation />
       </div>
-    )
-  }
+    </WithSignedUser>
+  )
 }
 
 export default Transactions

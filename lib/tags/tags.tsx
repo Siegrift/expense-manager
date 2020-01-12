@@ -9,10 +9,9 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 
 import { setCurrentScreen } from '../actions'
-import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
 import Paper from '../components/paper'
-import { useRedirectIfNotSignedIn } from '../shared/hooks'
+import WithSignedUser from '../components/withSignedUser'
 
 import { tagsSel } from './selectors'
 import TagItem from './tagItem'
@@ -44,10 +43,8 @@ const Transactions = () => {
 
   dispatch(setCurrentScreen('tags'))
 
-  if (useRedirectIfNotSignedIn() !== 'loggedIn') {
-    return <LoadingScreen />
-  } else {
-    return (
+  return (
+    <WithSignedUser>
       <div className={classes.wrapper}>
         <Paper listContainer>
           {tagsLength === 0 ? (
@@ -91,8 +88,8 @@ const Transactions = () => {
         </Button>
         <Navigation />
       </div>
-    )
-  }
+    </WithSignedUser>
+  )
 }
 
 export default Transactions
