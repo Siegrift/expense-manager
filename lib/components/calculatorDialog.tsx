@@ -37,6 +37,7 @@ const CalculatorDialog = ({
     >
       <DialogContent>
         <TextField
+          autoFocus
           inputProps={{ inputMode: 'numeric' }}
           fullWidth
           error={exprResult === null}

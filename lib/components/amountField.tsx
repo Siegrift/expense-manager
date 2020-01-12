@@ -112,6 +112,12 @@ const AmountField = ({
             setCalcExpression(value)
             setShowCalc(true)
           }}
+          onKeyDown={(e) => {
+            if (['+', '-', '/', '*'].includes(e.key)) {
+              setCalcExpression(value + e.key)
+              setShowCalc(true)
+            }
+          }}
         />
       </FormControl>
     </>
