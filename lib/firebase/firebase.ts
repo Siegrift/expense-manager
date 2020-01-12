@@ -7,7 +7,17 @@ import { Store } from 'redux'
 
 import { authChangeAction } from './actions'
 
-const firebaseConfig = {
+const firebaseDevConfig = {
+  apiKey: 'AIzaSyAFgtVKyy1iSHdE_44ijLyCQYW_KLEjbS0',
+  authDomain: 'expense-manager-dev-59ddb.firebaseapp.com',
+  databaseURL: 'https://expense-manager-dev-59ddb.firebaseio.com',
+  projectId: 'expense-manager-dev-59ddb',
+  storageBucket: 'expense-manager-dev-59ddb.appspot.com',
+  messagingSenderId: '1006392817344',
+  appId: '1:1006392817344:web:80409f3801b21248e2df25',
+}
+
+const firebaseProdConfig = {
   apiKey: 'AIzaSyBSskq5HfVggNz65zJoJaieWxkBCzxqHcM',
   authDomain: 'expense-manager-pwa.firebaseapp.com',
   databaseURL: 'https://expense-manager-pwa.firebaseio.com',
@@ -16,6 +26,11 @@ const firebaseConfig = {
   messagingSenderId: '163758023183',
   appId: '1:163758023183:web:522028afd5102881',
 }
+
+const firebaseConfig =
+  process.env.NODE_ENV === 'development'
+    ? firebaseDevConfig
+    : firebaseProdConfig
 
 export const initializeFirebase = async (store: Store) => {
   // firebase can be initialized only once, but crashes on hot update
