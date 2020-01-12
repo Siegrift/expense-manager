@@ -10,18 +10,16 @@ import TagDetails from './tagDetails'
 const CreateTagScreen = () => {
   const dispatch = useDispatch()
 
-  const initialTag = {
-    uid: getCurrentUserId(),
-    id: uuid(),
-    automatic: false,
-    name: '',
-  }
-
   return (
     <WithSignedUser>
       <TagDetails
         appBarTitle="Create new tag"
-        tag={initialTag}
+        tag={{
+          uid: getCurrentUserId(),
+          id: uuid(),
+          automatic: false,
+          name: '',
+        }}
         onSave={(tag) => dispatch(uploadToFirebase([], [tag]))}
       />
     </WithSignedUser>
