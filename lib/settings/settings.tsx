@@ -5,8 +5,8 @@ import { useDispatch } from 'react-redux'
 
 import { setCurrentScreen } from '../actions'
 import Navigation from '../components/navigation'
-import WithSignedUser from '../components/withSignedUser'
 import firebase from '../firebase/firebase'
+import withSignedUser from '../hoc/withSignedUser'
 
 import { clearAllData, exportToCSV, importFromCSV } from './actions'
 import SettingsPanel from './settingsPanel'
@@ -32,7 +32,7 @@ const Settings = () => {
   dispatch(setCurrentScreen('settings'))
 
   return (
-    <WithSignedUser>
+    <>
       <Navigation />
       <div className={classes.root}>
         settings
@@ -83,8 +83,8 @@ const Settings = () => {
           </Button>
         </SettingsPanel>
       </div>
-    </WithSignedUser>
+    </>
   )
 }
 
-export default Settings
+export default withSignedUser(Settings)

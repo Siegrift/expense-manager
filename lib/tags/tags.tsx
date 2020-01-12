@@ -11,7 +11,7 @@ import { FixedSizeList } from 'react-window'
 import { setCurrentScreen } from '../actions'
 import Navigation from '../components/navigation'
 import Paper from '../components/paper'
-import WithSignedUser from '../components/withSignedUser'
+import withSignedUser from '../hoc/withSignedUser'
 
 import { tagsSel } from './selectors'
 import TagItem from './tagItem'
@@ -44,52 +44,50 @@ const Transactions = () => {
   dispatch(setCurrentScreen('tags'))
 
   return (
-    <WithSignedUser>
-      <div className={classes.wrapper}>
-        <Paper listContainer>
-          {tagsLength === 0 ? (
-            <div className={classes.noTagsWrapper}>
-              <Typography
-                variant="overline"
-                display="block"
-                gutterBottom
-                className={classes.noTransactions}
-              >
-                You have no tags...
-              </Typography>
-            </div>
-          ) : (
-            <AutoSizer>
-              {({ height, width }) => {
-                return (
-                  <FixedSizeList
-                    height={height}
-                    width={width}
-                    itemSize={60}
-                    itemCount={tagsLength}
-                  >
-                    {TagItem}
-                  </FixedSizeList>
-                )
-              }}
-            </AutoSizer>
-          )}
-        </Paper>
+    <div className={classes.wrapper}>
+      <Paper listContainer>
+        {tagsLength === 0 ? (
+          <div className={classes.noTagsWrapper}>
+            <Typography
+              variant="overline"
+              display="block"
+              gutterBottom
+              className={classes.noTransactions}
+            >
+              You have no tags...
+            </Typography>
+          </div>
+        ) : (
+          <AutoSizer>
+            {({ height, width }) => {
+              return (
+                <FixedSizeList
+                  height={height}
+                  width={width}
+                  itemSize={60}
+                  itemCount={tagsLength}
+                >
+                  {TagItem}
+                </FixedSizeList>
+              )
+            }}
+          </AutoSizer>
+        )}
+      </Paper>
 
-        <Button
-          variant="contained"
-          color="primary"
-          aria-label="create tag"
-          className={classes.createTag}
-          onClick={() => Router.push('/tags/create')}
-          startIcon={<AddIcon />}
-        >
-          Create new tag
-        </Button>
-        <Navigation />
-      </div>
-    </WithSignedUser>
+      <Button
+        variant="contained"
+        color="primary"
+        aria-label="create tag"
+        className={classes.createTag}
+        onClick={() => Router.push('/tags/create')}
+        startIcon={<AddIcon />}
+      >
+        Create new tag
+      </Button>
+      <Navigation />
+    </div>
   )
 }
 
-export default Transactions
+export default withSignedUser(Transactions)

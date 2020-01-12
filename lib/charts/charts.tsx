@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 
 import { setCurrentScreen } from '../actions'
 import Navigation from '../components/navigation'
-import WithSignedUser from '../components/withSignedUser'
+import withSignedUser from '../hoc/withSignedUser'
 
 import AllTransactions from './allTransactions'
 import ChartWrapper from './chartWrapper'
@@ -30,7 +30,7 @@ const Charts = () => {
   dispatch(setCurrentScreen('charts'))
 
   return (
-    <WithSignedUser>
+    <>
       <Grid
         container
         direction="column"
@@ -51,8 +51,8 @@ const Charts = () => {
         </ChartWrapper>
       </Grid>
       <Navigation />
-    </WithSignedUser>
+    </>
   )
 }
 
-export default Charts
+export default withSignedUser(Charts)

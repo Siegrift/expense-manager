@@ -23,8 +23,8 @@ import { RepeatingOption, RepeatingOptions, Tag } from '../addTransaction/state'
 import AppBar from '../components/appBar'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
-import WithSignedUser from '../components/withSignedUser'
 import { getCurrentUserId } from '../firebase/util'
+import withSignedUser from '../hoc/withSignedUser'
 import { tagsSel } from '../settings/selectors'
 import { CURRENCIES } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
@@ -80,7 +80,7 @@ const EditTransaction = () => {
   const editedTxId = router.query.id as string
 
   return (
-    <WithSignedUser>
+    <>
       <AppBar
         returnUrl="/transaction"
         onSave={() => {
@@ -257,8 +257,8 @@ const EditTransaction = () => {
           </Grid>
         </Paper>
       </div>
-    </WithSignedUser>
+    </>
   )
 }
 
-export default EditTransaction
+export default withSignedUser(EditTransaction)

@@ -8,7 +8,7 @@ import { FixedSizeList } from 'react-window'
 import { setCurrentScreen } from '../actions'
 import Navigation from '../components/navigation'
 import Paper from '../components/paper'
-import WithSignedUser from '../components/withSignedUser'
+import withSignedUser from '../hoc/withSignedUser'
 import { State } from '../state'
 
 import Transaction from './transaction'
@@ -37,41 +37,39 @@ const Transactions = () => {
   dispatch(setCurrentScreen('transactions'))
 
   return (
-    <WithSignedUser>
-      <div className={classes.wrapper}>
-        <Paper listContainer>
-          {Object.keys(transactions).length === 0 ? (
-            <div className={classes.noTransactionsWrapper}>
-              <Typography
-                variant="overline"
-                display="block"
-                gutterBottom
-                className={classes.noTransactions}
-              >
-                You have no transactions...
-              </Typography>
-            </div>
-          ) : (
-            <AutoSizer>
-              {({ height, width }) => {
-                return (
-                  <FixedSizeList
-                    height={height}
-                    width={width}
-                    itemSize={100}
-                    itemCount={Object.keys(transactions).length}
-                  >
-                    {Transaction}
-                  </FixedSizeList>
-                )
-              }}
-            </AutoSizer>
-          )}
-        </Paper>
-        <Navigation />
-      </div>
-    </WithSignedUser>
+    <div className={classes.wrapper}>
+      <Paper listContainer>
+        {Object.keys(transactions).length === 0 ? (
+          <div className={classes.noTransactionsWrapper}>
+            <Typography
+              variant="overline"
+              display="block"
+              gutterBottom
+              className={classes.noTransactions}
+            >
+              You have no transactions...
+            </Typography>
+          </div>
+        ) : (
+          <AutoSizer>
+            {({ height, width }) => {
+              return (
+                <FixedSizeList
+                  height={height}
+                  width={width}
+                  itemSize={100}
+                  itemCount={Object.keys(transactions).length}
+                >
+                  {Transaction}
+                </FixedSizeList>
+              )
+            }}
+          </AutoSizer>
+        )}
+      </Paper>
+      <Navigation />
+    </div>
   )
 }
 
-export default Transactions
+export default withSignedUser(Transactions)

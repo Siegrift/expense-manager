@@ -1,10 +1,13 @@
 {
+  "engines": {
+    "node": "12.x"
+  },
   "name": "expense-manager",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "build": "next build",
-    "deploy": "yarn build && now",
+    "deploy": "yarn build && now --prod",
     "dev": "next dev",
     "lint": "tslint-config-prettier-check ./tslint.json && prettier --check \"@(lib|pages)/**/*.tsx\" && tslint --project tsconfig.json",
     "lint:fix": "prettier --write \"@(lib|pages)/**/*.tsx\" tslint --fix --project tsconfig.json",
