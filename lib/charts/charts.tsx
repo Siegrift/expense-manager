@@ -4,9 +4,8 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 
 import { setCurrentScreen } from '../actions'
-import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
-import { useRedirectIfNotSignedIn } from '../shared/hooks'
+import WithSignedUser from '../components/withSignedUser'
 
 import AllTransactions from './allTransactions'
 import ChartWrapper from './chartWrapper'
@@ -30,34 +29,30 @@ const Charts = () => {
 
   dispatch(setCurrentScreen('charts'))
 
-  if (useRedirectIfNotSignedIn() !== 'loggedIn') {
-    return <LoadingScreen />
-  } else {
-    return (
-      <>
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          className={classes.root}
-        >
-          <ChartWrapper label="Recent balance">
-            <RecentBalance />
-          </ChartWrapper>
+  return (
+    <WithSignedUser>
+      <Grid
+        container
+        direction="column"
+        justify="center"
+        alignItems="center"
+        className={classes.root}
+      >
+        <ChartWrapper label="Recent balance">
+          <RecentBalance />
+        </ChartWrapper>
 
-          <ChartWrapper label="All Transactions">
-            <AllTransactions />
-          </ChartWrapper>
+        <ChartWrapper label="All Transactions">
+          <AllTransactions />
+        </ChartWrapper>
 
-          <ChartWrapper label="Tag percentages">
-            <TagPercentages />
-          </ChartWrapper>
-        </Grid>
-        <Navigation />
-      </>
-    )
-  }
+        <ChartWrapper label="Tag percentages">
+          <TagPercentages />
+        </ChartWrapper>
+      </Grid>
+      <Navigation />
+    </WithSignedUser>
+  )
 }
 
 export default Charts

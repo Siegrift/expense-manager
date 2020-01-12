@@ -18,12 +18,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import uuid from 'uuid/v4'
 
 import { setCurrentScreen } from '../../lib/actions'
-import { useRedirectIfNotSignedIn } from '../../lib/shared/hooks'
 import AmountField from '../components/amountField'
-import { LoadingScreen } from '../components/loading'
 import Navigation from '../components/navigation'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
+import WithSignedUser from '../components/withSignedUser'
 import { getCurrentUserId } from '../firebase/util'
 import { CURRENCIES } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
@@ -91,10 +90,8 @@ const AddTransaction = () => {
   const tags = useSelector(tagsSel)
   const allTags = { ...tags, ...newTags }
 
-  if (useRedirectIfNotSignedIn() !== 'loggedIn') {
-    return <LoadingScreen />
-  } else {
-    return (
+  return (
+    <WithSignedUser>
       <Grid
         container
         direction="column"
@@ -325,8 +322,8 @@ const AddTransaction = () => {
         </Paper>
         <Navigation />
       </Grid>
-    )
-  }
+    </WithSignedUser>
+  )
 }
 
 export default AddTransaction

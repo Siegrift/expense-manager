@@ -1,7 +1,6 @@
 import Router from 'next/router'
 
-import { LoadingScreen } from '../lib/components/loading'
-import { useRedirectIfNotSignedIn } from '../lib/shared/hooks'
+import WithSignedUser from '../lib/components/withSignedUser'
 
 import AddTransaction from './add'
 
@@ -10,14 +9,13 @@ import AddTransaction from './add'
  * and display login screen if user is NOT signed in.
  */
 const IndexPage = () => {
-  // Firebase is loaded asynchronously and there is no user at the beginning.
-  // We don't want to present user with flashing screen though...
-  if (useRedirectIfNotSignedIn() !== 'loggedIn') {
-    return <LoadingScreen />
-  } else {
-    Router.push('/add')
-    return <AddTransaction />
-  }
+  Router.push('/add')
+
+  return (
+    <WithSignedUser>
+      <AddTransaction />
+    </WithSignedUser>
+  )
 }
 
 export default IndexPage

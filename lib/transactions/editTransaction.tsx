@@ -21,13 +21,12 @@ import uuid from 'uuid/v4'
 import { ObjectOf } from '../../lib/types'
 import { RepeatingOption, RepeatingOptions, Tag } from '../addTransaction/state'
 import AppBar from '../components/appBar'
-import { LoadingScreen } from '../components/loading'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
+import WithSignedUser from '../components/withSignedUser'
 import { getCurrentUserId } from '../firebase/util'
 import { tagsSel } from '../settings/selectors'
 import { CURRENCIES } from '../shared/currencies'
-import { useRedirectIfNotSignedIn } from '../shared/hooks'
 import { isAmountInValidFormat } from '../shared/utils'
 import { removeTx, saveTxEdit } from './actions'
 import { transactionByIdSel } from './selectors'
@@ -80,192 +79,186 @@ const EditTransaction = () => {
   // TODO: validate that txId is a valid txs id
   const editedTxId = router.query.id as string
 
-  if (useRedirectIfNotSignedIn() !== 'loggedIn') {
-    return <LoadingScreen />
-  } else {
-    return (
-      <>
-        <AppBar
-          returnUrl="/transactions"
-          onSave={() => {
-            if (isAmountInValidFormat(amount)) {
-              dispatch(
-                saveTxEdit(editedTxId, newTags, {
-                  amount: Number.parseFloat(amount),
-                  isExpense,
-                  note,
-                  currency,
-                  dateTime,
-                  tagIds,
-                  repeating,
-                }),
-              )
-              Router.push('/transactions')
-            } else {
-              setShouldValidate(true)
-            }
-          }}
-          onRemove={() => {
-            // TODO: confirm dialog (use different text when removing repeating tx)
-            dispatch(removeTx(editedTxId))
+  return (
+    <WithSignedUser>
+      <AppBar
+        returnUrl="/transaction"
+        onSave={() => {
+          if (isAmountInValidFormat(amount)) {
+            dispatch(
+              saveTxEdit(editedTxId, newTags, {
+                amount: Number.parseFloat(amount),
+                isExpense,
+                note,
+                currency,
+                dateTime,
+                tagIds,
+                repeating,
+              }),
+            )
             Router.push('/transactions')
-          }}
-          appBarTitle="Edit transaction"
-        />
+          } else {
+            setShouldValidate(true)
+          }
+        }}
+        onRemove={() => {
+          // TODO: confirm dialog (use different text when removing repeating tx)
+          dispatch(removeTx(editedTxId))
+          Router.push('/transactions')
+        }}
+        appBarTitle="Edit transaction"
+      />
 
-        <div className={classes.root}>
-          <Paper>
-            <Grid container className={classes.row}>
-              <ButtonGroup variant="contained" fullWidth>
-                <Button
-                  onClick={() => setIsExpense(true)}
-                  variant="contained"
-                  color={isExpense ? 'primary' : 'default'}
-                >
-                  Expense
-                </Button>
-                <Button
-                  onClick={() => setIsExpense(false)}
-                  variant="contained"
-                  color={!isExpense ? 'primary' : 'default'}
-                >
-                  Income
-                </Button>
-              </ButtonGroup>
-            </Grid>
+      <div className={classes.root}>
+        <Paper>
+          <Grid container className={classes.row}>
+            <ButtonGroup variant="contained" fullWidth>
+              <Button
+                onClick={() => setIsExpense(true)}
+                variant="contained"
+                color={isExpense ? 'primary' : 'default'}
+              >
+                Expense
+              </Button>
+              <Button
+                onClick={() => setIsExpense(false)}
+                variant="contained"
+                color={!isExpense ? 'primary' : 'default'}
+              >
+                Income
+              </Button>
+            </ButtonGroup>
+          </Grid>
 
-            <Grid className={classes.row}>
-              <TagField
-                className={classes.chipField}
-                tags={{ ...availableTags, ...newTags }}
-                onSelectTag={(id) => setTagIds([...tagIds, id])}
-                onCreateTag={(label) => {
-                  const id = uuid()
-                  setNewTags({
-                    ...newTags,
-                    [id]: {
-                      id,
-                      name: label,
-                      uid: getCurrentUserId(),
-                      automatic: false,
-                    },
-                  })
-                  setTagIds([...tagIds, id])
-                }}
-                onRemoveTags={(removeTagIds) => {
-                  const ids = difference(tagIds, removeTagIds)
-                  setTagIds(ids)
-                  setNewTags(
-                    pick(
-                      newTags,
-                      ids.filter((id) => availableTags[id] == null),
-                    ),
-                  )
-                }}
-                onSetTagInputValue={(newValue) => setTagInputValue(newValue)}
-                inputValue={tagInputValue}
-                currentTagIds={tagIds}
-              />
-            </Grid>
+          <Grid className={classes.row}>
+            <TagField
+              className={classes.chipField}
+              tags={{ ...availableTags, ...newTags }}
+              onSelectTag={(id) => setTagIds([...tagIds, id])}
+              onCreateTag={(label) => {
+                const id = uuid()
+                setNewTags({
+                  ...newTags,
+                  [id]: {
+                    id,
+                    name: label,
+                    uid: getCurrentUserId(),
+                    automatic: false,
+                  },
+                })
+                setTagIds([...tagIds, id])
+              }}
+              onRemoveTags={(removeTagIds) => {
+                const ids = difference(tagIds, removeTagIds)
+                setTagIds(ids)
+                setNewTags(
+                  pick(
+                    newTags,
+                    ids.filter((id) => availableTags[id] == null),
+                  ),
+                )
+              }}
+              onSetTagInputValue={(newValue) => setTagInputValue(newValue)}
+              inputValue={tagInputValue}
+              currentTagIds={tagIds}
+            />
+          </Grid>
 
-            <Grid container className={classes.row}>
-              <Grid item className={classes.amount}>
-                <FormControl
-                  aria-label="amount"
-                  error={shouldValidate && !isAmountInValidFormat(amount)}
-                >
-                  <InputLabel htmlFor="amount-id">
-                    Transaction amount
-                  </InputLabel>
-                  <Input
-                    inputProps={{ inputMode: 'numeric' }}
-                    id="amount-id"
-                    type="number"
-                    placeholder="0.00"
-                    value={amount}
-                    onChange={(e) => {
-                      setShouldValidate(true)
-                      setAmount(e.target.value)
-                    }}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <CancelIcon
-                          color="primary"
-                          onClick={() => setAmount('')}
-                          style={{ visibility: amount ? 'visible' : 'hidden' }}
-                        />
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-
-                <TextField
-                  select
-                  label="Currecy"
-                  value={currency}
-                  className={classes.currency}
-                  onChange={(e) =>
-                    setCurrency(
-                      (e.target.value as any) as keyof typeof CURRENCIES,
-                    )
-                  }
-                >
-                  {Object.keys(CURRENCIES).map((value) => (
-                    <MenuItem key={value} value={value}>
-                      {value}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-            </Grid>
-
-            <Grid className={classes.row}>
-              <DateTimePicker
-                autoOk
-                ampm={false}
-                disableFuture
-                value={dateTime}
-                onChange={(newDateTime) => setDateTime(newDateTime as Date)}
-                label="Transaction date"
-                style={{ flex: 1 }}
-              />
-            </Grid>
-
-            <Grid className={classes.row}>
-              <FormControl style={{ flex: 1 }}>
-                <InputLabel htmlFor="tx-repeating">Repeating</InputLabel>
-                <Select
-                  value={repeating}
-                  onChange={(e) =>
-                    setRepeating(e.target.value as RepeatingOption)
-                  }
-                  inputProps={{
-                    name: 'repeating',
-                    id: 'tx-repeating',
+          <Grid container className={classes.row}>
+            <Grid item className={classes.amount}>
+              <FormControl
+                aria-label="amount"
+                error={shouldValidate && !isAmountInValidFormat(amount)}
+              >
+                <InputLabel htmlFor="amount-id">Transaction amount</InputLabel>
+                <Input
+                  inputProps={{ inputMode: 'numeric' }}
+                  id="amount-id"
+                  type="number"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => {
+                    setShouldValidate(true)
+                    setAmount(e.target.value)
                   }}
-                >
-                  {Object.keys(RepeatingOptions).map((op) => (
-                    <MenuItem key={op} value={op}>
-                      {op}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <CancelIcon
+                        color="primary"
+                        onClick={() => setAmount('')}
+                        style={{ visibility: amount ? 'visible' : 'hidden' }}
+                      />
+                    </InputAdornment>
+                  }
+                />
               </FormControl>
-            </Grid>
 
-            <Grid className={classes.row}>
               <TextField
-                fullWidth
-                label="Additional note"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-              />
+                select
+                label="Currency"
+                value={currency}
+                className={classes.currency}
+                onChange={(e) =>
+                  setCurrency(
+                    (e.target.value as any) as keyof typeof CURRENCIES,
+                  )
+                }
+              >
+                {Object.keys(CURRENCIES).map((value) => (
+                  <MenuItem key={value} value={value}>
+                    {value}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
-          </Paper>
-        </div>
-      </>
-    )
-  }
+          </Grid>
+
+          <Grid className={classes.row}>
+            <DateTimePicker
+              autoOk
+              ampm={false}
+              disableFuture
+              value={dateTime}
+              onChange={(newDateTime) => setDateTime(newDateTime as Date)}
+              label="Transaction date"
+              style={{ flex: 1 }}
+            />
+          </Grid>
+
+          <Grid className={classes.row}>
+            <FormControl style={{ flex: 1 }}>
+              <InputLabel htmlFor="tx-repeating">Repeating</InputLabel>
+              <Select
+                value={repeating}
+                onChange={(e) =>
+                  setRepeating(e.target.value as RepeatingOption)
+                }
+                inputProps={{
+                  name: 'repeating',
+                  id: 'tx-repeating',
+                }}
+              >
+                {Object.keys(RepeatingOptions).map((op) => (
+                  <MenuItem key={op} value={op}>
+                    {op}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid className={classes.row}>
+            <TextField
+              fullWidth
+              label="Additional note"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+          </Grid>
+        </Paper>
+      </div>
+    </WithSignedUser>
+  )
 }
 
 export default EditTransaction
