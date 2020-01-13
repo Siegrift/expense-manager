@@ -8,13 +8,13 @@ Object {
       "automatic": false,
       "id": "uuid0",
       "name": "Tickets",
-      "uid": "mockedUserId",
+      "uid": "id",
     },
     "Shopping" => Object {
       "automatic": false,
       "id": "uuid2",
       "name": "Shopping",
-      "uid": "mockedUserId",
+      "uid": "id",
     },
   },
   "txs": Array [
@@ -31,7 +31,7 @@ Object {
         "uuid0",
       ],
       "transactionType": "imported",
-      "uid": "mockedUserId",
+      "uid": "id",
     },
     Object {
       "amount": 0.7,
@@ -45,7 +45,7 @@ Object {
         "uuid2",
       ],
       "transactionType": "imported",
-      "uid": "mockedUserId",
+      "uid": "id",
     },
   ],
 }
@@ -59,19 +59,19 @@ Object {
       "automatic": false,
       "id": "uuid4",
       "name": "A",
-      "uid": "mockedUserId",
+      "uid": "id",
     },
     "B" => Object {
       "automatic": false,
       "id": "uuid5",
       "name": "B",
-      "uid": "mockedUserId",
+      "uid": "id",
     },
     "C" => Object {
       "automatic": false,
       "id": "uuid6",
       "name": "C",
-      "uid": "mockedUserId",
+      "uid": "id",
     },
   },
   "txs": Array [
@@ -89,7 +89,7 @@ Object {
         "uuid6",
       ],
       "transactionType": "imported",
-      "uid": "mockedUserId",
+      "uid": "id",
     },
   ],
 }

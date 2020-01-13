@@ -7,7 +7,7 @@ import {
   Tag,
   Transaction,
 } from '../addTransaction/state'
-import firebase from '../firebase/firebase'
+import { getFirebase } from '../firebase/firebase'
 import { getCurrentUserId } from '../firebase/util'
 import { Action, Thunk } from '../redux/types'
 import { CURRENCIES } from '../shared/currencies'
@@ -148,9 +148,11 @@ export const clearAllData = (): Thunk => async (
   const removeColl = async (name: string) => {
     let stopRemove = false
     while (!stopRemove) {
-      const batch = firebase.firestore().batch()
+      const batch = getFirebase()
+        .firestore()
+        .batch()
 
-      const q = await firebase
+      const q = await getFirebase()
         .firestore()
         .collection(name)
         .where('uid', '==', getCurrentUserId())

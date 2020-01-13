@@ -16,7 +16,6 @@ import { ScreenTitle } from '../lib/state'
 import theme from '../lib/theme'
 
 const store = configureStore()
-initializeFirebase(store)
 
 const ComponentWithCorrectScreen: React.FC = ({ children }) => {
   const dispatch = useDispatch()
@@ -28,34 +27,40 @@ const ComponentWithCorrectScreen: React.FC = ({ children }) => {
 }
 
 class ExpenseManagerApp extends App {
+  async componentDidMount() {
+    await initializeFirebase(store)
+  }
+
   render() {
     const { Component, pageProps } = this.props
 
     return (
-      <ReduxProvider store={store}>
-        <ThemeProvider theme={theme}>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Head>
-              {/* https://github.com/zeit/next.js/blob/master/errors/no-document-title.md */}
-              <title>{PROJECT_TITLE}</title>
-            </Head>
-            <CssBaseline />
-            {/* Custom global styles */}
-            <style>
-              {`
+      <React.StrictMode>
+        <ReduxProvider store={store}>
+          <ThemeProvider theme={theme}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <Head>
+                {/* https://github.com/zeit/next.js/blob/master/errors/no-document-title.md */}
+                <title>{PROJECT_TITLE}</title>
+              </Head>
+              <CssBaseline />
+              {/* Custom global styles */}
+              <style>
+                {`
                 body {
                   background-color: blanchedalmond !important;
                   /* Disables pull-to-refresh but allows overscroll glow effects. */
                   overscroll-behavior-y: contain;
                 }
               `}
-            </style>
-            <ComponentWithCorrectScreen>
-              <Component {...pageProps} />
-            </ComponentWithCorrectScreen>
-          </MuiPickersUtilsProvider>
-        </ThemeProvider>
-      </ReduxProvider>
+              </style>
+              <ComponentWithCorrectScreen>
+                <Component {...pageProps} />
+              </ComponentWithCorrectScreen>
+            </MuiPickersUtilsProvider>
+          </ThemeProvider>
+        </ReduxProvider>
+      </React.StrictMode>
     )
   }
 }
