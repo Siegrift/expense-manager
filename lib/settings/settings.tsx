@@ -4,7 +4,7 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 
 import Navigation from '../components/navigation'
-import firebase from '../firebase/firebase'
+import { getFirebase } from '../firebase/firebase'
 import withSignedUser from '../hoc/withSignedUser'
 
 import { clearAllData, exportToCSV, importFromCSV } from './actions'
@@ -12,7 +12,9 @@ import SettingsPanel from './settingsPanel'
 
 function signOut() {
   // Sign out of Firebase
-  firebase.auth().signOut()
+  getFirebase()
+    .auth()
+    .signOut()
 }
 
 const useStyles = makeStyles((theme: Theme) => ({

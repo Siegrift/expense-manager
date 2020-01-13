@@ -13,7 +13,7 @@ jest.mock('uuid/v4', () => {
 
 jest.mock('../firebase/firebase', () => initializeMockFirebase())
 
-describe('settings actions', () => {
+describe.skip('settings actions', () => {
   describe('import/export', () => {
     describe('processing imported txs', () => {
       let state: State

@@ -1,18 +1,14 @@
-import firebase from '../firebase/firebase'
+import { getFirebase } from '../firebase/firebase'
 
 export function signIn() {
   // Sign into Firebase using popup auth & Google as the identity provider.
+  const firebase = getFirebase()
   const provider = new firebase.auth.GoogleAuthProvider()
   firebase.auth().signInWithPopup(provider)
 }
 
-export function signOut() {
-  // Sign out of Firebase.
-  firebase.auth().signOut()
-}
-
 export const convertTimestampsToDates = (value: any): any => {
-  if (value instanceof firebase.firestore.Timestamp) {
+  if (value instanceof getFirebase().firestore.Timestamp) {
     return value.toDate()
   } else if (Array.isArray(value)) {
     return value.map((v) => convertTimestampsToDates(v))
@@ -26,4 +22,4 @@ export const convertTimestampsToDates = (value: any): any => {
   }
 }
 
-export const getCurrentUserId = () => firebase.auth().currentUser!.uid
+export const getCurrentUserId = () => getFirebase().auth().currentUser!.uid

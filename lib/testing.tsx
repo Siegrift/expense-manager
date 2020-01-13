@@ -13,7 +13,7 @@ import rootReducer from './redux/rootReducer'
 import { getInitialState, State } from './state'
 import theme from './theme'
 
-export const reduxify = (Component: () => JSX.Element, store: Store) => {
+export const reduxify = (Component: React.FC, store: Store) => {
   return (
     <ReduxProvider store={store}>
       <ThemeProvider theme={theme}>

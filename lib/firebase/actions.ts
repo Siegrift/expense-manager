@@ -2,7 +2,7 @@ import { set } from '@siegrift/tsfunct'
 import { batch } from 'react-redux'
 
 import { addRepeatingTxs } from '../actions'
-import firebase from '../firebase/firebase'
+import { getFirebase } from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
 import { SignInStatus } from '../state'
 import { FirestoneQuery, getQueries } from './firestoneQueries'
@@ -42,15 +42,17 @@ export const authChangeAction = (status: SignInStatus): Thunk => async (
 
 export const initializeFirestore = (): Thunk => async (dispatch) => {
   let actions: Array<Parameters<typeof firestoneChangeAction>> = []
-  firebase.firestore().onSnapshotsInSync(() => {
-    // https://react-redux.js.org/api/batch
-    // treat the redux updates as one atomic operation and forbid rendering between the updates
-    // (which can render transaction with tag that hasn't been loaded yet)
-    batch(() => {
-      actions.forEach((a) => dispatch(firestoneChangeAction(a[0], a[1])))
-      actions = []
+  getFirebase()
+    .firestore()
+    .onSnapshotsInSync(() => {
+      // https://react-redux.js.org/api/batch
+      // treat the redux updates as one atomic operation and forbid rendering between the updates
+      // (which can render transaction with tag that hasn't been loaded yet)
+      batch(() => {
+        actions.forEach((a) => dispatch(firestoneChangeAction(a[0], a[1])))
+        actions = []
+      })
     })
-  })
 
   const initialQueries: Array<Promise<unknown>> = getQueries().map((query) => {
     return query

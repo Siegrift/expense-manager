@@ -1,8 +1,3 @@
-// Firebase App (the core Firebase SDK) is always required and must be listed first
-import * as firebase from 'firebase/app'
-// NOTE: Import all Firebase products that the project uses
-import 'firebase/auth'
-import 'firebase/firestore'
 import { Store } from 'redux'
 
 import { authChangeAction } from './actions'
@@ -32,11 +27,29 @@ const firebaseConfig =
     ? firebaseDevConfig
     : firebaseProdConfig
 
+let firebaseInstance: typeof import('firebase/app') | null = null
+
 export const initializeFirebase = async (store: Store) => {
+  if (firebaseInstance) {
+    throw new Error('Firebase instance already initialized!')
+  }
+
+  // Firebase App (the core Firebase SDK) is always required and must be listed first
+  const firebase = await import('firebase/app')
+  // NOTE: Import all Firebase products that the project uses
+  await import('firebase/auth')
+  await import('firebase/firestore')
+  await import('firebase/performance')
+
+  firebaseInstance = firebase
+
   // firebase can be initialized only once, but crashes on hot update
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig)
   }
+
+  // enable firebase performance
+  firebase.performance()
 
   // persistance only works in browsers
   if (typeof window !== 'undefined') {
@@ -48,12 +61,10 @@ export const initializeFirebase = async (store: Store) => {
         if (err.code === 'failed-precondition') {
           // Multiple tabs open, persistence can only be enabled
           // in one tab at a a time.
-          // ...
           console.error(err)
         } else if (err.code === 'unimplemented') {
           // The current browser does not support all of the
           // features required to enable persistence
-          // ...
           console.error(err)
         }
       })
@@ -64,4 +75,9 @@ export const initializeFirebase = async (store: Store) => {
   })
 }
 
-export default firebase
+export const getFirebase = () => {
+  if (firebaseInstance == null) {
+    throw new Error('Firebase has not been initialized yet')
+  }
+  return firebaseInstance
+}

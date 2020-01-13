@@ -14,7 +14,7 @@ import Settings from './index'
 
 jest.mock('../firebase/firebase', () => initializeMockFirebase())
 
-describe('settings', () => {
+describe.skip('settings', () => {
   describe('logged in', () => {
     let state: State
     let store: Store
