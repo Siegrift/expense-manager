@@ -1874,10 +1874,10 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
-"@siegrift/tsfunct@^1.4.1":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@siegrift/tsfunct/-/tsfunct-1.4.1.tgz#13f739eb81faec14f158801a51e5f8be315e5a3a"
-  integrity sha512-MOAjsmJ/4o6kIMTt43bT98P3LiNjNRmpfuEheaRaanM448GOapoAF+XKYMnXPIbYfJxGSr6URfK5ltq5xsw6Hw==
+"@siegrift/tsfunct@^1.5.6":
+  version "1.5.6"
+  resolved "https://registry.yarnpkg.com/@siegrift/tsfunct/-/tsfunct-1.5.6.tgz#5ff6effc6f7681a4aef1e3884da01581718f08dd"
+  integrity sha512-GBNo4VeBLWo1aQjmTA9gqGDTL+EnawopCbvgYMeL0RkVkxofJqprD5VhqU8tbwh7dQW4/QMTsBkQ1WUzbpck0Q==
 
 "@sinonjs/commons@^1.7.0":
   version "1.7.0"

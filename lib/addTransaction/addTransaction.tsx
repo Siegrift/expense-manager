@@ -11,7 +11,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles'
 import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
 import { DateTimePicker } from '@material-ui/pickers'
-import { pick, set, update } from '@siegrift/tsfunct'
+import { get, pick, pipe, set, fpSet, fpUpdate } from '@siegrift/tsfunct'
 import difference from 'lodash/difference'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -124,18 +124,16 @@ const AddTransaction = () => {
             tags={allTags}
             onSelectTag={(id: any) => {
               setAddTx((currAddTx) => {
-                // TODO: next tsfunct feature (lenses, to chain)
-                const newAddTx = update(currAddTx, ['tagIds'], (ids) => [
-                  ...ids,
-                  id,
-                ])
-
-                return update(newAddTx, ['amount'], (am) =>
-                  maybeApplyDefaultAmount(
-                    newAddTx.tagIds.map((i) => allTags[i]),
-                    am,
+                const newTagIds = [...get(currAddTx, ['tagIds']), id]
+                return pipe(
+                  fpSet<typeof currAddTx>()(['tagIds'], newTagIds),
+                  fpUpdate<typeof currAddTx>()(['amount'], (am) =>
+                    maybeApplyDefaultAmount(
+                      newTagIds.map((i) => allTags[i]),
+                      am,
+                    ),
                   ),
-                )
+                )(currAddTx)
               })
             }}
             onCreateTag={(tagName: any) => {
