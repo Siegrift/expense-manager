@@ -15,7 +15,8 @@
     // NOTE: no-unused-variable is depracated in favour of checks in tsconfig, however
     // those cannot be automatically fixed, so I am keeping this for now.
     "no-unused-variable": true,
-    "no-empty": false
+    "no-empty": false,
+    "array-type": false
   },
   "rulesDirectory": []
 }
