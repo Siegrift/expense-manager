@@ -1,4 +1,6 @@
+// eslint-disable-next-line
 const withOffline = require('next-offline')
+// eslint-disable-next-line
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
@@ -36,6 +38,17 @@ const nextConfig = {
         },
       },
     ],
+  },
+  webpack: (config, { dev }) => {
+    config.module.rules.push({
+      test: /\.tsx$/,
+      exclude: /node_modules/,
+      loader: 'eslint-loader',
+      options: {
+        emitWarning: dev,
+      },
+    })
+    return config
   },
 }
 

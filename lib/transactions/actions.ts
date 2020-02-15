@@ -1,7 +1,7 @@
 import { removeFromFirebase, uploadToFirebase } from '../actions'
 import { Tag, Transaction } from '../addTransaction/state'
-import { Thunk } from '../redux/types'
 import { ObjectOf } from '../types'
+import { Thunk } from '../redux/types'
 
 export const saveTxEdit = (
   id: string,

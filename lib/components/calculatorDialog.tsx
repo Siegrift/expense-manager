@@ -3,7 +3,6 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import TextField from '@material-ui/core/TextField'
-// @ts-ignore TODO: types
 import math from 'mathjs-expression-parser'
 import React from 'react'
 

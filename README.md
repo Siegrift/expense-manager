@@ -27,6 +27,9 @@ _We use fixed version of next, because deploying with firebase works only after 
 1. **Lower case filenames** - Nextjs uses predefined routing _(pages directory is automatically
    routed)_ and the url name must match the page filename. I want URL parts _(e.g. /login)_ to be
    lowercased, and for consistency all files should start with lowercase.
+2. **CI tests** - Currently, there are none. TODO: tutorial [how to setup cypress for
+   CI](https://docs.cypress.io/guides/guides/continuous-integration.html#Boot-your-server) _(also
+   covers, how to set it up locally, which we use right now)._
 
 ## Upgrade deps
 

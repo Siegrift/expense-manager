@@ -1,5 +1,5 @@
 import Grid from '@material-ui/core/Grid'
-import { makeStyles, Theme } from '@material-ui/core/styles'
+import { Theme, makeStyles } from '@material-ui/core/styles'
 import React from 'react'
 
 import Navigation from '../components/navigation'

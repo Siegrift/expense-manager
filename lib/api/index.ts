@@ -9,7 +9,6 @@ abstract class AbstractApi {
 let apiInstance: AbstractApi | undefined
 
 export class Api extends AbstractApi {
-  // tslint:disable-next-line
   constructor(protected logger: Logger) {
     super(logger)
 
@@ -33,5 +32,4 @@ export const clearAPIInstance = () => {
   apiInstance = undefined
 }
 
-// tslint:disable-next-line
 export class TestApi extends AbstractApi {}

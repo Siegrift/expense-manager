@@ -13,8 +13,9 @@ const DISABLE_SERVER_SIDE_LOGGING = true
 
 export const configureStore = () => {
   const logger: Logger = {
-    log: (_, __) => null,
+    log: () => null,
   }
+
   if (process.env.NODE_ENV === 'development') {
     logger.log = (message, payload) =>
       store.dispatch({

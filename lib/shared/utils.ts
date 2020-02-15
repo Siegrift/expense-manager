@@ -2,7 +2,7 @@ import Router from 'next/router'
 
 import { ObjectOf } from '../types'
 
-export const delay = (ms: number) => new Promise((res) => setTimeout(res, 1000))
+export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 export const redirectTo = (target: string) => {
   Router.push(target)

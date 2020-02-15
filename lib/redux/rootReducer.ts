@@ -1,4 +1,4 @@
-import { getInitialState, State } from '../state'
+import { State, getInitialState } from '../state'
 
 import { Action } from './types'
 

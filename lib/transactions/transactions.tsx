@@ -1,4 +1,4 @@
-import { makeStyles, Theme } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
 import { useSelector } from 'react-redux'
@@ -12,7 +12,7 @@ import { State } from '../state'
 
 import Transaction from './transaction'
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles({
   wrapper: {
     height: 'calc(100vh - 56px)',
     width: '100vw',
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '100%',
   },
   noTransactions: { textAlign: 'center' },
-}))
+})
 
 const Transactions = () => {
   const transactions = useSelector((state: State) => state.transactions)

@@ -1,4 +1,4 @@
-import { makeStyles, Theme } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import classnames from 'classnames'
@@ -7,11 +7,11 @@ import React from 'react'
 import { Tag } from '../addTransaction/state'
 import { ObjectOf } from '../types'
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles({
   root: {
     width: '100%',
   },
-}))
+})
 
 export interface TagFieldProps {
   tags: ObjectOf<Tag>

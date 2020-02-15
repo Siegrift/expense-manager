@@ -1,6 +1,5 @@
-// TODO: fix this
-// @ts-ignore
 import { ResponsiveSunburst } from '@nivo/sunburst'
+import React from 'react'
 import reduce from 'lodash/reduce'
 import { useSelector } from 'react-redux'
 

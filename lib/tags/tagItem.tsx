@@ -2,7 +2,7 @@ import Badge from '@material-ui/core/Badge'
 import Divider from '@material-ui/core/Divider'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import { makeStyles, Theme } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import AutoIcon from '@material-ui/icons/BrightnessAuto'
 import EuroIcon from '@material-ui/icons/Euro'
@@ -22,7 +22,7 @@ import {
   totalTransactionsSel,
 } from './selectors'
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles({
   listItem: {
     flexDirection: 'column',
     alignItems: 'start',
@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: 3,
     marginRight: 8,
   },
-}))
+})
 
 const TagItem: React.FC<ListChildComponentProps> = ({ index, style }) => {
   const tag = useSelector(tagFromSortedTagsByIndex(index))
