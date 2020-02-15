@@ -10,7 +10,7 @@ import { FirestoneQuery, getQueries } from './firestoneQueries'
 export const firestoneChangeAction = (
   query: FirestoneQuery,
   payload: firebase.firestore.QuerySnapshot,
-  isInitial: boolean = false,
+  isInitial = false,
 ): Action<firebase.firestore.QuerySnapshot> => ({
   type: `${isInitial ? 'Initial firestore' : 'Firestore'} query change: ${
     query.type

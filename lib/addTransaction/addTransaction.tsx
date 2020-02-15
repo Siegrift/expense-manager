@@ -7,11 +7,11 @@ import Grid from '@material-ui/core/Grid'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import Select from '@material-ui/core/Select'
-import { makeStyles, Theme } from '@material-ui/core/styles'
+import { Theme, makeStyles } from '@material-ui/core/styles'
 import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
 import { DateTimePicker } from '@material-ui/pickers'
-import { get, pick, pipe, set, fpSet, fpUpdate } from '@siegrift/tsfunct'
+import { fpSet, fpUpdate, get, pick, pipe, set } from '@siegrift/tsfunct'
 import difference from 'lodash/difference'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -29,10 +29,10 @@ import { addTransaction } from './actions'
 import { automaticTagIdsSel, tagsSel } from './selectors'
 import {
   AddTransaction as AddTransactionType,
-  createDefaultAddTransactionState,
   RepeatingOption,
   RepeatingOptions,
   Tag,
+  createDefaultAddTransactionState,
 } from './state'
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -205,9 +205,9 @@ const AddTransaction = () => {
               setAddTx((currAddTx) => set(currAddTx, ['currency'], value))
             }}
           >
-            {Object.entries(CURRENCIES).map(([value, label]) => (
-              <MenuItem key={value} value={value}>
-                {value}
+            {Object.keys(CURRENCIES).map((c) => (
+              <MenuItem key={c} value={c}>
+                {c}
               </MenuItem>
             ))}
           </TextField>

@@ -1,4 +1,4 @@
-import { clearAPIInstance, getAPI, Api } from '.'
+import { Api, clearAPIInstance, getAPI } from '.'
 
 describe('api', () => {
   beforeEach(() => {
@@ -6,9 +6,9 @@ describe('api', () => {
   })
 
   test('can create only single api instance', () => {
-    const api = new Api(undefined as any)
+    new Api(undefined as any)
+
     expect(() => {
-      // tslint:disable-next-line: no-unused-expression
       new Api(undefined as any)
     }).toThrow()
   })

@@ -1,5 +1,5 @@
 import { Transaction } from '../addTransaction/state'
-import { getInitialState, State } from '../state'
+import { State, getInitialState } from '../state'
 
 import { sortedTransactionsSel } from './selectors'
 

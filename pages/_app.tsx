@@ -28,7 +28,7 @@ const ComponentWithCorrectScreen: React.FC = ({ children }) => {
 
 class ExpenseManagerApp extends App {
   async componentDidMount() {
-    await initializeFirebase(store)
+    return await initializeFirebase(store)
   }
 
   render() {

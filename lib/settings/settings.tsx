@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button'
-import { makeStyles, Theme } from '@material-ui/core/styles'
+import { Theme, makeStyles } from '@material-ui/core/styles'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 

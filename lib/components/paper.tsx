@@ -1,5 +1,5 @@
 import MuiPaper, { PaperProps as MuiPaperProps } from '@material-ui/core/Paper'
-import { makeStyles, Theme } from '@material-ui/core/styles'
+import { Theme, makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import classNames from 'classnames'
 import React from 'react'

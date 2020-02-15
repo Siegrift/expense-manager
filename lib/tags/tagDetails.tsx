@@ -1,6 +1,6 @@
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import { makeStyles, Theme } from '@material-ui/core/styles'
+import { Theme, makeStyles } from '@material-ui/core/styles'
 import { SvgIconProps } from '@material-ui/core/SvgIcon'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
@@ -109,8 +109,10 @@ const TagDetails = ({
     amount: false,
   })
   const onRemoveTag = () => {
-    onRemove!()
-    Router.push('/tags')
+    if (onRemove) {
+      onRemove()
+      Router.push('/tags')
+    }
   }
 
   return (
@@ -128,13 +130,11 @@ const TagDetails = ({
             })
             Router.push('/tags')
           } else {
-            // FIXME: tsfunct feature
             setShouldValidate(
-              // @ts-ignore
               map(shouldValidate, (_, key) => ({
                 key,
                 value: true,
-              })),
+              })) as typeof shouldValidate,
             )
           }
         }}
@@ -203,7 +203,7 @@ const TagDetails = ({
             label="Usage stats"
           >
             <UsageStatRow
-              label="Transaction occurences"
+              label="Transaction occurrences"
               value={stats.totalTxs}
               Icon={TotalTxsIcon}
             />

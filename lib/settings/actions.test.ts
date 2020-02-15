@@ -1,7 +1,6 @@
 import keyBy from 'lodash/keyBy'
 
-import { getInitialState, State } from '../state'
-import { initializeMockFirebase } from '../testing'
+import { State, getInitialState } from '../state'
 
 import { processImportedCSV } from './actions'
 import { exportedCsvSel } from './selectors'
@@ -11,8 +10,10 @@ jest.mock('uuid/v4', () => {
   return jest.fn(() => `uuid${uuid++}`)
 })
 
-jest.mock('../firebase/firebase', () => initializeMockFirebase())
+// jest.mock('../firebase/firebase', () => initializeMockFirebase())
 
+// TODO: fix me
+// eslint-disable-next-line
 describe.skip('settings actions', () => {
   describe('import/export', () => {
     describe('processing imported txs', () => {

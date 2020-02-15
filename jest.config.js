@@ -1,17 +1,11 @@
 module.exports = {
-  roots: ["<rootDir>/lib", "<rootDir>/pages"],
-  preset: "ts-jest/presets/js-with-ts",
-  moduleFileExtensions: ["ts", "tsx", "js"],
-  transform: {
-    "^.+\\.(ts|tsx)$": "ts-jest"
-  },
-  testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/"],
-  snapshotSerializers: ["enzyme-to-json/serializer"],
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
-  globals: {
-    "ts-jest": {
-      tsConfig: "tsconfig.jest.json",
-      diagnostics: false
+  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/cypress/', '<rootDir>/node_modules/'],
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: -10
     }
-  }
-};
+  },
+}
