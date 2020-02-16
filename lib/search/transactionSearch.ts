@@ -10,6 +10,7 @@ import parse from 'date-fns/parse'
 import isBefore from 'date-fns/isBefore'
 import isAfter from 'date-fns/isAfter'
 import { CURRENCIES } from '../shared/currencies'
+import { booleanOptions } from './common'
 
 const isValidDate = (query: string) => {
   return (
@@ -103,7 +104,7 @@ export const COMMANDS: Command[] = [
       const wantExpense = query === 'true'
       return tx.isExpense === wantExpense
     },
-    valueOptions: ['true', 'false'],
+    valueOptions: booleanOptions,
   },
   {
     name: 'note',
@@ -121,7 +122,7 @@ export const COMMANDS: Command[] = [
       !!tx.tagIds.find(
         (tagId) => !!tags[tagId].automatic === (query === 'true'),
       ),
-    valueOptions: ['true', 'false'],
+    valueOptions: booleanOptions,
   },
   {
     name: 'with-default-amount',
@@ -129,7 +130,7 @@ export const COMMANDS: Command[] = [
       !!tx.tagIds.find(
         (tagId) => !!tags[tagId].defaultAmount === (query === 'true'),
       ),
-    valueOptions: ['true', 'false'],
+    valueOptions: booleanOptions,
   },
   {
     name: 'tag-count',
@@ -137,6 +138,11 @@ export const COMMANDS: Command[] = [
     queryValidation: (
       query, // https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
     ) => !isNaN(query as any) && !isNaN(parseInt(query)),
+  },
+  {
+    name: 'has-note',
+    predicate: (tx, hasNote) => (tx.note === '') === (hasNote === 'false'),
+    valueOptions: booleanOptions,
   },
 ]
 

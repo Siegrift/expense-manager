@@ -6,6 +6,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import RepeatOneIcon from '@material-ui/icons/RepeatOne'
 import formatDistance from 'date-fns/formatDistance'
+import NoteIcon from '@material-ui/icons/Comment'
 import Router from 'next/router'
 import React from 'react'
 import { useSelector } from 'react-redux'
@@ -92,6 +93,7 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
               color={tx.repeating === 'inactive' ? 'disabled' : 'primary'}
             />
           )}
+          {tx.note !== '' && <NoteIcon color="primary" />}
         </div>
       </div>
       <Divider className={classes.divider} />
