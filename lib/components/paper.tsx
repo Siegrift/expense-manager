@@ -10,7 +10,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   listContainer: {
     flex: 1,
-    margin: theme.spacing(2),
   },
 }))
 

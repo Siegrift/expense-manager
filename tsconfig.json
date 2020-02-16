@@ -19,6 +19,5 @@
     "rootDirs": ["lib", "pages"],
     "outDir": "build/lib"
   },
-  "exclude": ["node_modules", ".*"],
   "include": ["next-env.d.ts", "lib/**/*.ts", "pages/**/*.tsx", "lib/**/*.tsx"]
 }

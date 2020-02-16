@@ -1,7 +1,9 @@
 import { removeFromFirebase, uploadToFirebase } from '../actions'
 import { Tag, Transaction } from '../addTransaction/state'
 import { ObjectOf } from '../types'
-import { Thunk } from '../redux/types'
+import { Action, Thunk } from '../redux/types'
+import { set } from '@siegrift/tsfunct'
+import { TransactionSearch } from '../state'
 
 export const saveTxEdit = (
   id: string,
@@ -23,3 +25,11 @@ export const removeTx = (txId: string): Thunk => async (
   // TODO: what to do with tags that are not in any expense (deleted by edit)
   await dispatch(removeFromFirebase([txId], []))
 }
+
+export const changeTxSearchQuery = (
+  query: TransactionSearch,
+): Action<TransactionSearch> => ({
+  type: 'Change search query',
+  payload: query,
+  reducer: (state) => set(state, ['transactionSearch'], query),
+})

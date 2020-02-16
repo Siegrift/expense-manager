@@ -13,7 +13,7 @@ import { ListChildComponentProps } from 'react-window'
 
 import { CURRENCIES } from '../shared/currencies'
 import { State } from '../state'
-import { sortedTransactionsSel } from './selectors'
+import { applySearchOnTransactions } from './selectors'
 
 const formatAmount = (
   amount: string,
@@ -48,9 +48,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
   const classes = useStyles()
-  const sortedTransactions = useSelector(sortedTransactionsSel)
+  const transactions = useSelector(applySearchOnTransactions)
   const tags = useSelector((state: State) => state.tags)
-  const tx = sortedTransactions[index]
+  const tx = transactions[index]
 
   return (
     <ListItem

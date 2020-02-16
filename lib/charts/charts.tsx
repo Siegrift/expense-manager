@@ -12,7 +12,10 @@ import TagPercentages from './tagPercentages'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    height: `calc(100vh - 56px)`,
+    height: 'calc(100vh - 56px)',
+    ['@media (max-height:500px)']: {
+      height: 'calc(100vh)',
+    },
     padding: theme.spacing(2),
     overflow: 'auto',
     overflowX: 'hidden',
