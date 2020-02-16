@@ -42,10 +42,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   chipField: { flex: 1 },
   amountInput: { marginLeft: theme.spacing(1) },
   row: {
-    marginTop: '16px',
     display: 'flex',
-    justifyContent: 'center',
     alignSelf: 'stretch',
+  },
+  paper: {
+    '& > *:not(:first-child)': {
+      marginTop: theme.spacing(2),
+    },
   },
   amount: {
     display: 'flex',
@@ -95,7 +98,7 @@ const AddTransaction = () => {
       alignItems="center"
       className={classes.root}
     >
-      <Paper>
+      <Paper className={classes.paper}>
         <Grid container className={classes.row}>
           <ButtonGroup variant="contained" fullWidth>
             <Button
