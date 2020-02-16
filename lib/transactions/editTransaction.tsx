@@ -2,14 +2,11 @@ import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import FormControl from '@material-ui/core/FormControl'
 import Grid from '@material-ui/core/Grid'
-import Input from '@material-ui/core/Input'
-import InputAdornment from '@material-ui/core/InputAdornment'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import Select from '@material-ui/core/Select'
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
-import CancelIcon from '@material-ui/icons/Cancel'
 import { DateTimePicker } from '@material-ui/pickers'
 import { pick } from '@siegrift/tsfunct'
 import difference from 'lodash/difference'
@@ -30,6 +27,7 @@ import { CURRENCIES } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
 import { removeTx, saveTxEdit } from './actions'
 import { transactionByIdSel } from './selectors'
+import AmountField from '../components/amountField'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -166,32 +164,17 @@ const EditTransaction = () => {
 
           <Grid container className={classes.row}>
             <Grid item className={classes.amount}>
-              <FormControl
-                aria-label="amount"
-                error={shouldValidate && !isAmountInValidFormat(amount)}
-              >
-                <InputLabel htmlFor="amount-id">Transaction amount</InputLabel>
-                <Input
-                  inputProps={{ inputMode: 'numeric' }}
-                  id="amount-id"
-                  type="number"
-                  placeholder="0.00"
-                  value={amount}
-                  onChange={(e) => {
-                    setShouldValidate(true)
-                    setAmount(e.target.value)
-                  }}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <CancelIcon
-                        color="primary"
-                        onClick={() => setAmount('')}
-                        style={{ visibility: amount ? 'visible' : 'hidden' }}
-                      />
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
+              <AmountField
+                currencySymbol={CURRENCIES[currency]}
+                isValidAmount={isAmountInValidFormat}
+                shouldValidateAmount={shouldValidate}
+                label="Transaction amount"
+                value={amount}
+                onChange={(newAmount) => {
+                  setShouldValidate(true)
+                  setAmount(newAmount)
+                }}
+              />
 
               <TextField
                 select
