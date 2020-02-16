@@ -28,6 +28,11 @@ const CalculatorDialog = ({
     exprResult = null
   }
 
+  const onOk = () => {
+    setAmount('' + (exprResult || ''))
+    setShowCalc(false)
+  }
+
   return (
     <Dialog
       onClose={() => setShowCalc(false)}
@@ -49,19 +54,16 @@ const CalculatorDialog = ({
               ? 'Malformed expression'
               : `Result: ${exprResult || ''}`
           }
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') onOk()
+          }}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={() => setShowCalc(false)} color="primary">
           Cancel
         </Button>
-        <Button
-          onClick={() => {
-            setAmount('' + (exprResult || ''))
-            setShowCalc(false)
-          }}
-          color="primary"
-        >
+        <Button onClick={onOk} color="primary">
           OK
         </Button>
       </DialogActions>

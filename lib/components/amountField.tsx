@@ -19,6 +19,7 @@ interface AmountFieldProps {
   label: string
   className?: string
   currencySymbol?: string
+  onPressEnter: () => void
 }
 
 interface MuiInputProps {
@@ -73,6 +74,7 @@ const AmountField = ({
   label,
   className,
   currencySymbol,
+  onPressEnter,
 }: AmountFieldProps) => {
   const [showCalc, setShowCalc] = useState(false)
   const [calcExpression, setCalcExpression] = useState('')
@@ -117,6 +119,7 @@ const AmountField = ({
           onInput={(e) => {
             const native = e.nativeEvent as InputEvent
             const key = native.data!!
+
             if (CALC_OPEN_TRIGGERERS.includes(key)) {
               setCalcExpression((expr) => {
                 if (CALC_OPEN_TRIGGERERS.includes(expr[expr.length - 1])) {
@@ -127,6 +130,9 @@ const AmountField = ({
               })
               setShowCalc(true)
             }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') onPressEnter()
           }}
         />
       </FormControl>

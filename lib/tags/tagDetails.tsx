@@ -113,29 +113,31 @@ const TagDetails = ({
     }
   }
 
+  const onSaveHandler = () => {
+    if (isValidDefaultAmount(amount) && tagName) {
+      onSave({
+        ...tag,
+        name: tagName,
+        automatic: isAutotag,
+        defaultAmount: amount,
+      })
+      Router.push('/tags')
+    } else {
+      setShouldValidate(
+        map(shouldValidate, (_, key) => ({
+          key,
+          value: true,
+        })) as typeof shouldValidate,
+      )
+    }
+  }
+
   return (
     <>
       <AppBar
         appBarTitle={appBarTitle}
         returnUrl="/tags"
-        onSave={() => {
-          if (isValidDefaultAmount(amount) && tagName) {
-            onSave({
-              ...tag,
-              name: tagName,
-              automatic: isAutotag,
-              defaultAmount: amount,
-            })
-            Router.push('/tags')
-          } else {
-            setShouldValidate(
-              map(shouldValidate, (_, key) => ({
-                key,
-                value: true,
-              })) as typeof shouldValidate,
-            )
-          }
-        }}
+        onSave={onSaveHandler}
         onRemove={onRemove && onRemoveTag}
       />
 
@@ -164,6 +166,7 @@ const TagDetails = ({
             }}
             label="Default transaction amount"
             className={classes.amount}
+            onPressEnter={onSaveHandler}
           />
 
           <FormControlLabel

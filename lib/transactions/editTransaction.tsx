@@ -82,28 +82,30 @@ const EditTransaction = () => {
   // TODO: validate that txId is a valid txs id
   const editedTxId = router.query.id as string
 
+  const onSaveHandler = () => {
+    if (isAmountInValidFormat(amount)) {
+      dispatch(
+        saveTxEdit(editedTxId, newTags, {
+          amount: Number.parseFloat(amount),
+          isExpense,
+          note,
+          currency,
+          dateTime,
+          tagIds,
+          repeating,
+        }),
+      )
+      Router.push('/transactions')
+    } else {
+      setShouldValidate(true)
+    }
+  }
+
   return (
     <>
       <AppBar
         returnUrl="/transactions"
-        onSave={() => {
-          if (isAmountInValidFormat(amount)) {
-            dispatch(
-              saveTxEdit(editedTxId, newTags, {
-                amount: Number.parseFloat(amount),
-                isExpense,
-                note,
-                currency,
-                dateTime,
-                tagIds,
-                repeating,
-              }),
-            )
-            Router.push('/transactions')
-          } else {
-            setShouldValidate(true)
-          }
-        }}
+        onSave={onSaveHandler}
         onRemove={() => {
           // TODO: confirm dialog (use different text when removing repeating tx)
           dispatch(removeTx(editedTxId))
@@ -179,6 +181,7 @@ const EditTransaction = () => {
                   setShouldValidate(true)
                   setAmount(newAmount)
                 }}
+                onPressEnter={onSaveHandler}
               />
 
               <TextField
@@ -241,6 +244,9 @@ const EditTransaction = () => {
               label="Additional note"
               value={note}
               onChange={(e) => setNote(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') onSaveHandler()
+              }}
             />
           </Grid>
         </Paper>

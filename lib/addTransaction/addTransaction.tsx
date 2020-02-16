@@ -90,6 +90,17 @@ const AddTransaction = () => {
   const tags = useSelector(tagsSel)
   const allTags = { ...tags, ...newTags }
 
+  const onAddTransaction = () => {
+    // some fields were not filled correctly. Show incorrect and return.
+    if (!allFieldsAreValid(addTx)) {
+      setAddTx((currAddTx) => set(currAddTx, ['shouldValidateAmount'], true))
+      return
+    }
+
+    dispatch(addTransaction(addTx))
+    setAddTx(createDefaultAddTransactionState(automaticTagIds))
+  }
+
   return (
     <Grid
       container
@@ -195,6 +206,9 @@ const AddTransaction = () => {
                 shouldValidateAmount: true,
               }))
             }}
+            onPressEnter={() => {
+              onAddTransaction()
+            }}
           />
 
           <TextField
@@ -291,6 +305,9 @@ const AddTransaction = () => {
               const value = e.target.value
               setAddTx((currAddTx) => set(currAddTx, ['note'], value))
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') onAddTransaction()
+            }}
           />
         </Grid>
 
@@ -299,18 +316,7 @@ const AddTransaction = () => {
             variant="contained"
             color="primary"
             fullWidth
-            onClick={() => {
-              // some fields were not filled correctly. Show incorrect and return.
-              if (!allFieldsAreValid(addTx)) {
-                setAddTx((currAddTx) =>
-                  set(currAddTx, ['shouldValidateAmount'], true),
-                )
-                return
-              }
-
-              dispatch(addTransaction(addTx))
-              setAddTx(createDefaultAddTransactionState(automaticTagIds))
-            }}
+            onClick={onAddTransaction}
             aria-label="add transaction"
           >
             Add transaction
