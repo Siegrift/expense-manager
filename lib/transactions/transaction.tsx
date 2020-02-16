@@ -11,15 +11,9 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
 
-import { CURRENCIES } from '../shared/currencies'
+import { formatMoney } from '../shared/utils'
 import { State } from '../state'
 import { applySearchOnTransactions } from './selectors'
-
-const formatAmount = (
-  amount: string,
-  isExpense: boolean,
-  currency: keyof typeof CURRENCIES,
-) => `${isExpense ? '-' : '+'}${amount}${CURRENCIES[currency]}`
 
 const useStyles = makeStyles((theme: Theme) => ({
   listItem: {
@@ -68,7 +62,10 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
               variant="h4"
               style={{ color: tx.isExpense ? 'red' : 'green' }}
             >
-              {formatAmount('' + tx.amount, tx.isExpense, tx.currency)}
+              {`${tx.isExpense ? '-' : '+'}${formatMoney(
+                tx.amount,
+                tx.currency,
+              )}`}
             </Typography>
           }
         />
