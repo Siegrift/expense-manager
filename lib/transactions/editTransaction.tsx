@@ -47,6 +47,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   amount: {
     display: 'flex',
     alignSelf: 'stretch',
+    // for desktop
+    flex: 1,
   },
   currency: { width: 105, marginLeft: theme.spacing(2) },
 }))
