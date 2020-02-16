@@ -79,7 +79,7 @@ const TagField = ({
           }
         }}
         onInputChange={(event, value) => {
-          // TODO: for some reason this callback fires with null event and resets input value
+          // NOTE: for some reason this callback fires with null event and resets input value
           if (event != null) onSetTagInputValue(value)
         }}
         inputValue={inputValue}

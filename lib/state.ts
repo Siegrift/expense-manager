@@ -10,6 +10,12 @@ export type ScreenTitle =
 
 export type SignInStatus = 'loggedIn' | 'loggingIn' | 'loggedOut' | 'unknown'
 
+export interface TransactionSearch {
+  value: string
+  command?: string
+  searchQuery?: string
+}
+
 export interface State {
   cnt: number
   // use firebase.auth().currentUser to get the current user
@@ -17,6 +23,7 @@ export interface State {
   currentScreen: ScreenTitle
   tags: ObjectOf<Tag>
   transactions: ObjectOf<Transaction>
+  transactionSearch: TransactionSearch
 }
 
 const state: State = {
@@ -25,6 +32,9 @@ const state: State = {
   currentScreen: 'add',
   tags: {},
   transactions: {},
+  transactionSearch: {
+    value: '',
+  },
 }
 
 export const getInitialState = () => state

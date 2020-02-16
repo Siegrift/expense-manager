@@ -1,3 +1,5 @@
+// https://twitter.com/bahmutov/status/958772380834369536
+/// <reference types="Cypress" />
 import { BASE_URL } from './common'
 
 describe('e2e', () => {

@@ -1,0 +1,164 @@
+import {
+  RepeatingOptions,
+  Tag,
+  Transaction,
+  TransactionTypes,
+} from '../addTransaction/state'
+import { TransactionSearch } from '../state'
+import { ObjectOf } from '../types'
+import parse from 'date-fns/parse'
+import isBefore from 'date-fns/isBefore'
+import isAfter from 'date-fns/isAfter'
+import { CURRENCIES } from '../shared/currencies'
+
+const isValidDate = (query: string) => {
+  return (
+    !!query.match(/^\d*\.\d*\.\d*$/) &&
+    // date-fns parse is not very strict and (e.g. Date("2") is parsed)
+    parse(query, 'd.M.y', new Date()).getTime() !== NaN
+  )
+}
+
+type PredicateExtra = {
+  tags: ObjectOf<Tag>
+}
+
+interface CommandBase {
+  // convention for commands is they start with ":" character
+  name: string
+  predicate: (tx: Transaction, query: string, other: PredicateExtra) => boolean
+}
+
+interface CommandWithValidation extends CommandBase {
+  queryValidation: ((query: string) => boolean) | 'none'
+}
+
+const validateCommandWithOptions = (
+  command: CommandWithOptions,
+  query: string,
+) => {
+  return command.valueOptions.includes(query)
+}
+
+interface CommandWithOptions extends CommandBase {
+  valueOptions: string[]
+}
+
+export const isCommandWithValidation = (
+  command: any,
+): command is CommandWithValidation => {
+  return command.queryValidation !== undefined
+}
+
+export type Command = CommandWithValidation | CommandWithOptions
+
+export const COMMANDS: Command[] = [
+  {
+    // TODO: change to CommandWithOptions
+    name: ':tag',
+    predicate: (tx, query, { tags }) =>
+      !!tx.tagIds.find((tagId) =>
+        tags[tagId].name.toLowerCase().includes(query.toLowerCase()),
+      ),
+    queryValidation: 'none',
+  },
+  {
+    name: ':amount-over',
+    predicate: (tx, query) => tx.amount > Number.parseFloat(query),
+    queryValidation: (query) =>
+      // https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
+      !isNaN(query as any) && !isNaN(parseFloat(query)),
+  },
+  {
+    name: ':amount-under',
+    predicate: (tx, query) => tx.amount < Number.parseFloat(query),
+    queryValidation: (query) =>
+      // https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
+      !isNaN(query as any) && !isNaN(parseFloat(query)),
+  },
+  {
+    name: ':date-after',
+    predicate: (tx, query) =>
+      isAfter(parse(query, 'd.M.y', new Date()), tx.dateTime),
+    queryValidation: (query) => isValidDate(query),
+  },
+  {
+    name: ':date-before',
+    predicate: (tx, query) =>
+      isBefore(parse(query, 'd.M.y', new Date()), tx.dateTime),
+    queryValidation: (query) => isValidDate(query),
+  },
+  {
+    name: ':tx-type',
+    predicate: (tx, query) => tx.transactionType === query,
+    valueOptions: Object.keys(TransactionTypes),
+  },
+  {
+    name: ':currency',
+    predicate: (tx, query) => tx.currency === query,
+    valueOptions: Object.keys(CURRENCIES),
+  },
+  {
+    name: ':is-expense',
+    predicate: (tx, query) => {
+      const wantExpense = query === 'true'
+      return tx.isExpense === wantExpense
+    },
+    valueOptions: ['true', 'false'],
+  },
+  {
+    name: ':note',
+    predicate: (tx, query) => tx.note.includes(query),
+    queryValidation: 'none',
+  },
+  {
+    name: ':repeating',
+    predicate: (tx, query) => tx.repeating === query,
+    valueOptions: Object.keys(RepeatingOptions),
+  },
+  {
+    name: ':is-autotag',
+    predicate: (tx, query, { tags }) =>
+      !!tx.tagIds.find(
+        (tagId) => !!tags[tagId].automatic === (query === 'true'),
+      ),
+    valueOptions: ['true', 'false'],
+  },
+  {
+    name: ':with-default-amount',
+    predicate: (tx, query, { tags }) =>
+      !!tx.tagIds.find(
+        (tagId) => !!tags[tagId].defaultAmount === (query === 'true'),
+      ),
+    valueOptions: ['true', 'false'],
+  },
+  {
+    name: ':tag-count',
+    predicate: (tx, query) => tx.tagIds.length === Number.parseInt(query),
+    queryValidation: (
+      query, // https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
+    ) => !isNaN(query as any) && !isNaN(parseInt(query)),
+  },
+]
+
+export const search = (
+  txs: Transaction[],
+  query: TransactionSearch,
+  other: PredicateExtra,
+) => {
+  if (query.value === '') return txs
+
+  const command = COMMANDS.find((c) => c.name == query.command!)!
+  return txs.filter((tx) => command.predicate(tx, query.value, other))
+}
+
+export const isValidQuery = (query: TransactionSearch): boolean => {
+  const command = COMMANDS.find((c) => c.name == query.command!)
+  if (command === undefined) return false
+  else if (query.value === '') return true
+  else if (isCommandWithValidation(command))
+    return (
+      command.queryValidation === 'none' || command.queryValidation(query.value)
+    )
+  else return validateCommandWithOptions(command, query.value)
+}

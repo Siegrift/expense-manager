@@ -82,7 +82,7 @@ const EditTransaction = () => {
   return (
     <>
       <AppBar
-        returnUrl="/transaction"
+        returnUrl="/transactions"
         onSave={() => {
           if (isAmountInValidFormat(amount)) {
             dispatch(
