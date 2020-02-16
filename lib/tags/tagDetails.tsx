@@ -11,7 +11,6 @@ import NotRecentlyUsedIcon from '@material-ui/icons/EventBusy'
 import TotalTxsIcon from '@material-ui/icons/PostAddTwoTone'
 import RepeatOneIcon from '@material-ui/icons/RepeatOne'
 import { map } from '@siegrift/tsfunct'
-import classNames from 'classnames'
 import format from 'date-fns/format'
 import Router from 'next/router'
 import React, { useState } from 'react'
@@ -29,11 +28,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     flexDirection: 'column',
   },
-  row: {
-    marginTop: '16px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignSelf: 'stretch',
+  paper: {
+    '& > *:not(:first-child)': {
+      marginTop: theme.spacing(2),
+    },
   },
   amount: { width: '100%' },
   label: { width: '100%' },
@@ -115,38 +113,39 @@ const TagDetails = ({
     }
   }
 
+  const onSaveHandler = () => {
+    if (isValidDefaultAmount(amount) && tagName) {
+      onSave({
+        ...tag,
+        name: tagName,
+        automatic: isAutotag,
+        defaultAmount: amount,
+      })
+      Router.push('/tags')
+    } else {
+      setShouldValidate(
+        map(shouldValidate, (_, key) => ({
+          key,
+          value: true,
+        })) as typeof shouldValidate,
+      )
+    }
+  }
+
   return (
     <>
       <AppBar
         appBarTitle={appBarTitle}
         returnUrl="/tags"
-        onSave={() => {
-          if (isValidDefaultAmount(amount) && tagName) {
-            onSave({
-              ...tag,
-              name: tagName,
-              automatic: isAutotag,
-              defaultAmount: amount,
-            })
-            Router.push('/tags')
-          } else {
-            setShouldValidate(
-              map(shouldValidate, (_, key) => ({
-                key,
-                value: true,
-              })) as typeof shouldValidate,
-            )
-          }
-        }}
+        onSave={onSaveHandler}
         onRemove={onRemove && onRemoveTag}
       />
 
       <div className={classes.root}>
-        <Paper>
+        <Paper className={classes.paper}>
           <TextField fullWidth disabled label="Id" value={tag.id} />
 
           <TextField
-            className={classes.row}
             fullWidth
             label="Tag name"
             value={tagName}
@@ -166,11 +165,12 @@ const TagDetails = ({
               setShouldValidate((obj) => ({ ...obj, amount: true }))
             }}
             label="Default transaction amount"
-            className={classNames(classes.amount, classes.row)}
+            className={classes.amount}
+            onPressEnter={onSaveHandler}
           />
 
           <FormControlLabel
-            classes={{ root: classNames(classes.row), label: classes.label }}
+            classes={{ label: classes.label }}
             style={{ flex: 1, width: '100%' }}
             control={
               <Checkbox
@@ -197,11 +197,7 @@ const TagDetails = ({
           />
         </Paper>
         {stats && (
-          <Paper
-            className={classes.row}
-            style={{ flexDirection: 'column' }}
-            label="Usage stats"
-          >
+          <Paper style={{ flexDirection: 'column' }} label="Usage stats">
             <UsageStatRow
               label="Transaction occurrences"
               value={stats.totalTxs}

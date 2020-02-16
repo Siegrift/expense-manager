@@ -10,6 +10,7 @@ import parse from 'date-fns/parse'
 import isBefore from 'date-fns/isBefore'
 import isAfter from 'date-fns/isAfter'
 import { CURRENCIES } from '../shared/currencies'
+import { booleanOptions } from './common'
 
 const isValidDate = (query: string) => {
   return (
@@ -24,7 +25,6 @@ type PredicateExtra = {
 }
 
 interface CommandBase {
-  // convention for commands is they start with ":" character
   name: string
   predicate: (tx: Transaction, query: string, other: PredicateExtra) => boolean
 }
@@ -55,7 +55,7 @@ export type Command = CommandWithValidation | CommandWithOptions
 export const COMMANDS: Command[] = [
   {
     // TODO: change to CommandWithOptions
-    name: ':tag',
+    name: 'tag',
     predicate: (tx, query, { tags }) =>
       !!tx.tagIds.find((tagId) =>
         tags[tagId].name.toLowerCase().includes(query.toLowerCase()),
@@ -63,81 +63,86 @@ export const COMMANDS: Command[] = [
     queryValidation: 'none',
   },
   {
-    name: ':amount-over',
+    name: 'amount-over',
     predicate: (tx, query) => tx.amount > Number.parseFloat(query),
     queryValidation: (query) =>
       // https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
       !isNaN(query as any) && !isNaN(parseFloat(query)),
   },
   {
-    name: ':amount-under',
+    name: 'amount-under',
     predicate: (tx, query) => tx.amount < Number.parseFloat(query),
     queryValidation: (query) =>
       // https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
       !isNaN(query as any) && !isNaN(parseFloat(query)),
   },
   {
-    name: ':date-after',
+    name: 'date-after',
     predicate: (tx, query) =>
       isAfter(parse(query, 'd.M.y', new Date()), tx.dateTime),
     queryValidation: (query) => isValidDate(query),
   },
   {
-    name: ':date-before',
+    name: 'date-before',
     predicate: (tx, query) =>
       isBefore(parse(query, 'd.M.y', new Date()), tx.dateTime),
     queryValidation: (query) => isValidDate(query),
   },
   {
-    name: ':tx-type',
+    name: 'tx-type',
     predicate: (tx, query) => tx.transactionType === query,
     valueOptions: Object.keys(TransactionTypes),
   },
   {
-    name: ':currency',
+    name: 'currency',
     predicate: (tx, query) => tx.currency === query,
     valueOptions: Object.keys(CURRENCIES),
   },
   {
-    name: ':is-expense',
+    name: 'is-expense',
     predicate: (tx, query) => {
       const wantExpense = query === 'true'
       return tx.isExpense === wantExpense
     },
-    valueOptions: ['true', 'false'],
+    valueOptions: booleanOptions,
   },
   {
-    name: ':note',
+    name: 'note',
     predicate: (tx, query) => tx.note.includes(query),
     queryValidation: 'none',
   },
   {
-    name: ':repeating',
+    name: 'repeating',
     predicate: (tx, query) => tx.repeating === query,
     valueOptions: Object.keys(RepeatingOptions),
   },
   {
-    name: ':is-autotag',
+    name: 'is-autotag',
     predicate: (tx, query, { tags }) =>
       !!tx.tagIds.find(
         (tagId) => !!tags[tagId].automatic === (query === 'true'),
       ),
-    valueOptions: ['true', 'false'],
+    valueOptions: booleanOptions,
   },
   {
-    name: ':with-default-amount',
+    name: 'with-default-amount',
     predicate: (tx, query, { tags }) =>
       !!tx.tagIds.find(
         (tagId) => !!tags[tagId].defaultAmount === (query === 'true'),
       ),
-    valueOptions: ['true', 'false'],
+    valueOptions: booleanOptions,
   },
   {
-    name: ':tag-count',
+    name: 'tag-count',
     predicate: (tx, query) => tx.tagIds.length === Number.parseInt(query),
     queryValidation: (
       query, // https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
     ) => !isNaN(query as any) && !isNaN(parseInt(query)),
+  },
+  {
+    name: 'has-note',
+    predicate: (tx, hasNote) => (tx.note === '') === (hasNote === 'false'),
+    valueOptions: booleanOptions,
   },
 ]
 

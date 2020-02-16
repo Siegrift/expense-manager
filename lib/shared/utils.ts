@@ -1,6 +1,9 @@
 import Router from 'next/router'
 
 import { ObjectOf } from '../types'
+import { CURRENCIES } from './currencies'
+import { pipe } from '@siegrift/tsfunct'
+import chunk from 'lodash/chunk'
 
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -44,3 +47,31 @@ export const sorted = <T>(
 }
 
 export const formatBoolean = (value: boolean) => (value ? 'yes' : 'no')
+
+export const formatMoney = (
+  amount: string | number,
+  currency: keyof typeof CURRENCIES,
+) => `${formatAmount(amount)}${CURRENCIES[currency]}`
+
+export const reverse = (str: string) =>
+  str
+    .split('')
+    .reverse()
+    .join('')
+
+export const formatAmount = (amount: string | number): string => {
+  const strAmount = '' + amount
+
+  if (strAmount[0] === '-') return `-${formatAmount(strAmount.substr(1))}`
+
+  const numTokens = strAmount.split('.')
+  const insertCommas = pipe(
+    reverse,
+    (reversed) => chunk(reversed, 3),
+    (chunks) => chunks.reverse(),
+    (chunks) => chunks.map((c) => c.reverse().join('')),
+    (chunks) => chunks.join(','),
+  )(numTokens[0])
+
+  return insertCommas + (numTokens[1] ? `.${numTokens[1]}` : '')
+}
