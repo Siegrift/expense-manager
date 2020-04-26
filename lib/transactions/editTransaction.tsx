@@ -21,7 +21,6 @@ import AppBar from '../components/appBar'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
 import { getCurrentUserId } from '../firebase/util'
-import withSignedUser from '../hoc/withSignedUser'
 import { tagsSel } from '../settings/selectors'
 import { CURRENCIES } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
@@ -255,4 +254,4 @@ const EditTransaction = () => {
   )
 }
 
-export default withSignedUser(EditTransaction)
+export default EditTransaction

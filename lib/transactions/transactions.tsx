@@ -7,7 +7,6 @@ import { FixedSizeList } from 'react-window'
 
 import Navigation from '../components/navigation'
 import Paper from '../components/paper'
-import withSignedUser from '../hoc/withSignedUser'
 import Transaction from './transaction'
 import SearchBar from '../components/searchBar'
 import { COMMANDS } from '../search/transactionSearch'
@@ -97,4 +96,4 @@ const Transactions = () => {
   )
 }
 
-export default withSignedUser(Transactions)
+export default Transactions

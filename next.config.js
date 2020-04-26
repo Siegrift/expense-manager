@@ -1,3 +1,4 @@
+require('./load-env')
 // eslint-disable-next-line
 const withOffline = require('next-offline')
 // eslint-disable-next-line
@@ -11,21 +12,11 @@ const compose = (...fns) =>
     (arg) => arg,
   )
 
-const { NODE_ENV } = process.env
-if (!NODE_ENV) {
-  throw new Error(
-    'The NODE_ENV environment variable is required but was not specified.',
-  )
-}
-
-require('dotenv').config({
-  path: NODE_ENV === 'development' ? '.env-dev' : '.env-prod',
-})
-
 // https://github.com/hanford/next-offline#now-20
 const nextConfig = {
   // Public, build-time env vars.
   // https://nextjs.org/docs#build-time-configuration
+  // TODO: is this needed
   env: {
     FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
     FIREBASE_DATABASE_URL: process.env.FIREBASE_DATABASE_URL,
