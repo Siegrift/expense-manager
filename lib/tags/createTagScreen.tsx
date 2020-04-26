@@ -4,7 +4,6 @@ import uuid from 'uuid/v4'
 
 import { uploadToFirebase } from '../actions'
 import { getCurrentUserId } from '../firebase/util'
-import withSignedUser from '../hoc/withSignedUser'
 import TagDetails from './tagDetails'
 
 const CreateTagScreen = () => {
@@ -24,4 +23,4 @@ const CreateTagScreen = () => {
   )
 }
 
-export default withSignedUser(CreateTagScreen)
+export default CreateTagScreen

@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux'
 
 import Navigation from '../components/navigation'
 import { getFirebase } from '../firebase/firebase'
-import withSignedUser from '../hoc/withSignedUser'
 
 import { clearAllData, exportToCSV, importFromCSV } from './actions'
 import SettingsPanel from './settingsPanel'
@@ -84,4 +83,4 @@ const Settings = () => {
   )
 }
 
-export default withSignedUser(Settings)
+export default Settings

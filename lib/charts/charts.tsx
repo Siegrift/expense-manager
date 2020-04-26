@@ -3,7 +3,6 @@ import { Theme, makeStyles } from '@material-ui/core/styles'
 import React from 'react'
 
 import Navigation from '../components/navigation'
-import withSignedUser from '../hoc/withSignedUser'
 
 import AllTransactions from './allTransactions'
 import ChartWrapper from './chartWrapper'
@@ -53,4 +52,4 @@ const Charts = () => {
   )
 }
 
-export default withSignedUser(Charts)
+export default Charts

@@ -57,6 +57,21 @@ export const initializeFirebase = async (store: Store) => {
 
   firebase.auth().onAuthStateChanged((user) => {
     store.dispatch(authChangeAction(user ? 'loggedIn' : 'loggedOut') as any)
+    if (user) {
+      return user.getIdToken().then((token) => {
+        return fetch('/api/set-cookie', {
+          method: 'POST',
+          headers: new Headers({ 'Content-Type': 'application/json' }),
+          credentials: 'same-origin',
+          body: JSON.stringify({ token }),
+        })
+      })
+    } else {
+      return fetch('/api/remove-cookie', {
+        method: 'POST',
+        credentials: 'same-origin',
+      })
+    }
   })
 }
 

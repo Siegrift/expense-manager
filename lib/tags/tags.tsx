@@ -10,7 +10,6 @@ import { FixedSizeList } from 'react-window'
 
 import Navigation from '../components/navigation'
 import Paper from '../components/paper'
-import withSignedUser from '../hoc/withSignedUser'
 
 import { tagsSel } from './selectors'
 import TagItem from './tagItem'
@@ -91,4 +90,4 @@ const Transactions = () => {
   )
 }
 
-export default withSignedUser(Transactions)
+export default Transactions

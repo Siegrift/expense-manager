@@ -22,7 +22,6 @@ import Navigation from '../components/navigation'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
 import { getCurrentUserId } from '../firebase/util'
-import withSignedUser from '../hoc/withSignedUser'
 import { CURRENCIES } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
 import { addTransaction } from './actions'
@@ -328,4 +327,4 @@ const AddTransaction = () => {
   )
 }
 
-export default withSignedUser(AddTransaction)
+export default AddTransaction

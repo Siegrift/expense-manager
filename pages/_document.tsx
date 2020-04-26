@@ -17,23 +17,17 @@ class MyDocument extends Document {
           />
           {/* PWA primary color */}
           <meta name="theme-color" content="#a5790a" />
-
           {/* Page favicon */}
           <link rel="icon" type="image/png" href="../static/coin.png" />
-
           {/* Progressive Web App: Match the width of app’s content with width of viewport for mobile devices */}
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-
           {/* Progressive Web App: Provide manifest file for metadata */}
           <link rel="manifest" href="/static/manifest.json" />
-
           {/* SEO: App description for search-engine optimization */}
           <meta name="Description" content={PROJECT_DESCRIPTION} />
-
           {/* Bonus: Have app icon and splash screen for PWAs saved to homescreen on iOS devices */}
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-
           {/* Enable material UI typography font */}
           <link
             rel="stylesheet"
