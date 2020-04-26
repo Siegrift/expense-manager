@@ -27,18 +27,12 @@ const privateUpload = (
   entries: Array<Entry<'tags', Tag> | Entry<'transactions', Transaction>>,
 ) => {
   const colls = {
-    tags: getFirebase()
-      .firestore()
-      .collection('tags'),
-    transactions: getFirebase()
-      .firestore()
-      .collection('transactions'),
+    tags: getFirebase().firestore().collection('tags'),
+    transactions: getFirebase().firestore().collection('transactions'),
   }
 
   return chunk(entries, MAX_WRITES_IN_BATCH).map((ch) => {
-    const batch = getFirebase()
-      .firestore()
-      .batch()
+    const batch = getFirebase().firestore().batch()
     ch.forEach(({ data, coll }) => {
       const ref = colls[coll].doc(data.id)
       batch.set(ref, data)
@@ -52,18 +46,12 @@ const privateRemove = (
   entries: Array<Entry<'tags', string> | Entry<'transactions', string>>,
 ) => {
   const colls = {
-    tags: getFirebase()
-      .firestore()
-      .collection('tags'),
-    transactions: getFirebase()
-      .firestore()
-      .collection('transactions'),
+    tags: getFirebase().firestore().collection('tags'),
+    transactions: getFirebase().firestore().collection('transactions'),
   }
 
   return chunk(entries, MAX_WRITES_IN_BATCH).map((ch) => {
-    const batch = getFirebase()
-      .firestore()
-      .batch()
+    const batch = getFirebase().firestore().batch()
     ch.forEach(({ data, coll }) => {
       const ref = colls[coll].doc(data)
       batch.delete(ref)
@@ -111,13 +99,9 @@ export const removeFromFirebase = (
 }
 
 const setRepeatingTxsAsInactive = (inactive: Transaction[]) => {
-  const txs = getFirebase()
-    .firestore()
-    .collection('transactions')
+  const txs = getFirebase().firestore().collection('transactions')
   chunk(inactive, MAX_WRITES_IN_BATCH).map((c) => {
-    const batch = getFirebase()
-      .firestore()
-      .batch()
+    const batch = getFirebase().firestore().batch()
     c.forEach((tx) => {
       const ref = txs.doc(tx.id)
       batch.update(ref, { repeating: 'inactive' } as Partial<Transaction>)

@@ -53,11 +53,7 @@ export const formatMoney = (
   currency: keyof typeof CURRENCIES,
 ) => `${formatAmount(amount)}${CURRENCIES[currency]}`
 
-export const reverse = (str: string) =>
-  str
-    .split('')
-    .reverse()
-    .join('')
+export const reverse = (str: string) => str.split('').reverse().join('')
 
 export const formatAmount = (amount: string | number): string => {
   const strAmount = '' + amount

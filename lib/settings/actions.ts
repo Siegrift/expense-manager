@@ -148,9 +148,7 @@ export const clearAllData = (): Thunk => async (
   const removeColl = async (name: string) => {
     let stopRemove = false
     while (!stopRemove) {
-      const batch = getFirebase()
-        .firestore()
-        .batch()
+      const batch = getFirebase().firestore().batch()
 
       // this is the only way to remove all of the data
       // eslint-disable-next-line

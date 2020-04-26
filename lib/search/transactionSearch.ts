@@ -77,13 +77,13 @@ export const COMMANDS: Command[] = [
       !isNaN(query as any) && !isNaN(parseFloat(query)),
   },
   {
-    name: 'date-after',
+    name: 'date-before',
     predicate: (tx, query) =>
       isAfter(parse(query, 'd.M.y', new Date()), tx.dateTime),
     queryValidation: (query) => isValidDate(query),
   },
   {
-    name: 'date-before',
+    name: 'date-after',
     predicate: (tx, query) =>
       isBefore(parse(query, 'd.M.y', new Date()), tx.dateTime),
     queryValidation: (query) => isValidDate(query),

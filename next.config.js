@@ -11,8 +11,30 @@ const compose = (...fns) =>
     (arg) => arg,
   )
 
+const { NODE_ENV } = process.env
+if (!NODE_ENV) {
+  throw new Error(
+    'The NODE_ENV environment variable is required but was not specified.',
+  )
+}
+
+require('dotenv').config({
+  path: NODE_ENV === 'development' ? '.env-dev' : '.env-prod',
+})
+
 // https://github.com/hanford/next-offline#now-20
 const nextConfig = {
+  // Public, build-time env vars.
+  // https://nextjs.org/docs#build-time-configuration
+  env: {
+    FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
+    FIREBASE_DATABASE_URL: process.env.FIREBASE_DATABASE_URL,
+    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
+    FIREBASE_PUBLIC_API_KEY: process.env.FIREBASE_PUBLIC_API_KEY,
+    FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
+    FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
+    FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  },
   // NOTE: this is present in the example, but breaks on dev
   // target: "serverless",
   transformManifest: (manifest) => ['/'].concat(manifest), // add the homepage to the cache
