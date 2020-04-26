@@ -12,9 +12,7 @@ import SettingsPanel from './settingsPanel'
 
 function signOut() {
   // Sign out of Firebase
-  getFirebase()
-    .auth()
-    .signOut()
+  getFirebase().auth().signOut()
 }
 
 const useStyles = makeStyles((theme: Theme) => ({

@@ -7,6 +7,6 @@ describe('e2e', () => {
     cy.visit(BASE_URL)
     cy.wait
 
-    cy.queryAllByText('Sign in with Google', { timeout: 500 }).should('exist')
+    cy.findAllByText('Sign in with Google', { timeout: 500 }).should('exist')
   })
 })

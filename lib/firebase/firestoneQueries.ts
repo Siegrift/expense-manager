@@ -37,7 +37,7 @@ const createQueryReducer = (
         )
       }
     })
-    return newStatePart
+    return newStatePart as any
   })
 }
 

@@ -115,7 +115,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             ? valueOptions.filter((v) => v.startsWith(query.value))
             : []
         }
-        freeSolo={query.command !== undefined && valueOptions === undefined}
+        freeSolo={true}
         renderInput={(params) => {
           return (
             <InputBase
