@@ -40,6 +40,7 @@ export const initializeFirebase = async (store: Store) => {
   if (typeof window !== 'undefined') {
     await firebase
       .firestore()
+      .settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED })
       .enablePersistence({ synchronizeTabs: true })
       .catch((err) => {
         // TODO: handle errors
