@@ -5,6 +5,15 @@ if (!NODE_ENV) {
   )
 }
 
-require('dotenv').config({
-  path: NODE_ENV === 'development' ? '.env-dev' : '.env-prod',
-})
+// for production env variables see: https://vercel.com/siegrift/expense-manager-pwa/settings/general
+if (NODE_ENV === 'development') {
+  const { error } = require('dotenv').config({
+    path: '.env-dev',
+  })
+
+  if (error) {
+    throw Error(
+      'Dotenv configuration was NOT parsed correctly! Error: ' + error.message,
+    )
+  }
+}

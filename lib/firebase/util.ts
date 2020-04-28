@@ -1,10 +1,12 @@
 import { getFirebase } from '../firebase/firebase'
+import Router from 'next/router'
 
-export function signIn() {
+export async function signIn() {
   // Sign into Firebase using popup auth & Google as the identity provider.
   const firebase = getFirebase()
   const provider = new firebase.auth.GoogleAuthProvider()
-  firebase.auth().signInWithPopup(provider)
+  await firebase.auth().signInWithPopup(provider)
+  Router.push('/')
 }
 
 export const convertTimestampsToDates = (value: any): any => {

@@ -1,5 +1,4 @@
 import Typography from '@material-ui/core/Typography'
-import Router from 'next/router'
 import GoogleButton from 'react-google-button'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -14,13 +13,11 @@ const Login = () => {
   const dispatch = useDispatch()
   const signInStatus = useSelector((state: State) => state.signInStatus)
   switch (signInStatus) {
-    case 'loggedIn':
-      Router.push('/add')
-      return null
     case 'unknown':
       return <LoadingScreen />
     case 'loggingIn':
       return <LoadingScreen text="Signing in..." />
+    case 'loggedIn':
     case 'loggedOut':
       return (
         <>

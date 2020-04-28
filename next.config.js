@@ -14,9 +14,7 @@ const compose = (...fns) =>
 
 // https://github.com/hanford/next-offline#now-20
 const nextConfig = {
-  // Public, build-time env vars.
-  // https://nextjs.org/docs#build-time-configuration
-  // TODO: is this needed
+  // https://nextjs.org/docs/api-reference/next.config.js/environment-variables
   env: {
     FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
     FIREBASE_DATABASE_URL: process.env.FIREBASE_DATABASE_URL,

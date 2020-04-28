@@ -2,6 +2,7 @@ import Button from '@material-ui/core/Button'
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import React from 'react'
 import { useDispatch } from 'react-redux'
+import Router from 'next/router'
 
 import Navigation from '../components/navigation'
 import { getFirebase } from '../firebase/firebase'
@@ -9,9 +10,10 @@ import { getFirebase } from '../firebase/firebase'
 import { clearAllData, exportToCSV, importFromCSV } from './actions'
 import SettingsPanel from './settingsPanel'
 
-function signOut() {
+async function signOut() {
   // Sign out of Firebase
-  getFirebase().auth().signOut()
+  await getFirebase().auth().signOut()
+  Router.push('/')
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
