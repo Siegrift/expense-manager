@@ -67,7 +67,7 @@ export const initializeFirebase = async (store: Store) => {
           body: JSON.stringify({ token }),
         })
 
-        Router.push('/add')
+        if (Router.pathname === '/') Router.push('/add')
       })
     } else {
       await fetch('/api/remove-cookie', {

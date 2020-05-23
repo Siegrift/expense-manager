@@ -41,6 +41,20 @@ export const authChangeAction = (status: SignInStatus): Thunk => async (
 }
 
 export const initializeFirestore = (): Thunk => async (dispatch) => {
+  const queries = getQueries()
+  const initialQueries = queries.map((query) => {
+    return query.createFirestoneQuery().get({
+      source: 'cache',
+    })
+  })
+
+  const initialQueriesData = await Promise.all(initialQueries)
+  batch(() => {
+    initialQueriesData.forEach((data, i) =>
+      dispatch(firestoneChangeAction(queries[i], data, true)),
+    )
+  })
+
   let actions: Array<Parameters<typeof firestoneChangeAction>> = []
   getFirebase()
     .firestore()
@@ -54,19 +68,7 @@ export const initializeFirestore = (): Thunk => async (dispatch) => {
       })
     })
 
-  const initialQueries: Array<Promise<unknown>> = getQueries().map((query) => {
-    return query
-      .createFirestoneQuery()
-      .get({
-        source: 'cache',
-      })
-      .then((snapshot) =>
-        dispatch(firestoneChangeAction(query, snapshot, true)),
-      )
-  })
-
-  await Promise.all(initialQueries)
-  getQueries().forEach((q) => {
+  queries.forEach((q) => {
     q.createFirestoneQuery().onSnapshot((change) => {
       actions.push([q, change])
     })
