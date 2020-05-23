@@ -19,10 +19,10 @@
     "test:unit-update": "jest --updateSnapshot",
     "test:unit-ui": "majestic",
     "test:unit-watch": "jest --watch",
-    "test:e2e-start-server": "next dev -p 3999",
+    "test:e2e-start-server": "next dev -p 3000",
     "test:e2e-run": "cypress run",
     "test:e2e-open": "cypress open",
-    "test:e2e": "start-server-and-test 'yarn test:e2e-start-server' http://localhost:3999 'yarn test:e2e-run'",
+    "test:e2e": "start-server-and-test 'yarn test:e2e-start-server' http://localhost:3000 'yarn test:e2e-run'",
     "analyze": "cross-env ANALYZE=true next build"
   },
   "husky": {
