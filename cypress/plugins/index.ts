@@ -9,4 +9,9 @@
 // https://on.cypress.io/plugins-guide
 // ***********************************************************
 
-module.exports = (on, _config) => {}
+const admin = require('firebase-admin')
+const cypressFirebasePlugin = require('cypress-firebase').plugin
+
+module.exports = (on, config) => {
+  return cypressFirebasePlugin(on, config, admin)
+}
