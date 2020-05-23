@@ -5,7 +5,8 @@ import { redirect, redirectToLoginIfNotSignedIn } from '../lib/server/utils'
 const IndexPage = () => null
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  if (!redirectToLoginIfNotSignedIn(req, res)) return { props: {} }
+  if ((await redirectToLoginIfNotSignedIn(req, res)) === null)
+    return { props: {} }
 
   redirect(res, '/add')
   return { props: {} }

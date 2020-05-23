@@ -1,5 +1,6 @@
-import cookieSession from 'cookie-session'
 import '../../load-env'
+import cookieSession from 'cookie-session'
+import compose from 'lodash/fp/compose'
 
 // Update a value in the cookie so that the set-cookie will be sent.
 // Only changes every minute so that it's not sent with every request.
@@ -14,10 +15,7 @@ const cookieSessionRefreshHandler = (next: Function) => (
   next(req, res)
 }
 
-export const cookieSessionHandler = (next: Function) => (
-  req: any,
-  res: any,
-) => {
+export const addSession = (req: any, res: any) => {
   const sessionSecrets = [
     process.env.SESSION_SECRET_CURRENT!,
     process.env.SESSION_SECRET_PREVIOUS!,
@@ -31,9 +29,15 @@ export const cookieSessionHandler = (next: Function) => (
     overwrite: true,
   })
   includeSession(req, res, () => null)
+}
 
+export const cookieSessionHandler = (next: Function) => (
+  req: any,
+  res: any,
+) => {
+  addSession(req, res)
   return next(req, res)
 }
 
 export const applyMiddleware = (handler: Function) =>
-  cookieSessionHandler(cookieSessionRefreshHandler(handler))
+  compose(cookieSessionHandler, cookieSessionRefreshHandler)(handler)

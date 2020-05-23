@@ -46,5 +46,6 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/prefer-interface': 0,
     'react/no-unescaped-entities': 0,
+    '@typescript-eslint/no-var-requires': 'off',
   },
 }
