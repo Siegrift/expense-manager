@@ -9,5 +9,6 @@ declare namespace Cypress {
   interface Chainable {
     dataCy(value: string): Chainable<Element>
     cypressFirebaseLogin(testUid: string): Chainable<unknown>
+    logCurrentFirebaseUser(): Chainable<undefined>
   }
 }

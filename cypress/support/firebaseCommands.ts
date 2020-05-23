@@ -45,3 +45,7 @@ Cypress.Commands.add('login', () => {
       })
     })
 })
+
+Cypress.Commands.add('logCurrentFirebaseUser', () => {
+  console.log(firebase.auth().currentUser)
+})

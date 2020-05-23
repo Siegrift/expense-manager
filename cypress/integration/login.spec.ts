@@ -20,4 +20,12 @@ describe('login', () => {
     cy.visit('/transactions')
     cy.location('pathname').should('equal', '/transactions')
   })
+
+  it('is redirected to /add after logging in', () => {
+    cy.visit('/login')
+    cy.findAllByText('Sign in with Google', { timeout: 1500 }).should('exist')
+    cy.cypressFirebaseLogin(Cypress.env('testUid'))
+
+    cy.location('pathname').should('equal', '/add')
+  })
 })
