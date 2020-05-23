@@ -1,3 +1,4 @@
+import Router from 'next/router'
 import { Store } from 'redux'
 
 import { authChangeAction } from './actions'
@@ -55,22 +56,26 @@ export const initializeFirebase = async (store: Store) => {
       })
   }
 
-  firebase.auth().onAuthStateChanged((user) => {
+  firebase.auth().onAuthStateChanged(async (user) => {
     store.dispatch(authChangeAction(user ? 'loggedIn' : 'loggedOut') as any)
     if (user) {
-      return user.getIdToken().then((token) => {
-        return fetch('/api/set-cookie', {
+      user.getIdToken().then(async (token) => {
+        await fetch('/api/set-cookie', {
           method: 'POST',
           headers: new Headers({ 'Content-Type': 'application/json' }),
           credentials: 'same-origin',
           body: JSON.stringify({ token }),
         })
+
+        Router.push('/add')
       })
     } else {
-      return fetch('/api/remove-cookie', {
+      await fetch('/api/remove-cookie', {
         method: 'POST',
         credentials: 'same-origin',
       })
+
+      Router.push('/login')
     }
   })
 }

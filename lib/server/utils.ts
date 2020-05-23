@@ -46,7 +46,6 @@ export const getSignInToken = async (
     // we are ussing cookie session middleware
     return await verifyIdToken((req as any).session.token)
   } catch (e) {
-    console.log(e)
     return null
   }
 }
