@@ -13,14 +13,12 @@ import difference from 'lodash/difference'
 import Router, { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import uuid from 'uuid/v4'
 
 import { ObjectOf } from '../../lib/types'
 import { RepeatingOption, RepeatingOptions, Tag } from '../addTransaction/state'
 import AppBar from '../components/appBar'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
-import { getCurrentUserId } from '../firebase/util'
 import { tagsSel } from '../settings/selectors'
 import { CURRENCIES } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
@@ -139,18 +137,12 @@ const EditTransaction = () => {
               className={classes.chipField}
               tags={{ ...availableTags, ...newTags }}
               onSelectTag={(id) => setTagIds([...tagIds, id])}
-              onCreateTag={(label) => {
-                const id = uuid()
+              onCreateTag={(tag) => {
                 setNewTags({
                   ...newTags,
-                  [id]: {
-                    id,
-                    name: label,
-                    uid: getCurrentUserId(),
-                    automatic: false,
-                  },
+                  [tag.id]: tag,
                 })
-                setTagIds([...tagIds, id])
+                setTagIds([...tagIds, tag.id])
               }}
               onRemoveTags={(removeTagIds) => {
                 const ids = difference(tagIds, removeTagIds)

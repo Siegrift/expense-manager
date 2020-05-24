@@ -15,13 +15,11 @@ import { fpSet, fpUpdate, get, pick, pipe, set } from '@siegrift/tsfunct'
 import difference from 'lodash/difference'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import uuid from 'uuid/v4'
 
 import AmountField from '../components/amountField'
 import Navigation from '../components/navigation'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
-import { getCurrentUserId } from '../firebase/util'
 import { CURRENCIES } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
 import { addTransaction } from './actions'
@@ -135,7 +133,7 @@ const AddTransaction = () => {
         <Grid className={classes.row}>
           <TagField
             tags={allTags}
-            onSelectTag={(id: any) => {
+            onSelectTag={(id) => {
               setAddTx((currAddTx) => {
                 const newTagIds = [...get(currAddTx, ['tagIds']), id]
                 return pipe(
@@ -149,25 +147,19 @@ const AddTransaction = () => {
                 )(currAddTx)
               })
             }}
-            onCreateTag={(tagName: any) => {
-              const id = uuid()
+            onCreateTag={(tag: Tag) => {
               setAddTx((currAddTx) => ({
                 ...currAddTx,
-                tagIds: [...currAddTx.tagIds, id],
+                tagIds: [...currAddTx.tagIds, tag.id],
                 newTags: {
                   ...currAddTx.newTags,
-                  [id]: {
-                    id,
-                    name: tagName,
-                    uid: getCurrentUserId(),
-                    automatic: false,
-                  },
+                  [tag.id]: tag,
                 },
                 note: '',
                 tagInputValue: '',
               }))
             }}
-            onSetTagInputValue={(newValue: any) => {
+            onSetTagInputValue={(newValue) => {
               setAddTx((currAddTx) =>
                 set(currAddTx, ['tagInputValue'], newValue),
               )
