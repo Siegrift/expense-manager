@@ -1,3 +1,5 @@
+import React, { useState } from 'react'
+
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Collapse from '@material-ui/core/Collapse'
@@ -13,17 +15,15 @@ import TextField from '@material-ui/core/TextField'
 import { DateTimePicker } from '@material-ui/pickers'
 import { fpSet, fpUpdate, get, pick, pipe, set } from '@siegrift/tsfunct'
 import difference from 'lodash/difference'
-import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import uuid from 'uuid/v4'
 
 import AmountField from '../components/amountField'
 import Navigation from '../components/navigation'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
-import { getCurrentUserId } from '../firebase/util'
 import { CURRENCIES } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
+
 import { addTransaction } from './actions'
 import { automaticTagIdsSel, tagsSel } from './selectors'
 import {
@@ -135,7 +135,7 @@ const AddTransaction = () => {
         <Grid className={classes.row}>
           <TagField
             tags={allTags}
-            onSelectTag={(id: any) => {
+            onSelectTag={(id) => {
               setAddTx((currAddTx) => {
                 const newTagIds = [...get(currAddTx, ['tagIds']), id]
                 return pipe(
@@ -149,25 +149,19 @@ const AddTransaction = () => {
                 )(currAddTx)
               })
             }}
-            onCreateTag={(tagName: any) => {
-              const id = uuid()
+            onCreateTag={(tag: Tag) => {
               setAddTx((currAddTx) => ({
                 ...currAddTx,
-                tagIds: [...currAddTx.tagIds, id],
+                tagIds: [...currAddTx.tagIds, tag.id],
                 newTags: {
                   ...currAddTx.newTags,
-                  [id]: {
-                    id,
-                    name: tagName,
-                    uid: getCurrentUserId(),
-                    automatic: false,
-                  },
+                  [tag.id]: tag,
                 },
                 note: '',
                 tagInputValue: '',
               }))
             }}
-            onSetTagInputValue={(newValue: any) => {
+            onSetTagInputValue={(newValue) => {
               setAddTx((currAddTx) =>
                 set(currAddTx, ['tagInputValue'], newValue),
               )
@@ -193,6 +187,7 @@ const AddTransaction = () => {
 
         <Grid container className={classes.row}>
           <AmountField
+            isExpense={isExpense}
             currencySymbol={CURRENCIES[currency]}
             isValidAmount={isAmountInValidFormat}
             shouldValidateAmount={shouldValidateAmount}
@@ -229,6 +224,22 @@ const AddTransaction = () => {
           </TextField>
         </Grid>
 
+        <Grid className={classes.row}>
+          <TextField
+            fullWidth
+            label="Note"
+            value={note}
+            onChange={(e) => {
+              // NOTE: we need to save the value, because it might not exist when the callback is called
+              const value = e.target.value
+              setAddTx((currAddTx) => set(currAddTx, ['note'], value))
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') onAddTransaction()
+            }}
+          />
+        </Grid>
+
         <Grid className={classes.row} style={{ justifyContent: 'start' }}>
           <FormControlLabel
             control={
@@ -261,7 +272,9 @@ const AddTransaction = () => {
                 )
               }
               label="Transaction date"
-              style={{ flex: 1 }}
+              renderInput={(props) => (
+                <TextField {...props} style={{ flex: 1 }} />
+              )}
             />
           </Grid>
         </Collapse>
@@ -292,22 +305,6 @@ const AddTransaction = () => {
                 ))}
             </Select>
           </FormControl>
-        </Grid>
-
-        <Grid className={classes.row}>
-          <TextField
-            fullWidth
-            label="Additional note"
-            value={note}
-            onChange={(e) => {
-              // NOTE: we need to save the value, because it might not exist when the callback is called
-              const value = e.target.value
-              setAddTx((currAddTx) => set(currAddTx, ['note'], value))
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') onAddTransaction()
-            }}
-          />
         </Grid>
 
         <Grid className={classes.row}>

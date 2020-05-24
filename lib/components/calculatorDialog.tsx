@@ -1,10 +1,11 @@
+import React from 'react'
+
 import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import TextField from '@material-ui/core/TextField'
 import math from 'mathjs-expression-parser'
-import React from 'react'
 
 interface CalculatorDialogProps {
   setShowCalc: (open: boolean) => void

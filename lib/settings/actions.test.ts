@@ -5,9 +5,9 @@ import { State, getInitialState } from '../state'
 import { processImportedCSV } from './actions'
 import { exportedCsvSel } from './selectors'
 
-jest.mock('uuid/v4', () => {
+jest.mock('uuid', () => {
   let uuid = 0
-  return jest.fn(() => `uuid${uuid++}`)
+  return jest.fn(() => ({ v4: `uuid${uuid++}` }))
 })
 
 // jest.mock('../firebase/firebase', () => initializeMockFirebase())

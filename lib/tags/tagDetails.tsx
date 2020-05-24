@@ -1,3 +1,5 @@
+import React, { useState } from 'react'
+
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import { Theme, makeStyles } from '@material-ui/core/styles'
@@ -13,7 +15,6 @@ import RepeatOneIcon from '@material-ui/icons/RepeatOne'
 import { map } from '@siegrift/tsfunct'
 import format from 'date-fns/format'
 import Router from 'next/router'
-import React, { useState } from 'react'
 
 import { Tag, Transaction } from '../addTransaction/state'
 import AmountField from '../components/amountField'

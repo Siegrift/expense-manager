@@ -1,6 +1,7 @@
-import { verifyIdToken } from '../../lib/server/utils'
 import { applyMiddleware } from '../../lib/server/middleware'
+import { verifyIdToken } from '../../lib/server/utils'
 
+// inspired by https://github.com/zeit/next.js/tree/canary/examples/with-firebase-authentication-serverless
 const setCookieHandler = (req, res) => {
   if (!req.body) {
     return res.end(400)

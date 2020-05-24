@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect'
+
 import {
   COMMANDS,
   isCommandWithValidation,
   isValidQuery,
   search,
 } from '../search/transactionSearch'
-
 import { sorted } from '../shared/utils'
 import { State } from '../state'
 
@@ -42,3 +42,5 @@ export const applySearchOnTransactions = createSelector(
 )
 
 export const txSearchQuerySel = (state: State) => state.transactionSearch
+
+export const cursorSel = (state: State) => state.cursor

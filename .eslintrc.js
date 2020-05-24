@@ -19,17 +19,40 @@ module.exports = {
     'prettier/babel',
     'prettier/react',
     'prettier/@typescript-eslint',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
   ],
   plugins: ['@typescript-eslint', 'react', 'jest'],
   rules: {
     'no-await-in-loop': 'error',
-    'sort-imports': [
+    'import/no-duplicates': 'error',
+    'import/order': [
       'error',
       {
-        ignoreCase: false,
-        ignoreDeclarationSort: true,
-        ignoreMemberSort: false,
-        memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
+        // https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/order.md
+        groups: [
+          'builtin',
+          'external',
+          'internal',
+          'parent',
+          'sibling',
+          'index',
+        ],
+        // --- Make react first
+        pathGroups: [
+          {
+            pattern: 'react',
+            group: 'builtin',
+            position: 'before',
+          },
+        ],
+        pathGroupsExcludedImportTypes: ['react'],
+        // ---
+        'newlines-between': 'always',
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
       },
     ],
     '@typescript-eslint/no-use-before-define': 'off',
@@ -43,8 +66,11 @@ module.exports = {
       },
     ],
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-explicit-any': 0,
-    '@typescript-eslint/prefer-interface': 0,
-    'react/no-unescaped-entities': 0,
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/prefer-interface': 'off',
+    'react/no-unescaped-entities': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    'import/no-named-as-default': 'off',
   },
 }

@@ -1,9 +1,11 @@
-import { useRouter } from 'next/router'
 import * as React from 'react'
+
+import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { removeFromFirebase, uploadToFirebase } from '../actions'
 import { Tag } from '../addTransaction/state'
+
 import {
   isRecentlyUsedSel,
   isRecurringTagSel,

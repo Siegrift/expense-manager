@@ -1,4 +1,5 @@
 import { IncomingMessage, ServerResponse } from 'http'
+
 import * as admin from 'firebase-admin'
 
 export const verifyIdToken = (token: string) => {
@@ -32,14 +33,33 @@ export const redirect = (res: ServerResponse, path: string) => {
   res.end()
 }
 
-export const redirectToLoginIfNotSignedIn = (
+export const getSignInToken = async (
   req: IncomingMessage,
   res: ServerResponse,
 ) => {
-  if (!req.headers.cookie) {
+  // If server-side, get AuthUserInfo from the session in the request.
+  // Don't include server middleware in the client JS bundle. See:
+  // https://arunoda.me/blog/ssr-and-server-only-modules
+  const { addSession } = require('./middleware')
+  addSession(req, res)
+
+  try {
+    // we are ussing cookie session middleware
+    return await verifyIdToken((req as any).session.token)
+  } catch (e) {
+    return null
+  }
+}
+
+export const redirectToLoginIfNotSignedIn = async (
+  req: IncomingMessage,
+  res: ServerResponse,
+) => {
+  const token = await getSignInToken(req, res)
+  if (token === null) {
     redirect(res, '/login')
-    return false
+    return null
   }
 
-  return true
+  return token
 }

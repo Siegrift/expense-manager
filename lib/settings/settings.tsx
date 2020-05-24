@@ -1,8 +1,9 @@
+import React, { useEffect } from 'react'
+
 import Button from '@material-ui/core/Button'
 import { Theme, makeStyles } from '@material-ui/core/styles'
-import React from 'react'
-import { useDispatch } from 'react-redux'
 import Router from 'next/router'
+import { useDispatch } from 'react-redux'
 
 import Navigation from '../components/navigation'
 import { getFirebase } from '../firebase/firebase'
@@ -13,7 +14,6 @@ import SettingsPanel from './settingsPanel'
 async function signOut() {
   // Sign out of Firebase
   await getFirebase().auth().signOut()
-  Router.push('/')
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -28,6 +28,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 const Settings = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    // Prefetch the /add page as the user will go there after the login
+    // see: firebase.ts
+    Router.prefetch('/add')
+  }, [])
 
   return (
     <>

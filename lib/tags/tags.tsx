@@ -1,9 +1,10 @@
+import React from 'react'
+
 import Button from '@material-ui/core/Button'
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import AddIcon from '@material-ui/icons/Add'
-import Router from 'next/router'
-import React from 'react'
+import Link from 'next/link'
 import { useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
@@ -74,16 +75,17 @@ const Transactions = () => {
           )}
         </Paper>
 
-        <Button
-          variant="contained"
-          color="primary"
-          aria-label="create tag"
-          className={classes.createTag}
-          onClick={() => Router.push('/tags/create')}
-          startIcon={<AddIcon />}
-        >
-          Create new tag
-        </Button>
+        <Link href="/tags/create">
+          <Button
+            variant="contained"
+            color="primary"
+            aria-label="create tag"
+            className={classes.createTag}
+            startIcon={<AddIcon />}
+          >
+            Create new tag
+          </Button>
+        </Link>
       </div>
       <Navigation />
     </>

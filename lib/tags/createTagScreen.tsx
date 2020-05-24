@@ -1,9 +1,11 @@
 import React from 'react'
+
 import { useDispatch } from 'react-redux'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 import { uploadToFirebase } from '../actions'
 import { getCurrentUserId } from '../firebase/util'
+
 import TagDetails from './tagDetails'
 
 const CreateTagScreen = () => {

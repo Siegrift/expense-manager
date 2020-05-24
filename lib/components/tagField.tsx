@@ -1,10 +1,17 @@
+import React from 'react'
+
 import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
-import Autocomplete from '@material-ui/lab/Autocomplete'
+import Autocomplete, {
+  createFilterOptions,
+} from '@material-ui/lab/Autocomplete'
+import { omit } from '@siegrift/tsfunct'
 import classnames from 'classnames'
 import difference from 'lodash/difference'
-import React from 'react'
+import { v4 as uuid } from 'uuid'
+
 import { Tag } from '../addTransaction/state'
+import { getCurrentUserId } from '../firebase/util'
 import { ObjectOf } from '../types'
 
 const useStyles = makeStyles({
@@ -13,18 +20,23 @@ const useStyles = makeStyles({
   },
 })
 
+interface TagFieldTag extends Tag {
+  createdByTagField?: true
+}
+
 export interface TagFieldProps {
   tags: ObjectOf<Tag>
   className?: string
   inputValue: string
   currentTagIds: string[]
   onSelectTag: (tagId: string) => void
-  // TODO: currently there is no way to issue a label for creating a new tag, but it's
-  // being discussed in https://github.com/mui-org/material-ui/issues/18985
-  onCreateTag: (tagName: string) => void
+  onCreateTag: (tag: Tag) => void
   onSetTagInputValue: (tagName: string) => void
   onRemoveTags: (tagIds: string[]) => void
 }
+
+const filterOptions = createFilterOptions<TagFieldTag>()
+const ADD_NEW_OPTION_LABEL = 'Create new: '
 
 const TagField = ({
   tags,
@@ -40,7 +52,7 @@ const TagField = ({
 
   return (
     <div className={classnames(classes.root, className)}>
-      <Autocomplete
+      <Autocomplete<TagFieldTag, true, true, true>
         multiple
         size="small"
         autoComplete
@@ -48,7 +60,7 @@ const TagField = ({
         clearOnEscape
         autoHighlight
         options={Object.values(tags)}
-        getOptionLabel={(option: Tag) => option.name}
+        getOptionLabel={(option) => option.name}
         renderInput={(params) => {
           return (
             <TextField
@@ -59,14 +71,36 @@ const TagField = ({
             />
           )
         }}
+        filterOptions={(options, params) => {
+          const filtered = filterOptions(options, params)
+          if (
+            !filtered.find(
+              (option) => params.getOptionLabel(option) === params.inputValue,
+            )
+          ) {
+            const id = uuid()
+            filtered.push({
+              name: `${ADD_NEW_OPTION_LABEL}${params.inputValue}`,
+              automatic: false,
+              id,
+              uid: getCurrentUserId(),
+              createdByTagField: true,
+            })
+          }
+          return filtered
+        }}
         includeInputInList
         filterSelectedOptions={false}
-        // if a new tag is created it will be appended as a string to the end of the array
-        onChange={(_, values: Array<Tag | string>) => {
+        onChange={(_, values) => {
           if (currentTagIds.length < values.length) {
             const added = values[values.length - 1]
-            if (typeof added === 'string') {
-              onCreateTag(added)
+            if (typeof added === 'string')
+              throw new Error('This should not happen!')
+            if (added.createdByTagField) {
+              onCreateTag({
+                ...omit(added, ['createdByTagField']),
+                name: added.name.split(ADD_NEW_OPTION_LABEL)[1],
+              })
             } else {
               onSelectTag(added.id)
             }
