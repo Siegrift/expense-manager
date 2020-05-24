@@ -229,6 +229,22 @@ const AddTransaction = () => {
           </TextField>
         </Grid>
 
+        <Grid className={classes.row}>
+          <TextField
+            fullWidth
+            label="Note"
+            value={note}
+            onChange={(e) => {
+              // NOTE: we need to save the value, because it might not exist when the callback is called
+              const value = e.target.value
+              setAddTx((currAddTx) => set(currAddTx, ['note'], value))
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') onAddTransaction()
+            }}
+          />
+        </Grid>
+
         <Grid className={classes.row} style={{ justifyContent: 'start' }}>
           <FormControlLabel
             control={
@@ -292,22 +308,6 @@ const AddTransaction = () => {
                 ))}
             </Select>
           </FormControl>
-        </Grid>
-
-        <Grid className={classes.row}>
-          <TextField
-            fullWidth
-            label="Additional note"
-            value={note}
-            onChange={(e) => {
-              // NOTE: we need to save the value, because it might not exist when the callback is called
-              const value = e.target.value
-              setAddTx((currAddTx) => set(currAddTx, ['note'], value))
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') onAddTransaction()
-            }}
-          />
         </Grid>
 
         <Grid className={classes.row}>
