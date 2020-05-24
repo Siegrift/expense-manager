@@ -35,7 +35,8 @@ export const authChangeAction = (status: SignInStatus): Thunk => async (
   logger.log(`Auth changed: ${status}`)
   if (status === 'loggedIn') {
     await dispatch(initializeFirestore())
-    dispatch(addRepeatingTxs())
+    // TODO: remove or fix repeating transactions
+    // dispatch(addRepeatingTxs())
   }
   dispatch(changeSignInStatus(status))
 }
