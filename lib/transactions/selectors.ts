@@ -42,3 +42,5 @@ export const applySearchOnTransactions = createSelector(
 )
 
 export const txSearchQuerySel = (state: State) => state.transactionSearch
+
+export const cursorSel = (state: State) => state.cursor

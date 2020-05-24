@@ -4,6 +4,9 @@ import { ObjectOf } from '../types'
 import { Action, Thunk } from '../redux/types'
 import { set } from '@siegrift/tsfunct'
 import { TransactionSearch } from '../state'
+import { sortedTransactionsSel } from './selectors'
+import Router from 'next/router'
+import { clamp } from 'lodash'
 
 export const saveTxEdit = (
   id: string,
@@ -33,3 +36,35 @@ export const changeTxSearchQuery = (
   payload: query,
   reducer: (state) => set(state, ['transactionSearch'], query),
 })
+
+export const setCursor = (newCursor: number): Action<number> => ({
+  type: 'Set cursor',
+  payload: newCursor,
+  reducer: (state) => set(state, ['cursor'], newCursor),
+})
+
+export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
+  dispatch,
+  getState,
+  { logger },
+) => {
+  const key = e.key.toUpperCase()
+  logger.log('Transaction list keyboard press: ' + key)
+
+  const cursor = getState().cursor
+  const txs = sortedTransactionsSel(getState())
+  switch (key) {
+    case 'ARROWUP':
+      if (cursor > 0) dispatch(setCursor(cursor - 1))
+      break
+    case 'ARROWDOWN':
+      if (cursor + 1 < txs.length) dispatch(setCursor(cursor + 1))
+      break
+    case 'E':
+      Router.push('/transactions/[id]', `/transactions/${txs[cursor].id}`)
+      break
+    case 'D':
+      dispatch(removeTx(txs[cursor].id))
+      break
+  }
+}

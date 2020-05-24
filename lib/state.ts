@@ -21,9 +21,11 @@ export interface State {
   // use firebase.auth().currentUser to get the current user
   signInStatus: SignInStatus
   currentScreen: ScreenTitle
+  // NOTE: tags and transactions are in sync with firestore, keep local data out of it
   tags: ObjectOf<Tag>
   transactions: ObjectOf<Transaction>
   transactionSearch: TransactionSearch
+  cursor: number
 }
 
 const state: State = {
@@ -35,6 +37,7 @@ const state: State = {
   transactionSearch: {
     value: '',
   },
+  cursor: 0,
 }
 
 export const getInitialState = () => state

@@ -1,6 +1,6 @@
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
@@ -11,7 +11,7 @@ import Transaction from './transaction'
 import SearchBar from '../components/searchBar'
 import { COMMANDS } from '../search/transactionSearch'
 
-import { changeTxSearchQuery } from './actions'
+import { changeTxSearchQuery, keyPressAction } from './actions'
 import {
   applySearchOnTransactions,
   isValidQuerySel,
@@ -47,6 +47,15 @@ const Transactions = () => {
   const valueOptions = useSelector(valueOptionsSel)
   const classes = useStyles()
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => dispatch(keyPressAction(e))
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [dispatch])
 
   return (
     <>
