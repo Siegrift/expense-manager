@@ -4,6 +4,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+import Tooltip from '@material-ui/core/Tooltip'
 import AutoIcon from '@material-ui/icons/BrightnessAuto'
 import EuroIcon from '@material-ui/icons/Euro'
 import NotRecentlyUsedIcon from '@material-ui/icons/EventBusy'
@@ -77,27 +78,41 @@ const TagItem: React.FC<ListChildComponentProps> = ({ index, style }) => {
           }
         />
         <div className={classes.iconPanel}>
-          {tag.automatic && <AutoIcon className={classes.icon} />}
-          {isRecurring && <RepeatOneIcon className={classes.icon} />}
-          {!isRecentlyUsed && (
-            <NotRecentlyUsedIcon className={classes.icon} color="secondary" />
+          {tag.automatic && (
+            <Tooltip title="Automatic tag">
+              <AutoIcon className={classes.icon} />
+            </Tooltip>
           )}
-          <Badge
-            className={classes.icon}
-            badgeContent={totalTxs}
-            max={99}
-            color="primary"
-          >
-            <TotalTxsIcon />
-          </Badge>
-          <Badge
-            className={classes.txsSum}
-            badgeContent={totalExpenseInTxs}
-            color="primary"
-            max={999}
-          >
-            <EuroIcon />
-          </Badge>
+          {isRecurring && (
+            <Tooltip title="In recurring transaction">
+              <RepeatOneIcon className={classes.icon} />
+            </Tooltip>
+          )}
+          {!isRecentlyUsed && (
+            <Tooltip title="Not recently used">
+              <NotRecentlyUsedIcon className={classes.icon} color="secondary" />
+            </Tooltip>
+          )}
+          <Tooltip title="Transaction count">
+            <Badge
+              className={classes.icon}
+              badgeContent={totalTxs}
+              max={99}
+              color="primary"
+            >
+              <TotalTxsIcon />
+            </Badge>
+          </Tooltip>
+          <Tooltip title="Money involved">
+            <Badge
+              className={classes.txsSum}
+              badgeContent={totalExpenseInTxs}
+              color="primary"
+              max={999}
+            >
+              <EuroIcon />
+            </Badge>
+          </Tooltip>
         </div>
       </div>
       <Divider className={classes.divider} />

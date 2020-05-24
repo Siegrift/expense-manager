@@ -7,6 +7,9 @@ import CancelIcon from '@material-ui/icons/Cancel'
 import React, { Suspense, useState } from 'react'
 import { FaCalculator as CalculatorIcon } from 'react-icons/fa'
 import NumberFormat from 'react-number-format'
+import Tooltip from '@material-ui/core/Tooltip'
+import RemoveIcon from '@material-ui/icons/Remove'
+import AddIcon from '@material-ui/icons/Add'
 
 const CalculatorDialog = React.lazy(() => import('./calculatorDialog'))
 const CALC_OPEN_TRIGGERERS = ['+', '-', '*', '/']
@@ -20,18 +23,21 @@ interface AmountFieldProps {
   className?: string
   currencySymbol?: string
   onPressEnter: () => void
+  isExpense?: boolean
 }
 
 interface MuiInputProps {
   clearAmount: () => void
   openCalculator: () => void
   value: string
+  isExpense?: boolean
 }
 
 const MuiInput: React.FC<MuiInputProps> = ({
   clearAmount,
   openCalculator,
   value,
+  isExpense,
   ...others
 }) => {
   const theme = useTheme()
@@ -43,22 +49,36 @@ const MuiInput: React.FC<MuiInputProps> = ({
       id="amount-id"
       placeholder="0.00"
       value={value}
+      startAdornment={
+        isExpense === true ? (
+          <RemoveIcon style={{ color: 'red' }} />
+        ) : isExpense === false ? (
+          <AddIcon style={{ color: 'green' }} />
+        ) : null
+      }
       endAdornment={
         <InputAdornment position="end">
           <>
-            <CancelIcon
-              color="primary"
-              onClick={clearAmount}
-              style={{
-                visibility: value ? 'visible' : 'hidden',
-                marginRight: 2,
-              }}
-            />
-            <CalculatorIcon
-              color={theme.palette.primary.main}
-              size={20}
-              onClick={openCalculator}
-            />
+            <Tooltip title="Clear amount">
+              <CancelIcon
+                color="primary"
+                onClick={clearAmount}
+                style={{
+                  visibility: value ? 'visible' : 'hidden',
+                  marginRight: 2,
+                  cursor: 'pointer',
+                }}
+              />
+            </Tooltip>
+            <Tooltip title="Open calculator" style={{ cursor: 'pointer' }}>
+              <span>
+                <CalculatorIcon
+                  color={theme.palette.primary.main}
+                  size={20}
+                  onClick={openCalculator}
+                />
+              </span>
+            </Tooltip>
           </>
         </InputAdornment>
       }
@@ -75,6 +95,7 @@ const AmountField = ({
   className,
   currencySymbol,
   onPressEnter,
+  isExpense,
 }: AmountFieldProps) => {
   const [showCalc, setShowCalc] = useState(false)
   const [calcExpression, setCalcExpression] = useState('')
@@ -134,6 +155,7 @@ const AmountField = ({
           onKeyDown={(e) => {
             if (e.key === 'Enter') onPressEnter()
           }}
+          isExpense={isExpense}
         />
       </FormControl>
     </>

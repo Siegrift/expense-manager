@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
+import Tooltip from '@material-ui/core/Tooltip'
 
 import { formatMoney } from '../../shared/utils'
 import { State } from '../../state'
@@ -100,33 +101,41 @@ const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
         </div>
         <div className={classes.iconPanel}>
           {tx.repeating !== 'none' && (
-            <RepeatOneIcon
-              className={classes.icon}
-              color={tx.repeating === 'inactive' ? 'disabled' : 'primary'}
-            />
+            <Tooltip title="Repeating transaction">
+              <RepeatOneIcon
+                className={classes.icon}
+                color={tx.repeating === 'inactive' ? 'disabled' : 'primary'}
+              />
+            </Tooltip>
           )}
           {tx.note !== '' && (
-            <NoteIcon className={classes.icon} color="primary" />
+            <Tooltip title="Contains note">
+              <NoteIcon className={classes.icon} color="primary" />
+            </Tooltip>
           )}
 
           {bigDevice && (
             <>
               <Divider orientation="vertical" flexItem style={{ width: 2 }} />
-              <IconButton
-                className={classes.iconButton}
-                onClick={() =>
-                  Router.push('/transactions/[id]', `/transactions/${tx.id}`)
-                }
-              >
-                <EditIcon color="primary" />
-              </IconButton>
-              <IconButton
-                className={classes.iconButton}
-                // TODO: confirm dialog
-                onClick={() => dispatch(removeTx(tx.id))}
-              >
-                <DeleteIcon color="secondary" />
-              </IconButton>
+              <Tooltip title="(E)dit transaction">
+                <IconButton
+                  className={classes.iconButton}
+                  onClick={() =>
+                    Router.push('/transactions/[id]', `/transactions/${tx.id}`)
+                  }
+                >
+                  <EditIcon color="primary" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="(D)elete transaction">
+                <IconButton
+                  className={classes.iconButton}
+                  // TODO: confirm dialog
+                  onClick={() => dispatch(removeTx(tx.id))}
+                >
+                  <DeleteIcon color="secondary" />
+                </IconButton>
+              </Tooltip>
             </>
           )}
         </div>

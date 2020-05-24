@@ -193,6 +193,7 @@ const AddTransaction = () => {
 
         <Grid container className={classes.row}>
           <AmountField
+            isExpense={isExpense}
             currencySymbol={CURRENCIES[currency]}
             isValidAmount={isAmountInValidFormat}
             shouldValidateAmount={shouldValidateAmount}
