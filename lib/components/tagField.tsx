@@ -1,16 +1,18 @@
+import React from 'react'
+
 import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Autocomplete, {
   createFilterOptions,
 } from '@material-ui/lab/Autocomplete'
+import { omit } from '@siegrift/tsfunct'
 import classnames from 'classnames'
 import difference from 'lodash/difference'
-import React from 'react'
+import { v4 as uuid } from 'uuid'
+
 import { Tag } from '../addTransaction/state'
-import { ObjectOf } from '../types'
-import uuid from 'uuid/v4'
 import { getCurrentUserId } from '../firebase/util'
-import { omit } from '@siegrift/tsfunct'
+import { ObjectOf } from '../types'
 
 const useStyles = makeStyles({
   root: {
@@ -50,7 +52,7 @@ const TagField = ({
 
   return (
     <div className={classnames(classes.root, className)}>
-      <Autocomplete<TagFieldTag>
+      <Autocomplete<TagFieldTag, true, true, true>
         multiple
         size="small"
         autoComplete
@@ -92,6 +94,8 @@ const TagField = ({
         onChange={(_, values) => {
           if (currentTagIds.length < values.length) {
             const added = values[values.length - 1]
+            if (typeof added === 'string')
+              throw new Error('This should not happen!')
             if (added.createdByTagField) {
               onCreateTag({
                 ...omit(added, ['createdByTagField']),

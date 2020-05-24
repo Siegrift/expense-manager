@@ -1,6 +1,7 @@
-import EditTagScreen from '../../lib/tags/editTagScreen'
 import { GetServerSideProps } from 'next'
+
 import { redirectToLoginIfNotSignedIn } from '../../lib/server/utils'
+import EditTagScreen from '../../lib/tags/editTagScreen'
 
 export default EditTagScreen
 

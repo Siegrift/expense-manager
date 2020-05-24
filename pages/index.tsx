@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next'
+
 import { redirect, redirectToLoginIfNotSignedIn } from '../lib/server/utils'
 
 // we have no landing page, redirect to /add

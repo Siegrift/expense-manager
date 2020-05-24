@@ -1,7 +1,7 @@
-import Login from '../../lib/components/login'
 import { GetServerSideProps } from 'next'
-import { redirect } from '../../lib/server/utils'
-import { getSignInToken } from '../../lib/server/utils'
+
+import Login from '../../lib/components/login'
+import { redirect, getSignInToken } from '../../lib/server/utils'
 
 export default Login
 

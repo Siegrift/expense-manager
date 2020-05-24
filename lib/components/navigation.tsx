@@ -1,3 +1,5 @@
+import React, { ComponentType, useEffect } from 'react'
+
 import { makeStyles } from '@material-ui/core'
 import BottomNavigation from '@material-ui/core/BottomNavigation'
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction'
@@ -7,9 +9,8 @@ import BarChartIcon from '@material-ui/icons/BarChart'
 import ListIcon from '@material-ui/icons/List'
 import TagIcon from '@material-ui/icons/LocalOffer'
 import SettingsIcon from '@material-ui/icons/Settings'
-import React, { ComponentType, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import Router from 'next/router'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { setCurrentScreen } from '../actions'
 import { redirectTo } from '../shared/utils'

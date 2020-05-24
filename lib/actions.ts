@@ -5,7 +5,7 @@ import addWeeks from 'date-fns/addWeeks'
 import addYears from 'date-fns/addYears'
 import isBefore from 'date-fns/isBefore'
 import chunk from 'lodash/chunk'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 import { Tag, Transaction } from './addTransaction/state'
 import { getFirebase } from './firebase/firebase'

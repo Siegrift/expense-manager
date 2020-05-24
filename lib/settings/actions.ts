@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 import { uploadToFirebase } from '../actions'
 import {
@@ -14,6 +14,7 @@ import { CURRENCIES } from '../shared/currencies'
 import { downloadFile, isValidDate } from '../shared/utils'
 import { State } from '../state'
 import { ObjectOf } from '../types'
+
 import { exportedCsvSel } from './selectors'
 
 export const importFromCSV = (

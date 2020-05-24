@@ -1,19 +1,20 @@
 import React, { useState } from 'react'
-import { Theme, createStyles, makeStyles } from '@material-ui/core/styles'
-import Paper from '@material-ui/core/Paper'
-import InputBase from '@material-ui/core/InputBase'
-import IconButton from '@material-ui/core/IconButton'
-import InfoIcon from '@material-ui/icons/InfoOutlined'
-import classnames from 'classnames'
-import Autocomplete from '@material-ui/lab/Autocomplete'
+
 import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
-import Typography from '@material-ui/core/Typography'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogTitle from '@material-ui/core/DialogTitle'
 import Divider from '@material-ui/core/Divider'
+import IconButton from '@material-ui/core/IconButton'
+import InputBase from '@material-ui/core/InputBase'
+import Paper from '@material-ui/core/Paper'
+import { Theme, createStyles, makeStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
 import CodeIcon from '@material-ui/icons/Code'
+import InfoIcon from '@material-ui/icons/InfoOutlined'
+import Autocomplete from '@material-ui/lab/Autocomplete'
+import classnames from 'classnames'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -105,7 +106,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         </Dialog>
       )}
 
-      <Autocomplete<string>
+      <Autocomplete<string, false, false, true>
         size="medium"
         style={{ flex: 1 }}
         options={

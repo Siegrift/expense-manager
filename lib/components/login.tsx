@@ -1,15 +1,16 @@
+import { useEffect } from 'react'
+
 import Typography from '@material-ui/core/Typography'
+import Router from 'next/router'
 import GoogleButton from 'react-google-button'
 import { useDispatch, useSelector } from 'react-redux'
-
-import { LoadingScreen } from './loading'
 
 import { authChangeAction } from '../firebase/actions'
 import { signIn } from '../firebase/util'
 import { PROJECT_TITLE } from '../shared/constants'
 import { State } from '../state'
-import { useEffect } from 'react'
-import Router from 'next/router'
+
+import { LoadingScreen } from './loading'
 
 const Login = () => {
   const dispatch = useDispatch()

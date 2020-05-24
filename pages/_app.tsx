@@ -1,11 +1,12 @@
-import DateFnsUtils from '@date-io/date-fns'
+import React, { useEffect } from 'react'
+
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import { LocalizationProvider } from '@material-ui/pickers'
+import DateFnsUtils from '@material-ui/pickers/adapter/date-fns'
 import { ThemeProvider } from '@material-ui/styles'
 import App from 'next/app'
 import Head from 'next/head'
 import Router from 'next/router'
-import React, { useEffect } from 'react'
 import { Provider as ReduxProvider, useDispatch } from 'react-redux'
 
 import { setCurrentScreen } from '../lib/actions'
@@ -38,7 +39,7 @@ class ExpenseManagerApp extends App {
       <React.StrictMode>
         <ReduxProvider store={store}>
           <ThemeProvider theme={theme}>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <LocalizationProvider dateAdapter={DateFnsUtils}>
               <Head>
                 {/* https://github.com/zeit/next.js/blob/master/errors/no-document-title.md */}
                 <title>{PROJECT_TITLE}</title>
@@ -57,7 +58,7 @@ class ExpenseManagerApp extends App {
               <ComponentWithCorrectScreen>
                 <Component {...pageProps} />
               </ComponentWithCorrectScreen>
-            </MuiPickersUtilsProvider>
+            </LocalizationProvider>
           </ThemeProvider>
         </ReduxProvider>
       </React.StrictMode>

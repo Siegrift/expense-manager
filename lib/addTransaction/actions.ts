@@ -1,9 +1,10 @@
 import { pick } from '@siegrift/tsfunct'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 import { uploadToFirebase } from '../actions'
 import { getCurrentUserId } from '../firebase/util'
 import { Thunk } from '../redux/types'
+
 import { AddTransaction } from './state'
 
 export const addTransaction = (addTx: AddTransaction): Thunk => async (

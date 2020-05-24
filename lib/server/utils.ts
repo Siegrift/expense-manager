@@ -1,4 +1,5 @@
 import { IncomingMessage, ServerResponse } from 'http'
+
 import * as admin from 'firebase-admin'
 
 export const verifyIdToken = (token: string) => {

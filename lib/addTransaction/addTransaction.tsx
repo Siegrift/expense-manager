@@ -1,3 +1,5 @@
+import React, { useState } from 'react'
+
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Collapse from '@material-ui/core/Collapse'
@@ -13,7 +15,6 @@ import TextField from '@material-ui/core/TextField'
 import { DateTimePicker } from '@material-ui/pickers'
 import { fpSet, fpUpdate, get, pick, pipe, set } from '@siegrift/tsfunct'
 import difference from 'lodash/difference'
-import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import AmountField from '../components/amountField'
@@ -22,6 +23,7 @@ import Paper from '../components/paper'
 import TagField from '../components/tagField'
 import { CURRENCIES } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
+
 import { addTransaction } from './actions'
 import { automaticTagIdsSel, tagsSel } from './selectors'
 import {
@@ -270,7 +272,9 @@ const AddTransaction = () => {
                 )
               }
               label="Transaction date"
-              style={{ flex: 1 }}
+              renderInput={(props) => (
+                <TextField {...props} style={{ flex: 1 }} />
+              )}
             />
           </Grid>
         </Collapse>

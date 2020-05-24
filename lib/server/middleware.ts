@@ -5,10 +5,7 @@ import compose from 'lodash/fp/compose'
 // Update a value in the cookie so that the set-cookie will be sent.
 // Only changes every minute so that it's not sent with every request.
 // https://github.com/expressjs/cookie-session#extending-the-session-expiration
-const cookieSessionRefreshHandler = (next: Function) => (
-  req: any,
-  res: any,
-) => {
+const cookieSessionRefreshHandler = (next: any) => (req: any, res: any) => {
   if (req.session) {
     req.session.nowInMinutes = Math.floor(Date.now() / 60e3)
   }
@@ -31,13 +28,10 @@ export const addSession = (req: any, res: any) => {
   includeSession(req, res, () => null)
 }
 
-export const cookieSessionHandler = (next: Function) => (
-  req: any,
-  res: any,
-) => {
+export const cookieSessionHandler = (next: any) => (req: any, res: any) => {
   addSession(req, res)
   return next(req, res)
 }
 
-export const applyMiddleware = (handler: Function) =>
+export const applyMiddleware = (handler: any) =>
   compose(cookieSessionHandler, cookieSessionRefreshHandler)(handler)

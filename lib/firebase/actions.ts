@@ -1,10 +1,10 @@
 import { set } from '@siegrift/tsfunct'
 import { batch } from 'react-redux'
 
-import { addRepeatingTxs } from '../actions'
 import { getFirebase } from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
 import { SignInStatus } from '../state'
+
 import { FirestoneQuery, getQueries } from './firestoneQueries'
 
 export const firestoneChangeAction = (

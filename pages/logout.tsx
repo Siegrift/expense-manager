@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
-import { getFirebase } from '../lib/firebase/firebase'
+
 import Router from 'next/router'
+
+import { getFirebase } from '../lib/firebase/firebase'
 
 async function signOut() {
   // Sign out of Firebase

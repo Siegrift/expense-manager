@@ -1,9 +1,10 @@
+import { pipe } from '@siegrift/tsfunct'
+import chunk from 'lodash/chunk'
 import Router from 'next/router'
 
 import { ObjectOf } from '../types'
+
 import { CURRENCIES } from './currencies'
-import { pipe } from '@siegrift/tsfunct'
-import chunk from 'lodash/chunk'
 
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms))
 

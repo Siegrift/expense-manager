@@ -1,8 +1,9 @@
+import React, { useEffect } from 'react'
+
 import Button from '@material-ui/core/Button'
 import { Theme, makeStyles } from '@material-ui/core/styles'
-import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import Router from 'next/router'
+import { useDispatch } from 'react-redux'
 
 import Navigation from '../components/navigation'
 import { getFirebase } from '../firebase/firebase'

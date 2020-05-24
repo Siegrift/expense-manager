@@ -1,6 +1,7 @@
-import CreateTagScreen from '../../lib/tags/createTagScreen'
 import { GetServerSideProps } from 'next'
+
 import { redirectToLoginIfNotSignedIn } from '../../lib/server/utils'
+import CreateTagScreen from '../../lib/tags/createTagScreen'
 
 export default CreateTagScreen
 

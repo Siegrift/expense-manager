@@ -1,10 +1,12 @@
-import { ResponsiveSunburst } from '@nivo/sunburst'
 import React from 'react'
+
+import { ResponsiveSunburst } from '@nivo/sunburst'
 import reduce from 'lodash/reduce'
 import { useSelector } from 'react-redux'
 
 import { Transaction } from '../addTransaction/state'
 import { State } from '../state'
+
 import { TagShare, tagSharesSel } from './selectors'
 
 const MAX_LEVELS = 4

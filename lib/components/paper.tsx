@@ -1,8 +1,9 @@
+import React from 'react'
+
 import MuiPaper, { PaperProps as MuiPaperProps } from '@material-ui/core/Paper'
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import classNames from 'classnames'
-import React from 'react'
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {

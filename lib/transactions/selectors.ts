@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect'
+
 import {
   COMMANDS,
   isCommandWithValidation,
   isValidQuery,
   search,
 } from '../search/transactionSearch'
-
 import { sorted } from '../shared/utils'
 import { State } from '../state'
 

@@ -1,13 +1,13 @@
+import React, { useEffect } from 'react'
+
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 
 import Navigation from '../components/navigation'
 import Paper from '../components/paper'
-import Transaction from './transaction'
 import SearchBar from '../components/searchBar'
 import { COMMANDS } from '../search/transactionSearch'
 
@@ -18,6 +18,7 @@ import {
   txSearchQuerySel,
   valueOptionsSel,
 } from './selectors'
+import Transaction from './transaction'
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {

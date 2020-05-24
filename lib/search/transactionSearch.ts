@@ -1,15 +1,17 @@
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import parse from 'date-fns/parse'
+
 import {
   RepeatingOptions,
   Tag,
   Transaction,
   TransactionTypes,
 } from '../addTransaction/state'
+import { CURRENCIES } from '../shared/currencies'
 import { TransactionSearch } from '../state'
 import { ObjectOf } from '../types'
-import parse from 'date-fns/parse'
-import isBefore from 'date-fns/isBefore'
-import isAfter from 'date-fns/isAfter'
-import { CURRENCIES } from '../shared/currencies'
+
 import { booleanOptions } from './common'
 
 const isValidDate = (query: string) => {

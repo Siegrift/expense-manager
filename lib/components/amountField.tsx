@@ -1,15 +1,16 @@
+import React, { Suspense, useState } from 'react'
+
 import FormControl from '@material-ui/core/FormControl'
 import Input from '@material-ui/core/Input'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import InputLabel from '@material-ui/core/InputLabel'
 import { useTheme } from '@material-ui/core/styles'
+import Tooltip from '@material-ui/core/Tooltip'
+import AddIcon from '@material-ui/icons/Add'
 import CancelIcon from '@material-ui/icons/Cancel'
-import React, { Suspense, useState } from 'react'
+import RemoveIcon from '@material-ui/icons/Remove'
 import { FaCalculator as CalculatorIcon } from 'react-icons/fa'
 import NumberFormat from 'react-number-format'
-import Tooltip from '@material-ui/core/Tooltip'
-import RemoveIcon from '@material-ui/icons/Remove'
-import AddIcon from '@material-ui/icons/Add'
 
 const CalculatorDialog = React.lazy(() => import('./calculatorDialog'))
 const CALC_OPEN_TRIGGERERS = ['+', '-', '*', '/']
@@ -139,7 +140,7 @@ const AmountField = ({
           // https://codepen.io/ashconnolly/pen/WyWgPG
           onInput={(e) => {
             const native = e.nativeEvent as InputEvent
-            const key = native.data!!
+            const key = native.data!
 
             if (CALC_OPEN_TRIGGERERS.includes(key)) {
               setCalcExpression((expr) => {

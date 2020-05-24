@@ -1,6 +1,7 @@
+import React from 'react'
+
 import Grid from '@material-ui/core/Grid'
 import { Theme, makeStyles } from '@material-ui/core/styles'
-import React from 'react'
 
 import Navigation from '../components/navigation'
 

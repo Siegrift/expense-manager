@@ -1,12 +1,13 @@
+import { set } from '@siegrift/tsfunct'
+import Router from 'next/router'
+
 import { removeFromFirebase, uploadToFirebase } from '../actions'
 import { Tag, Transaction } from '../addTransaction/state'
-import { ObjectOf } from '../types'
 import { Action, Thunk } from '../redux/types'
-import { set } from '@siegrift/tsfunct'
 import { TransactionSearch } from '../state'
+import { ObjectOf } from '../types'
+
 import { sortedTransactionsSel } from './selectors'
-import Router from 'next/router'
-import { clamp } from 'lodash'
 
 export const saveTxEdit = (
   id: string,

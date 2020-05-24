@@ -1,8 +1,9 @@
-import DateFnsUtils from '@date-io/date-fns'
-import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import React from 'react'
+
+import { LocalizationProvider } from '@material-ui/pickers'
+import DateFnsUtils from '@material-ui/pickers/adapter/date-fns'
 import { ThemeProvider } from '@material-ui/styles'
 import firebasemock from 'firebase-mock'
-import React from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
 import { Store, applyMiddleware, createStore } from 'redux'
 import thunk from 'redux-thunk'
@@ -16,9 +17,9 @@ export const reduxify = (Component: React.FC, store: Store) => {
   return (
     <ReduxProvider store={store}>
       <ThemeProvider theme={theme}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <LocalizationProvider dateAdapter={DateFnsUtils}>
           <Component />
-        </MuiPickersUtilsProvider>
+        </LocalizationProvider>
       </ThemeProvider>
     </ReduxProvider>
   )
@@ -60,12 +61,12 @@ export const initializeMockFirebase = () => {
     null, // messaging
   )
   const firebase = mockSdk.initializeApp()
-  ;(global as ExtendedGlobal).mockFirebase = firebase
+  ;((global as any) as ExtendedGlobal).mockFirebase = firebase
   return firebase
 }
 
 export const getMockedFirebase = () => {
-  const g = global as ExtendedGlobal
+  const g = (global as any) as ExtendedGlobal
   if (!g.mockFirebase) {
     throw new Error(
       'Mock firebase is not present. Be sure to mock it first using "initializeMockFirebase"',

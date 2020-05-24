@@ -1,3 +1,5 @@
+import React from 'react'
+
 import MuiAppBar from '@material-ui/core/AppBar'
 import IconButton from '@material-ui/core/IconButton'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -5,7 +7,6 @@ import Typography from '@material-ui/core/Typography'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import DeleteIcon from '@material-ui/icons/Delete'
 import DoneIcon from '@material-ui/icons/Done'
-import React from 'react'
 import Link from 'next/link'
 
 interface AppBarProps {
