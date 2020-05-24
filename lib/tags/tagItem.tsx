@@ -10,7 +10,7 @@ import EuroIcon from '@material-ui/icons/Euro'
 import NotRecentlyUsedIcon from '@material-ui/icons/EventBusy'
 import TotalTxsIcon from '@material-ui/icons/PostAddTwoTone'
 import RepeatOneIcon from '@material-ui/icons/RepeatOne'
-import Router from 'next/router'
+import Link from 'next/link'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
@@ -63,60 +63,60 @@ const TagItem: React.FC<ListChildComponentProps> = ({ index, style }) => {
   const classes = useStyles()
 
   return (
-    <ListItem
-      button
-      style={style}
-      className={classes.listItem}
-      onClick={() => Router.push('/tags/[id]', `/tags/${tag.id}`)}
-    >
-      <div style={{ display: 'flex', width: '100%' }}>
-        <ListItemText
-          primary={
-            <Typography variant="subtitle1" style={{ lineHeight: '44px' }}>
-              {tag.name}
-            </Typography>
-          }
-        />
-        <div className={classes.iconPanel}>
-          {tag.automatic && (
-            <Tooltip title="Automatic tag">
-              <AutoIcon className={classes.icon} />
+    <Link href={`/tags/${tag.id}`}>
+      <ListItem button style={style} className={classes.listItem}>
+        <div style={{ display: 'flex', width: '100%' }}>
+          <ListItemText
+            primary={
+              <Typography variant="subtitle1" style={{ lineHeight: '44px' }}>
+                {tag.name}
+              </Typography>
+            }
+          />
+          <div className={classes.iconPanel}>
+            {tag.automatic && (
+              <Tooltip title="Automatic tag">
+                <AutoIcon className={classes.icon} />
+              </Tooltip>
+            )}
+            {isRecurring && (
+              <Tooltip title="In recurring transaction">
+                <RepeatOneIcon className={classes.icon} />
+              </Tooltip>
+            )}
+            {!isRecentlyUsed && (
+              <Tooltip title="Not recently used">
+                <NotRecentlyUsedIcon
+                  className={classes.icon}
+                  color="secondary"
+                />
+              </Tooltip>
+            )}
+            <Tooltip title="Transaction count">
+              <Badge
+                className={classes.icon}
+                badgeContent={totalTxs}
+                max={99}
+                color="primary"
+              >
+                <TotalTxsIcon />
+              </Badge>
             </Tooltip>
-          )}
-          {isRecurring && (
-            <Tooltip title="In recurring transaction">
-              <RepeatOneIcon className={classes.icon} />
+            <Tooltip title="Money involved">
+              <Badge
+                className={classes.txsSum}
+                badgeContent={totalExpenseInTxs}
+                color="primary"
+                max={999}
+              >
+                <EuroIcon />
+              </Badge>
             </Tooltip>
-          )}
-          {!isRecentlyUsed && (
-            <Tooltip title="Not recently used">
-              <NotRecentlyUsedIcon className={classes.icon} color="secondary" />
-            </Tooltip>
-          )}
-          <Tooltip title="Transaction count">
-            <Badge
-              className={classes.icon}
-              badgeContent={totalTxs}
-              max={99}
-              color="primary"
-            >
-              <TotalTxsIcon />
-            </Badge>
-          </Tooltip>
-          <Tooltip title="Money involved">
-            <Badge
-              className={classes.txsSum}
-              badgeContent={totalExpenseInTxs}
-              color="primary"
-              max={999}
-            >
-              <EuroIcon />
-            </Badge>
-          </Tooltip>
+          </div>
         </div>
-      </div>
-      <Divider className={classes.divider} />
-    </ListItem>
+        <Divider className={classes.divider} />
+      </ListItem>
+    </Link>
   )
 }
 

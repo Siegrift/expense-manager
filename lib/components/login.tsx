@@ -8,10 +8,19 @@ import { authChangeAction } from '../firebase/actions'
 import { signIn } from '../firebase/util'
 import { PROJECT_TITLE } from '../shared/constants'
 import { State } from '../state'
+import { useEffect } from 'react'
+import Router from 'next/router'
 
 const Login = () => {
   const dispatch = useDispatch()
   const signInStatus = useSelector((state: State) => state.signInStatus)
+
+  useEffect(() => {
+    // Prefetch the /login page as the user will go there after the logout
+    // see: firebase.ts
+    Router.prefetch('/login')
+  }, [])
+
   switch (signInStatus) {
     case 'unknown':
       return <LoadingScreen />

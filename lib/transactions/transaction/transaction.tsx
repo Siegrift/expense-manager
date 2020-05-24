@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography'
 import RepeatOneIcon from '@material-ui/icons/RepeatOne'
 import formatDistance from 'date-fns/formatDistance'
 import NoteIcon from '@material-ui/icons/Comment'
-import Router from 'next/router'
+import Link from 'next/link'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
@@ -118,14 +118,11 @@ const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
             <>
               <Divider orientation="vertical" flexItem style={{ width: 2 }} />
               <Tooltip title="(E)dit transaction">
-                <IconButton
-                  className={classes.iconButton}
-                  onClick={() =>
-                    Router.push('/transactions/[id]', `/transactions/${tx.id}`)
-                  }
-                >
-                  <EditIcon color="primary" />
-                </IconButton>
+                <Link href={`/transactions/${tx.id}`}>
+                  <IconButton className={classes.iconButton}>
+                    <EditIcon color="primary" />
+                  </IconButton>
+                </Link>
               </Tooltip>
               <Tooltip title="(D)elete transaction">
                 <IconButton
@@ -168,16 +165,11 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
     )
   } else {
     return (
-      <ListItem
-        style={style}
-        className={classes.listItem}
-        button
-        onClick={() =>
-          Router.push('/transactions/[id]', `/transactions/${tx.id}`)
-        }
-      >
-        <TransactionContent tx={tx} bigDevice={bigDevice} />
-      </ListItem>
+      <Link href={`/transactions/${tx.id}`}>
+        <ListItem style={style} className={classes.listItem} button>
+          <TransactionContent tx={tx} bigDevice={bigDevice} />
+        </ListItem>
+      </Link>
     )
   }
 }

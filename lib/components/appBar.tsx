@@ -5,8 +5,8 @@ import Typography from '@material-ui/core/Typography'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import DeleteIcon from '@material-ui/icons/Delete'
 import DoneIcon from '@material-ui/icons/Done'
-import Router from 'next/router'
 import React from 'react'
+import Link from 'next/link'
 
 interface AppBarProps {
   returnUrl?: string
@@ -25,14 +25,11 @@ const AppBar: React.FC<AppBarProps> = ({
     <MuiAppBar position="static">
       <Toolbar>
         {returnUrl && (
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="back"
-            onClick={() => Router.push(returnUrl)}
-          >
-            <ArrowBackIcon />
-          </IconButton>
+          <Link href={returnUrl}>
+            <IconButton edge="start" color="inherit" aria-label="back">
+              <ArrowBackIcon />
+            </IconButton>
+          </Link>
         )}
         <Typography variant="h6" style={{ flexGrow: 1 }}>
           {appBarTitle}

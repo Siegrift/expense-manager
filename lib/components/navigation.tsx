@@ -7,8 +7,9 @@ import BarChartIcon from '@material-ui/icons/BarChart'
 import ListIcon from '@material-ui/icons/List'
 import TagIcon from '@material-ui/icons/LocalOffer'
 import SettingsIcon from '@material-ui/icons/Settings'
-import React, { ComponentType } from 'react'
+import React, { ComponentType, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import Router from 'next/router'
 
 import { setCurrentScreen } from '../actions'
 import { redirectTo } from '../shared/utils'
@@ -43,6 +44,13 @@ const Navigation = () => {
   const currentScreen = useSelector((state: State) => state.currentScreen)
   const dispatch = useDispatch()
   const classes = useStyles()
+
+  useEffect(() => {
+    // Prefetch all of the navigation pages
+    navigationItems.forEach(({ screen }) => {
+      Router.prefetch(`/${screen}`)
+    })
+  }, [])
 
   return (
     <BottomNavigation
