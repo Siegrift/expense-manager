@@ -50,7 +50,11 @@ const Transactions = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => dispatch(keyPressAction(e))
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (document.activeElement?.tagName === 'BODY') {
+        dispatch(keyPressAction(e))
+      }
+    }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => {
