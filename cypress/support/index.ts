@@ -14,5 +14,21 @@
 // ***********************************************************
 
 import '@testing-library/cypress/add-commands'
+import 'cypress-plugin-tab'
 import './commands'
 import './firebaseCommands'
+
+beforeEach(() => {
+  const removeTestData = (coll) => {
+    cy.callFirestore('get', coll).then((data) => {
+      const uid = Cypress.env('testUid')
+      const filtered = data.filter((r) => r.uid === uid)
+      filtered.forEach((f) => {
+        cy.callFirestore('delete', `${coll}/${f.id}`)
+      })
+    })
+  }
+
+  removeTestData('transactions')
+  removeTestData('tags')
+})

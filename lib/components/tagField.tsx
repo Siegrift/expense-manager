@@ -51,7 +51,10 @@ const TagField = ({
   const classes = useStyles()
 
   return (
-    <div className={classnames(classes.root, className)}>
+    <div
+      className={classnames(classes.root, className)}
+      data-cy="tag-field-wrapper"
+    >
       <Autocomplete<TagFieldTag, true, true, true>
         multiple
         size="small"
@@ -83,6 +86,7 @@ const TagField = ({
               name: `${ADD_NEW_OPTION_LABEL}${params.inputValue}`,
               automatic: false,
               id,
+              // TODO: firebase might not be loaded yet
               uid: getCurrentUserId(),
               createdByTagField: true,
             })

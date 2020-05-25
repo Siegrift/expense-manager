@@ -7,7 +7,7 @@ import { Action, Thunk } from '../redux/types'
 import { TransactionSearch } from '../state'
 import { ObjectOf } from '../types'
 
-import { sortedTransactionsSel } from './selectors'
+import { applySearchOnTransactions } from './selectors'
 
 export const saveTxEdit = (
   id: string,
@@ -44,16 +44,25 @@ export const setCursor = (newCursor: number): Action<number> => ({
   reducer: (state) => set(state, ['cursor'], newCursor),
 })
 
+export const setConfirmTxDeleteDialogOpen = (open: boolean): Action => ({
+  type: `${open ? 'Open' : 'Close'} confirm delete tx dialog`,
+  reducer: (state) =>
+    set(state, ['transactionList', 'confirmTxDeleteDialogOpen'], open),
+})
+
 export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
   dispatch,
   getState,
   { logger },
 ) => {
   const key = e.key.toUpperCase()
+  // TODO: log this if the keypress is actionable
   logger.log('Transaction list keyboard press: ' + key)
 
   const cursor = getState().cursor
-  const txs = sortedTransactionsSel(getState())
+  const txs = applySearchOnTransactions(getState())
+  if (!txs[cursor]) return
+
   switch (key) {
     case 'ARROWUP':
       if (cursor > 0) dispatch(setCursor(cursor - 1))
@@ -65,7 +74,7 @@ export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
       Router.push('/transactions/[id]', `/transactions/${txs[cursor].id}`)
       break
     case 'D':
-      dispatch(removeTx(txs[cursor].id))
+      dispatch(setConfirmTxDeleteDialogOpen(true))
       break
   }
 }
