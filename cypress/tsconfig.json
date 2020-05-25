@@ -5,5 +5,5 @@
     "types": ["@types/testing-library__cypress", "cypress"],
     "noImplicitAny": false
   },
-  "include": ["../node_modules/cypress"]
+  "include": ["../node_modules/cypress", "./**/*.ts"]
 }

@@ -104,6 +104,7 @@
     "babel-loader": "^8.1.0",
     "cross-env": "^7.0.2",
     "cypress-firebase": "^1.2.0",
+    "cypress-plugin-tab": "^1.0.5",
     "cypress-testing-library": "^4.0.0",
     "eslint": "^7.1.0",
     "eslint-config-prettier": "^6.11.0",

@@ -3334,7 +3334,7 @@ ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.0, ajv@^6.5.5:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-ally.js@1.4.1:
+ally.js@1.4.1, ally.js@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/ally.js/-/ally.js-1.4.1.tgz#9fb7e6ba58efac4ee9131cb29aa9ee3b540bcf1e"
   integrity sha1-n7fmuljvrE7pExyymqnuO1QLzx4=
@@ -5087,6 +5087,13 @@ cypress-firebase@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/cypress-firebase/-/cypress-firebase-1.2.0.tgz#79098373fefbc150e9d43ab0391fa0cf8c12bc44"
   integrity sha512-xC2OJ7lFlpp4XXcXYpBj4c/Ojkxx4Kwh4vT347loX0SGv3Equ9m1q+R/q2hNE2VSB+qF2v+yUMk0jhkZa2wWMg==
+
+cypress-plugin-tab@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/cypress-plugin-tab/-/cypress-plugin-tab-1.0.5.tgz#a40714148104004bb05ed62b1bf46bb544f8eb4a"
+  integrity sha512-QtTJcifOVwwbeMP3hsOzQOKf3EqKsLyjtg9ZAGlYDntrCRXrsQhe4ZQGIthRMRLKpnP6/tTk6G0gJ2sZUfRliQ==
+  dependencies:
+    ally.js "^1.4.1"
 
 cypress-testing-library@^4.0.0:
   version "4.0.0"

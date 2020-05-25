@@ -58,6 +58,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   cursor: {
     backgroundColor: 'rgba(0,0,0,0.1)',
   },
+  expenseId: {
+    color: 'gray',
+    fontSize: '0.5em',
+    verticalAlign: 'middle',
+    display: 'inline-block',
+    margin: '0 0 6px 12px',
+  },
 }))
 
 type TransactionContentProps = { tx: TransactionState; bigDevice: boolean }
@@ -80,6 +87,7 @@ const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
                 tx.amount,
                 tx.currency,
               )}`}
+              <span className={classes.expenseId}>{tx.id.substr(0, 8)}...</span>
             </Typography>
           }
         />
@@ -118,13 +126,16 @@ const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
           {bigDevice && (
             <>
               <Divider orientation="vertical" flexItem style={{ width: 2 }} />
-              <Tooltip title="(E)dit transaction">
-                <Link href={`/transactions/${tx.id}`}>
-                  <IconButton className={classes.iconButton}>
+              <Link href={`/transactions/${tx.id}`}>
+                <Tooltip title="(E)dit transaction">
+                  <IconButton
+                    className={classes.iconButton}
+                    data-cy="edit-icon"
+                  >
                     <EditIcon color="primary" />
                   </IconButton>
-                </Link>
-              </Tooltip>
+                </Tooltip>
+              </Link>
               <Tooltip title="(D)elete transaction">
                 <IconButton
                   className={classes.iconButton}
