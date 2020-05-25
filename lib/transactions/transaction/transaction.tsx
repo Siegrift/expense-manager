@@ -19,10 +19,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
 
 import { Transaction as TransactionState } from '../../addTransaction/state'
+import ConfirmDialog from '../../components/confirmDialog'
 import { useIsBigDevice } from '../../shared/hooks'
 import { formatMoney } from '../../shared/utils'
 import { State } from '../../state'
-import { removeTx, setCursor } from '../actions'
+import { removeTx, setCursor, setConfirmTxDeleteDialogOpen } from '../actions'
 import { applySearchOnTransactions, cursorSel } from '../selectors'
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -73,6 +74,9 @@ const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
   const tags = useSelector((state: State) => state.tags)
   const dispatch = useDispatch()
   const classes = useStyles()
+  const confirmDeleteTxOpen = useSelector(
+    (state: State) => state.transactionList.confirmTxDeleteDialogOpen,
+  )
 
   return (
     <>
@@ -136,15 +140,32 @@ const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
                   </IconButton>
                 </Tooltip>
               </Link>
+
               <Tooltip title="(D)elete transaction">
                 <IconButton
                   className={classes.iconButton}
-                  // TODO: confirm dialog
-                  onClick={() => dispatch(removeTx(tx.id))}
+                  onClick={() => dispatch(setConfirmTxDeleteDialogOpen(true))}
                 >
                   <DeleteIcon color="secondary" />
                 </IconButton>
               </Tooltip>
+
+              <ConfirmDialog
+                text={
+                  <>
+                    <p>
+                      Do you really want to remove the following transaction?
+                    </p>
+                    <b>{tx.id}</b>
+                    <p>
+                      <i>This action can't be undone!</i>
+                    </p>
+                  </>
+                }
+                open={confirmDeleteTxOpen}
+                onCancel={() => dispatch(setConfirmTxDeleteDialogOpen(false))}
+                onConfirm={() => dispatch(removeTx(tx.id))}
+              />
             </>
           )}
         </div>
