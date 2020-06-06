@@ -1,6 +1,6 @@
 {
   "engines": {
-    "node": "12.x"
+    "node": "10.x || 12.x"
   },
   "name": "expense-manager",
   "version": "0.1.0",
