@@ -263,7 +263,6 @@ const AddTransaction = () => {
         <Collapse in={!useCurrentTime} style={{ margin: 0 }}>
           <Grid className={classes.row}>
             <DateTimePicker
-              autoOk
               ampm={false}
               disableFuture
               value={dateTime}

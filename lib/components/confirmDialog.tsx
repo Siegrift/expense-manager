@@ -11,19 +11,26 @@ interface Props {
   open: boolean
   onCancel: () => void
   onConfirm: () => void
-  text: React.ReactNode
+  text?: string
+  ContentComponent?: React.ReactNode
   title?: string
 }
 
-const ConfirmDialog = ({ open, onCancel, onConfirm, text, title }: Props) => {
+const ConfirmDialog = ({
+  open,
+  onCancel,
+  onConfirm,
+  text,
+  ContentComponent,
+  title,
+}: Props) => {
   return (
     <div>
       <Dialog onClose={onCancel} disableEnforceFocus open={open}>
         {title && <DialogTitle>{title}</DialogTitle>}
-        <DialogContent>
-          <DialogContentText style={{ textAlign: 'center' }}>
-            {text}
-          </DialogContentText>
+        <DialogContent style={{ textAlign: 'center' }}>
+          {text && <DialogContentText>{text}</DialogContentText>}
+          {ContentComponent}
         </DialogContent>
         <DialogActions>
           <Button onClick={onCancel} color="primary">

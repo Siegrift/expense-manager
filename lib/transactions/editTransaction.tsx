@@ -199,7 +199,6 @@ const EditTransaction = () => {
 
           <Grid className={classes.row}>
             <DateTimePicker
-              autoOk
               ampm={false}
               disableFuture
               value={dateTime}

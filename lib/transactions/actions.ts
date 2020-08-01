@@ -44,12 +44,6 @@ export const setCursor = (newCursor: number): Action<number> => ({
   reducer: (state) => set(state, ['cursor'], newCursor),
 })
 
-export const setConfirmTxDeleteDialogOpen = (open: boolean): Action => ({
-  type: `${open ? 'Open' : 'Close'} confirm delete tx dialog`,
-  reducer: (state) =>
-    set(state, ['transactionList', 'confirmTxDeleteDialogOpen'], open),
-})
-
 export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
   dispatch,
   getState,

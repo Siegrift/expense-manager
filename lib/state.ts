@@ -24,9 +24,6 @@ export interface State {
   // NOTE: tags and transactions are in sync with firestore, keep local data out of it
   tags: ObjectOf<Tag>
   transactions: ObjectOf<Transaction>
-  transactionList: {
-    confirmTxDeleteDialogOpen: boolean
-  }
   transactionSearch: TransactionSearch
   cursor: number
 }
@@ -41,9 +38,6 @@ const state: State = {
     value: '',
   },
   cursor: 0,
-  transactionList: {
-    confirmTxDeleteDialogOpen: false,
-  },
 }
 
 export const getInitialState = () => state

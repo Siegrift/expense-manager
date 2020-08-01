@@ -12,7 +12,7 @@ import { Provider as ReduxProvider, useDispatch } from 'react-redux'
 import { setCurrentScreen } from '../lib/actions'
 import { initializeFirebase } from '../lib/firebase/firebase'
 import { configureStore } from '../lib/redux/configureStore'
-import { PROJECT_TITLE } from '../lib/shared/constants'
+import { PROJECT_TITLE, BACKGROUND_COLOR } from '../lib/shared/constants'
 import { ScreenTitle } from '../lib/state'
 import theme from '../lib/theme'
 
@@ -49,7 +49,7 @@ class ExpenseManagerApp extends App {
               <style>
                 {`
                 body {
-                  background-color: blanchedalmond !important;
+                  background-color: ${BACKGROUND_COLOR} !important;
                   /* Disables pull-to-refresh but allows overscroll glow effects. */
                   overscroll-behavior-y: contain;
                 }
