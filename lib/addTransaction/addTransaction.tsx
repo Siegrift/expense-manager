@@ -259,7 +259,8 @@ const AddTransaction = () => {
           />
         </Grid>
 
-        <Collapse in={!useCurrentTime}>
+        {/* override margin set by parent component */}
+        <Collapse in={!useCurrentTime} style={{ margin: 0 }}>
           <Grid className={classes.row}>
             <DateTimePicker
               autoOk
