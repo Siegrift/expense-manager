@@ -67,8 +67,8 @@ export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
     case 'E':
       Router.push('/transactions/[id]', `/transactions/${txs[cursor].id}`)
       break
-    case 'D':
-      dispatch(setConfirmTxDeleteDialogOpen(true))
-      break
+    // case 'D':
+    //   dispatch(setConfirmTxDeleteDialogOpen(true))
+    //   break
   }
 }
