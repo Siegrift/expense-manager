@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
-import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 
 interface Props {
@@ -20,7 +19,6 @@ const ConfirmDialog = ({
   open,
   onCancel,
   onConfirm,
-  text,
   ContentComponent,
   title,
 }: Props) => {
@@ -29,7 +27,6 @@ const ConfirmDialog = ({
       <Dialog onClose={onCancel} disableEnforceFocus open={open}>
         {title && <DialogTitle>{title}</DialogTitle>}
         <DialogContent style={{ textAlign: 'center' }}>
-          {text && <DialogContentText>{text}</DialogContentText>}
           {ContentComponent}
         </DialogContent>
         <DialogActions>

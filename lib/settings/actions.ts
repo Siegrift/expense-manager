@@ -8,9 +8,11 @@ import {
   Transaction,
 } from '../addTransaction/state'
 import { getFirebase } from '../firebase/firebase'
-import { getCurrentUserId } from '../firebase/util'
 import { Action, Thunk } from '../redux/types'
+import { setAppError } from '../shared/actions'
+import { NO_USER_ID_ERROR } from '../shared/constants'
 import { CURRENCIES } from '../shared/currencies'
+import { currentUserIdSel } from '../shared/selectors'
 import { downloadFile, isValidDate } from '../shared/utils'
 import { State } from '../state'
 import { ObjectOf } from '../types'
@@ -21,14 +23,22 @@ export const importFromCSV = (
   e: React.ChangeEvent<HTMLInputElement>,
 ): Thunk => (dispatch, getState, { logger }) => {
   logger.log('Import from csv')
+
+  const userId = currentUserIdSel(getState())
   const chosenFile = e.target.files!.item(0)!
   const reader = new FileReader()
+
+  if (!userId) {
+    dispatch(setAppError(NO_USER_ID_ERROR))
+    return Promise.resolve()
+  }
 
   return new Promise((res) => {
     reader.onload = async () => {
       const { errorReason, tags, txs } = processImportedCSV(
         getState(),
         reader.result as string,
+        userId,
       )
 
       if (errorReason) {
@@ -56,7 +66,11 @@ export const importFromCSV = (
  *  6. repeating - one of the supported repeating modes
  *  other columns are ignored
  */
-export const processImportedCSV = (state: State, importedCsv: string) => {
+export const processImportedCSV = (
+  state: State,
+  importedCsv: string,
+  userId: string,
+) => {
   const lines = importedCsv.trim().split('\n')
   const txs: Transaction[] = []
   const tags = new Map<string, Tag>()
@@ -99,7 +113,7 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
           tags.set(tag, {
             id: uuid(),
             name: tag,
-            uid: getCurrentUserId(),
+            uid: userId,
             // TODO: make it importable
             automatic: false,
           })
@@ -121,7 +135,7 @@ export const processImportedCSV = (state: State, importedCsv: string) => {
             return stateTagsByName[tag].id
           }
         }),
-        uid: getCurrentUserId(),
+        uid: userId,
         repeating: t[5] as RepeatingOption,
       })
     }
@@ -146,6 +160,13 @@ export const clearAllData = (): Thunk => async (
   { logger },
 ) => {
   logger.log('Clear all data')
+
+  const userId = currentUserIdSel(getState())
+  if (!userId) {
+    dispatch(setAppError(NO_USER_ID_ERROR))
+    return Promise.resolve()
+  }
+
   const removeColl = async (name: string) => {
     let stopRemove = false
     while (!stopRemove) {
@@ -156,7 +177,7 @@ export const clearAllData = (): Thunk => async (
       const q = await getFirebase()
         .firestore()
         .collection(name)
-        .where('uid', '==', getCurrentUserId())
+        .where('uid', '==', userId)
         .limit(500)
         .get()
 

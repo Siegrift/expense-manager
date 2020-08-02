@@ -26,6 +26,8 @@ export interface State {
   transactions: ObjectOf<Transaction>
   transactionSearch: TransactionSearch
   cursor: number
+  user: firebase.User | null
+  error: string | null
 }
 
 const state: State = {
@@ -38,6 +40,8 @@ const state: State = {
     value: '',
   },
   cursor: 0,
+  user: null,
+  error: null,
 }
 
 export const getInitialState = () => state

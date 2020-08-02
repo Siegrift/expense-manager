@@ -21,6 +21,7 @@ import './firebaseCommands'
 beforeEach(() => {
   const removeTestData = (coll) => {
     cy.callFirestore('get', coll).then((data) => {
+      if (!data) return
       const uid = Cypress.env('testUid')
       const filtered = data.filter((r) => r.uid === uid)
       filtered.forEach((f) => {

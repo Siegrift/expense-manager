@@ -18,7 +18,7 @@ import difference from 'lodash/difference'
 import { useDispatch, useSelector } from 'react-redux'
 
 import AmountField from '../components/amountField'
-import Navigation from '../components/navigation'
+import PageWrapper from '../components/pageWrapper'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
 import { CURRENCIES } from '../shared/currencies'
@@ -35,9 +35,6 @@ import {
 } from './state'
 
 const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
   chipField: { flex: 1 },
   amountInput: { marginLeft: theme.spacing(1) },
   row: {
@@ -101,13 +98,7 @@ const AddTransaction = () => {
   }
 
   return (
-    <Grid
-      container
-      direction="column"
-      justify="center"
-      alignItems="center"
-      className={classes.root}
-    >
+    <PageWrapper>
       <Paper className={classes.paper}>
         <Grid container className={classes.row}>
           <ButtonGroup variant="contained" fullWidth>
@@ -319,8 +310,7 @@ const AddTransaction = () => {
           </Button>
         </Grid>
       </Paper>
-      <Navigation />
-    </Grid>
+    </PageWrapper>
   )
 }
 

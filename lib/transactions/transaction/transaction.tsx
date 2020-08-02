@@ -204,6 +204,7 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
         )}
         onClick={() => dispatch(setCursor(index))}
         ContainerComponent="div"
+        data-cy="transaction"
       >
         <TransactionContent tx={tx} bigDevice={bigDevice} />
       </ListItem>
@@ -216,6 +217,7 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
           className={classes.listItem}
           button
           ContainerComponent="div"
+          data-cy="transaction"
         >
           <TransactionContent tx={tx} bigDevice={bigDevice} />
         </ListItem>

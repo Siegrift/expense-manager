@@ -1,9 +1,9 @@
-import { set } from '@siegrift/tsfunct'
+import { fpSet, pipe } from '@siegrift/tsfunct'
 import { batch } from 'react-redux'
 
 import { getFirebase } from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
-import { SignInStatus } from '../state'
+import { SignInStatus, State } from '../state'
 
 import { FirestoneQuery, getQueries } from './firestoneQueries'
 
@@ -21,24 +21,30 @@ export const firestoneChangeAction = (
   },
 })
 
-const changeSignInStatus = (status: SignInStatus): Action<SignInStatus> => ({
-  type: 'Change sign in status',
+const changeSignInStatus = (
+  status: SignInStatus,
+  user: firebase.User | null,
+): Action<SignInStatus> => ({
+  type: 'Change sign in status and set user',
   payload: status,
-  reducer: (state) => set(state, ['signInStatus'], status),
+  reducer: (state) =>
+    pipe(
+      fpSet<State>()(['signInStatus'], status),
+      fpSet<State>()(['user'], user),
+    )(state),
 })
 
-export const authChangeAction = (status: SignInStatus): Thunk => async (
-  dispatch,
-  getState,
-  { logger },
-) => {
+export const authChangeAction = (
+  status: SignInStatus,
+  user: firebase.User | null,
+): Thunk => async (dispatch, getState, { logger }) => {
   logger.log(`Auth changed: ${status}`)
   if (status === 'loggedIn') {
     await dispatch(initializeFirestore())
     // TODO: remove or fix repeating transactions
     // dispatch(addRepeatingTxs())
   }
-  dispatch(changeSignInStatus(status))
+  dispatch(changeSignInStatus(status, user))
 }
 
 export const initializeFirestore = (): Thunk => async (dispatch) => {

@@ -21,5 +21,3 @@ export const convertTimestampsToDates = (value: any): any => {
     return value
   }
 }
-
-export const getCurrentUserId = () => getFirebase().auth().currentUser!.uid

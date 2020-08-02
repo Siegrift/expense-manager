@@ -57,7 +57,9 @@ export const initializeFirebase = async (store: Store) => {
   }
 
   firebase.auth().onAuthStateChanged(async (user) => {
-    store.dispatch(authChangeAction(user ? 'loggedIn' : 'loggedOut') as any)
+    store.dispatch(
+      authChangeAction(user ? 'loggedIn' : 'loggedOut', user) as any,
+    )
     if (user) {
       user.getIdToken().then(async (token) => {
         await fetch('/api/set-cookie', {
