@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import Chip from '@material-ui/core/Chip'
 import Divider from '@material-ui/core/Divider'
@@ -19,12 +19,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
 
 import { Transaction as TransactionState } from '../../addTransaction/state'
-import ConfirmDialog from '../../components/confirmDialog'
-import { BACKGROUND_COLOR } from '../../shared/constants'
 import { useIsBigDevice } from '../../shared/hooks'
 import { formatMoney } from '../../shared/utils'
 import { State } from '../../state'
-import { removeTx, setCursor } from '../actions'
+import { setCursor, setConfirmTxDeleteDialogOpen } from '../actions'
 import { applySearchOnTransactions, cursorSel } from '../selectors'
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -64,13 +62,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 type TransactionContentProps = { tx: TransactionState; bigDevice: boolean }
 
-const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
+export const TransactionContent = ({
+  tx,
+  bigDevice,
+}: TransactionContentProps) => {
   const tags = useSelector((state: State) => state.tags)
   const dispatch = useDispatch()
   const classes = useStyles()
-  const [confirmDeleteTxOpen, setConfirmDeleteTxOpen] = useState(false)
 
-  const TransactionComponent = () => (
+  return (
     <>
       <div className={classes.listItemFirstRow}>
         <ListItemText
@@ -135,7 +135,7 @@ const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
             <Tooltip title="(D)elete transaction">
               <IconButton
                 className={classes.iconButton}
-                onClick={() => setConfirmDeleteTxOpen(true)}
+                onClick={() => dispatch(setConfirmTxDeleteDialogOpen(true))}
               >
                 <DeleteIcon color="secondary" />
               </IconButton>
@@ -143,45 +143,7 @@ const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
           </>
         )}
       </div>
-    </>
-  )
-
-  return (
-    <>
-      <TransactionComponent />
       <Divider className={classes.divider} />
-      <ConfirmDialog
-        ContentComponent={
-          <>
-            <p>Do you really want to remove the following transaction?</p>
-            <div
-              style={{
-                backgroundColor: BACKGROUND_COLOR,
-              }}
-            >
-              <div
-                style={{
-                  transform: 'scale(0.7)',
-                  backgroundColor: 'white',
-                  padding: 16,
-                  borderRadius: 8,
-                }}
-              >
-                <TransactionComponent />
-              </div>
-            </div>
-            <i>
-              <b>This action can't be undone!</b>
-            </i>
-          </>
-        }
-        open={confirmDeleteTxOpen}
-        onCancel={() => setConfirmDeleteTxOpen(false)}
-        onConfirm={() => {
-          dispatch(removeTx(tx.id))
-          setConfirmDeleteTxOpen(false)
-        }}
-      />
     </>
   )
 }

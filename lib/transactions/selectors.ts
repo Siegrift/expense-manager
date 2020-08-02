@@ -44,3 +44,16 @@ export const applySearchOnTransactions = createSelector(
 export const txSearchQuerySel = (state: State) => state.transactionSearch
 
 export const cursorSel = (state: State) => state.cursor
+
+export const confirmTxDeleteDialogOpenSel = (state: State) =>
+  state.confirmTxDeleteDialogOpen
+
+export const confirmDeleteDialogForTxSel = createSelector(
+  confirmTxDeleteDialogOpenSel,
+  applySearchOnTransactions,
+  cursorSel,
+  (isOpen, txs, cursor) => {
+    if (!isOpen || txs[cursor] === undefined) return null
+    return txs[cursor]
+  },
+)

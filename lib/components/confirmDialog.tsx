@@ -23,22 +23,33 @@ const ConfirmDialog = ({
   title,
 }: Props) => {
   return (
-    <div>
-      <Dialog onClose={onCancel} disableEnforceFocus open={open}>
-        {title && <DialogTitle>{title}</DialogTitle>}
-        <DialogContent style={{ textAlign: 'center' }}>
-          {ContentComponent}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onCancel} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={onConfirm} color="secondary">
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+    <Dialog onClose={onCancel} disableEnforceFocus open={open}>
+      {title && <DialogTitle>{title}</DialogTitle>}
+      <DialogContent style={{ textAlign: 'center' }}>
+        {/* ContentComponent is sometimes evaluated even after the dialog is closed. */}
+        {open && ContentComponent}
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onCancel}
+          color="primary"
+          onKeyDown={(e) => {
+            if (e.key === 'Esc') onCancel()
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={onConfirm}
+          color="secondary"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') onConfirm()
+          }}
+        >
+          OK
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 

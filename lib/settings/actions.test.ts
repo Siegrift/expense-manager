@@ -25,7 +25,7 @@ describe.skip('settings actions', () => {
 
       test('checks for errors', () => {
         const checkError = (input: string) =>
-          processImportedCSV(state, input).errorReason
+          processImportedCSV(state, input, 'userId').errorReason
 
         expect(checkError('')).toBe(
           'Unknown error. Check whether the data are in correct format.',
@@ -72,8 +72,8 @@ describe.skip('settings actions', () => {
         const csv2 = '2016-02-16T00:00:00Z,-1.56,A|B|C,,EUR,monthly'
 
         // Travel tag should be reused from state
-        expect(processImportedCSV(state, csv1)).toMatchSnapshot()
-        expect(processImportedCSV(state, csv2)).toMatchSnapshot()
+        expect(processImportedCSV(state, csv1, 'userId')).toMatchSnapshot()
+        expect(processImportedCSV(state, csv2, 'userId')).toMatchSnapshot()
       })
 
       test('exporting imported txs yields identity', () => {
@@ -83,7 +83,7 @@ describe.skip('settings actions', () => {
         const csv =
           '2017-08-19T00:00:00.000Z,-1,Travel|Tickets,,EUR,none\n2017-08-16T00:00:00.000Z,-0.7,Shopping,,EUR,monthly'
 
-        const imp = processImportedCSV(state, csv)
+        const imp = processImportedCSV(state, csv, 'userId')
         const newState: State = {
           ...state,
           transactions: keyBy(imp.txs, 'id'),

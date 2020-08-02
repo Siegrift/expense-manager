@@ -28,6 +28,7 @@ export interface State {
   cursor: number
   user: firebase.User | null
   error: string | null
+  confirmTxDeleteDialogOpen: boolean
 }
 
 const state: State = {
@@ -42,6 +43,7 @@ const state: State = {
   cursor: 0,
   user: null,
   error: null,
+  confirmTxDeleteDialogOpen: false,
 }
 
 export const getInitialState = () => state
