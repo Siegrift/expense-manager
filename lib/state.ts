@@ -1,4 +1,5 @@
 import { Tag, Transaction } from './addTransaction/state'
+import { Profile } from './settings/state'
 import { ObjectOf } from './types'
 
 export type ScreenTitle =
@@ -29,6 +30,7 @@ export interface State {
   user: firebase.User | null
   error: string | null
   confirmTxDeleteDialogOpen: boolean
+  profile: ObjectOf<Profile>
 }
 
 const state: State = {
@@ -44,6 +46,7 @@ const state: State = {
   user: null,
   error: null,
   confirmTxDeleteDialogOpen: false,
+  profile: {},
 }
 
 export const getInitialState = () => state

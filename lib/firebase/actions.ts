@@ -1,10 +1,11 @@
-import { fpSet, pipe } from '@siegrift/tsfunct'
+import { fpSet, pipe, set } from '@siegrift/tsfunct'
 import { batch } from 'react-redux'
 
 import { addRepeatingTxs } from '../actions'
 import { getFirebase } from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
-import { setAppError } from '../shared/actions'
+import { getInitialState as getInitialProfileState } from '../settings/state'
+import { withErrorHandler } from '../shared/actions'
 import { SignInStatus, State } from '../state'
 
 import { FirestoneQuery, getQueries } from './firestoneQueries'
@@ -39,14 +40,24 @@ const changeSignInStatus = (
 export const authChangeAction = (
   status: SignInStatus,
   user: firebase.User | null,
-): Thunk => async (dispatch, getState, { logger }) => {
+): Thunk => async (dispatch, _getState, { logger }) => {
   logger.log(`Auth changed: ${status}`)
 
-  dispatch(changeSignInStatus(status, user))
   if (status === 'loggedIn') {
+    dispatch(applyInitialState(user!))
     await dispatch(initializeFirestore())
   }
+  // this must be last, used to indicate when firestore has finished loading
+  dispatch(changeSignInStatus(status, user))
 }
+
+const applyInitialState = (user: firebase.User): Action => ({
+  type: 'Apply initial state',
+  reducer: (state) => {
+    const profileState = getInitialProfileState(user)
+    return set(state, ['profile', profileState.id], profileState)
+  },
+})
 
 export const initializeFirestore = (): Thunk => async (dispatch) => {
   const queries = getQueries()
@@ -65,25 +76,25 @@ export const initializeFirestore = (): Thunk => async (dispatch) => {
   })
 
   // try to add repeating transactions
-  try {
-    const freshQueriesData = await Promise.all(
-      queries.map((query) => {
-        return query.createFirestoneQuery().get({
-          source: 'server',
-        })
-      }),
-    )
-    batch(() => {
-      freshQueriesData.forEach((data, i) =>
-        dispatch(firestoneChangeAction(queries[i], data)),
+  withErrorHandler(
+    'Unexpected error. Failed to add repeating transactions.',
+    dispatch,
+    async () => {
+      const freshQueriesData = await Promise.all(
+        queries.map((query) => {
+          return query.createFirestoneQuery().get({
+            source: 'server',
+          })
+        }),
       )
-      dispatch(addRepeatingTxs())
-    })
-  } catch (error) {
-    dispatch(
-      setAppError('Unexpected error. Failed to add repeating transactions.'),
-    )
-  }
+      batch(() => {
+        freshQueriesData.forEach((data, i) =>
+          dispatch(firestoneChangeAction(queries[i], data)),
+        )
+        dispatch(addRepeatingTxs())
+      })
+    },
+  )
 
   let actions: Array<Parameters<typeof firestoneChangeAction>> = []
   getFirebase()

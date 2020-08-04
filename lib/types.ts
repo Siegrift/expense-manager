@@ -5,3 +5,5 @@ export interface ObjectOf<T> {
 export interface Logger {
   log: (message: string, payload?: any) => void
 }
+
+export type FirebaseField = { uid: string; id: string }

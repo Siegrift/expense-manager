@@ -1,3 +1,4 @@
+import { set } from '@siegrift/tsfunct'
 import { v4 as uuid } from 'uuid'
 
 import { uploadToFirebase } from '../actions'
@@ -9,10 +10,10 @@ import {
 } from '../addTransaction/state'
 import { getFirebase } from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
-import { setAppError } from '../shared/actions'
+import { setAppError, withErrorHandler } from '../shared/actions'
 import { NO_USER_ID_ERROR } from '../shared/constants'
-import { CURRENCIES } from '../shared/currencies'
-import { currentUserIdSel } from '../shared/selectors'
+import { CURRENCIES, Currency } from '../shared/currencies'
+import { currentUserIdSel, profileSel } from '../shared/selectors'
 import { downloadFile, isValidDate } from '../shared/utils'
 import { State } from '../state'
 import { ObjectOf } from '../types'
@@ -46,7 +47,7 @@ export const importFromCSV = (
         console.error(errorReason)
       } else {
         // TODO: display success notification
-        await dispatch(uploadToFirebase(txs, [...tags.values()]))
+        await dispatch(uploadToFirebase({ txs, tags: [...tags.values()] }))
       }
 
       res()
@@ -124,7 +125,7 @@ export const processImportedCSV = (
         amount: Math.abs(amount),
         // TODO: preserve this for our exports
         transactionType: 'imported',
-        currency: (t[4] as any) as keyof typeof CURRENCIES,
+        currency: (t[4] as any) as Currency,
         dateTime: dt,
         isExpense: amount < 0,
         note: t[3],
@@ -190,4 +191,38 @@ export const clearAllData = (): Thunk => async (
     }
   }
   return Promise.all([removeColl('transactions'), removeColl('tags')])
+}
+
+export const changeDefaultCurrency = (currency: Currency): Thunk => async (
+  dispatch,
+  getState,
+  { logger },
+) => {
+  logger.log('Change default currency')
+
+  withErrorHandler("Couldn't change the default currency", dispatch, () => {
+    const profile = profileSel(getState())
+    dispatch(
+      uploadToFirebase({
+        profile: [set(profile, ['settings', 'defaultCurrency'], currency)],
+      }),
+    )
+  })
+}
+
+export const changeMainCurrency = (currency: Currency): Thunk => async (
+  dispatch,
+  getState,
+  { logger },
+) => {
+  logger.log('Change main currency')
+
+  withErrorHandler("Couldn't change the main currency", dispatch, () => {
+    const profile = profileSel(getState())
+    dispatch(
+      uploadToFirebase({
+        profile: [set(profile, ['settings', 'mainCurrency'], currency)],
+      }),
+    )
+  })
 }

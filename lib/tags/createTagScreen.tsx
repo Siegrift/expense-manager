@@ -22,7 +22,7 @@ const CreateTagScreen = () => {
         automatic: false,
         name: '',
       }}
-      onSave={(tag) => dispatch(uploadToFirebase([], [tag]))}
+      onSave={(tag) => dispatch(uploadToFirebase({ tags: [tag] }))}
     />
   )
 }

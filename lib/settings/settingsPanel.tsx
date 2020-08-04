@@ -1,8 +1,8 @@
 import React from 'react'
 
-import ExpansionPanel from '@material-ui/core/ExpansionPanel'
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
@@ -22,19 +22,19 @@ const SettingsPanel: React.FunctionComponent<SettingsPanelProps> = (props) => {
   const [expanded, setExpanded] = React.useState(false)
 
   return (
-    <ExpansionPanel
+    <Accordion
       expanded={expanded}
       onChange={() => setExpanded(!expanded)}
       aria-label={props.name}
       style={{ textTransform: 'capitalize' }}
     >
-      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>{props.name}</Typography>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails className={classes.importExportContent}>
+      </AccordionSummary>
+      <AccordionDetails className={classes.importExportContent}>
         {props.children}
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
+      </AccordionDetails>
+    </Accordion>
   )
 }
 

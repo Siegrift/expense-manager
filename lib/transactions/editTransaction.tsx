@@ -24,6 +24,7 @@ import {
 } from '../addTransaction/state'
 import AmountField from '../components/amountField'
 import AppBar from '../components/appBar'
+import CurrencySelect from '../components/currencySelect'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
 import { tagsSel } from '../settings/selectors'
@@ -176,23 +177,11 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
                 onPressEnter={onSaveHandler}
               />
 
-              <TextField
-                select
-                label="Currency"
+              <CurrencySelect
+                onChange={setCurrency}
                 value={currency}
                 className={classes.currency}
-                onChange={(e) =>
-                  setCurrency(
-                    (e.target.value as any) as keyof typeof CURRENCIES,
-                  )
-                }
-              >
-                {Object.keys(CURRENCIES).map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </TextField>
+              />
             </Grid>
           </Grid>
 

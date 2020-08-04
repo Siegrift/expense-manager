@@ -39,6 +39,8 @@ export const addTransaction = (addTx: AddTransaction): Thunk => async (
     }
 
     // TODO: handle network error
-    await dispatch(uploadToFirebase([tx], Object.values(addTx.newTags)))
+    await dispatch(
+      uploadToFirebase({ txs: [tx], tags: Object.values(addTx.newTags) }),
+    )
   }
 }
