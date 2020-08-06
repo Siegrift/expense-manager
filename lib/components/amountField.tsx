@@ -12,6 +12,8 @@ import RemoveIcon from '@material-ui/icons/Remove'
 import { FaCalculator as CalculatorIcon } from 'react-icons/fa'
 import NumberFormat from 'react-number-format'
 
+import { CurrencyValue } from '../shared/currencies'
+
 const CalculatorDialog = React.lazy(() => import('./calculatorDialog'))
 const CALC_OPEN_TRIGGERERS = ['+', '-', '*', '/']
 
@@ -22,7 +24,7 @@ interface AmountFieldProps {
   onChange: (amount: string) => void
   label: string
   className?: string
-  currencySymbol?: string
+  currency: CurrencyValue
   onPressEnter: () => void
   isExpense?: boolean
 }
@@ -94,7 +96,7 @@ const AmountField = ({
   onChange,
   label,
   className,
-  currencySymbol,
+  currency,
   onPressEnter,
   isExpense,
 }: AmountFieldProps) => {
@@ -122,9 +124,9 @@ const AmountField = ({
       >
         <InputLabel htmlFor="amount-id">{label}</InputLabel>
         <NumberFormat
-          prefix={currencySymbol && `${currencySymbol} `}
+          prefix={`${currency.symbol} `}
           thousandSeparator=","
-          decimalScale={2}
+          decimalScale={currency.scale}
           fixedDecimalScale
           allowNegative={false}
           value={value}

@@ -51,7 +51,7 @@ export const sorted = <T>(
 export const formatBoolean = (value: boolean) => (value ? 'yes' : 'no')
 
 export const formatMoney = (amount: string | number, currency: Currency) =>
-  `${formatAmount(amount)}${CURRENCIES[currency]}`
+  `${formatAmount(amount)} ${CURRENCIES[currency].symbol}`
 
 export const reverse = (str: string) => str.split('').reverse().join('')
 

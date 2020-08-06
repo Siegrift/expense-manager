@@ -27,6 +27,7 @@ export enum RepeatingOptions {
 export type RepeatingOption = keyof typeof RepeatingOptions
 
 export interface BaseTransaction {
+  rate?: number
   transactionType: TransactionType
   // NOTE: order might be important
   tagIds: string[]

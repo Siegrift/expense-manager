@@ -165,7 +165,7 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
           <Grid container className={classes.row}>
             <Grid item className={classes.amount}>
               <AmountField
-                currencySymbol={CURRENCIES[currency]}
+                currency={CURRENCIES[currency]}
                 isValidAmount={isAmountInValidFormat}
                 shouldValidateAmount={shouldValidate}
                 label="Transaction amount"

@@ -196,7 +196,7 @@ const AddTransaction = () => {
         <Grid container className={classes.row}>
           <AmountField
             isExpense={isExpense}
-            currencySymbol={CURRENCIES[currency]}
+            currency={CURRENCIES[currency]}
             isValidAmount={isAmountInValidFormat}
             shouldValidateAmount={shouldValidateAmount}
             label="Transaction amount"
@@ -225,17 +225,29 @@ const AddTransaction = () => {
         <Collapse in={currency !== mainCurrency} style={{ margin: 0 }}>
           <Grid className={classes.row} style={{ flexWrap: 'wrap' }}>
             {settingsLoaded && (
-              <Typography variant="caption">
-                1 {currency} is{' '}
-                <b>
-                  {computeExchangeRate(
-                    exchangeRates!.rates,
-                    currency,
-                    mainCurrency!,
-                  ).toFixed(4)}
-                </b>{' '}
-                {mainCurrency}, rates from <b>{exchangeRates!.date}</b>
-              </Typography>
+              <>
+                <Typography variant="caption">
+                  {(parseFloat(amount) || 0).toFixed(
+                    CURRENCIES[currency!].scale,
+                  )}{' '}
+                  {currency}
+                  {' = '}
+                  <b>
+                    {(
+                      (parseFloat(amount) || 0) *
+                      computeExchangeRate(
+                        exchangeRates!.rates,
+                        currency,
+                        mainCurrency!,
+                      )
+                    ).toFixed(CURRENCIES[mainCurrency!].scale)}{' '}
+                    {mainCurrency}
+                  </b>
+                </Typography>
+                <Typography variant="caption" style={{ marginLeft: 8 }}>
+                  <i>(rates from {exchangeRates!.date})</i>
+                </Typography>
+              </>
             )}
             {loading && (
               <Typography variant="caption">
