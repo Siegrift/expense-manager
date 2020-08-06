@@ -4,3 +4,4 @@ export const PROJECT_DESCRIPTION =
 export const PROJECT_TITLE = 'Expense manager'
 export const BACKGROUND_COLOR = 'blanchedalmond'
 export const NO_USER_ID_ERROR = 'Unable to get user id of current user!'
+export const USER_DATA_NOT_LOADED_ERROR = 'User data have not been loaded!'
