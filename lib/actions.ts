@@ -10,10 +10,20 @@ import { v4 as uuid } from 'uuid'
 import { Tag, Transaction } from './addTransaction/state'
 import { getFirebase } from './firebase/firebase'
 import { Action, Thunk } from './redux/types'
+import { Profile } from './settings/state'
 import { ScreenTitle } from './state'
+import { FirebaseField, ObjectOf } from './types'
 
-type CollectionType = 'tags' | 'transactions'
-type Entry<C extends CollectionType, T> = { coll: C; data: T }
+type CollectionType = 'tags' | 'transactions' | 'profile'
+type FirebaseCollections = { [key in CollectionType]: any }
+type UploadEntry<C extends CollectionType, T extends FirebaseField> = {
+  coll: C
+  data: T
+}
+type RemoveEntry<C extends CollectionType> = {
+  coll: C
+  docId: string
+}
 
 export const setCurrentScreen = (screen: ScreenTitle): Action<ScreenTitle> => ({
   type: 'Set current screen',
@@ -24,11 +34,16 @@ export const setCurrentScreen = (screen: ScreenTitle): Action<ScreenTitle> => ({
 const MAX_WRITES_IN_BATCH = 500
 
 const privateUpload = (
-  entries: Array<Entry<'tags', Tag> | Entry<'transactions', Transaction>>,
+  entries: Array<
+    | UploadEntry<'tags', Tag>
+    | UploadEntry<'transactions', Transaction>
+    | UploadEntry<'profile', Profile>
+  >,
 ) => {
-  const colls = {
+  const colls: FirebaseCollections = {
     tags: getFirebase().firestore().collection('tags'),
     transactions: getFirebase().firestore().collection('transactions'),
+    profile: getFirebase().firestore().collection('profile'),
   }
 
   return chunk(entries, MAX_WRITES_IN_BATCH).map((ch) => {
@@ -43,17 +58,18 @@ const privateUpload = (
 }
 
 const privateRemove = (
-  entries: Array<Entry<'tags', string> | Entry<'transactions', string>>,
+  entries: Array<RemoveEntry<'tags'> | RemoveEntry<'transactions'>>,
 ) => {
-  const colls = {
+  const colls: FirebaseCollections = {
     tags: getFirebase().firestore().collection('tags'),
     transactions: getFirebase().firestore().collection('transactions'),
+    profile: getFirebase().firestore().collection('profile'),
   }
 
   return chunk(entries, MAX_WRITES_IN_BATCH).map((ch) => {
     const batch = getFirebase().firestore().batch()
-    ch.forEach(({ data, coll }) => {
-      const ref = colls[coll].doc(data)
+    ch.forEach(({ coll, docId }) => {
+      const ref = colls[coll].doc(docId)
       batch.delete(ref)
     })
 
@@ -61,24 +77,54 @@ const privateRemove = (
   })
 }
 
-export const uploadToFirebase = (txs: Transaction[], tags: Tag[]): Thunk => (
+interface UploadToFirebaseParams extends Partial<ObjectOf<FirebaseField[]>> {
+  txs?: Transaction[]
+  tags?: Tag[]
+  profile?: Profile[]
+}
+
+export const uploadToFirebase = (data: UploadToFirebaseParams): Thunk => (
   dispatch,
   getState,
   { logger },
 ) => {
-  logger.log('Upload transactions and tags to firestone')
+  logger.log('Upload data to firestore', data)
+
+  const { txs, tags, profile } = data
+  const uploadEntries: Parameters<typeof privateUpload>[0] = []
+  if (tags) {
+    uploadEntries.push(
+      ...tags.map((t) => ({ coll: 'tags', data: t, docId: t.id } as const)),
+    )
+  }
+  if (txs) {
+    uploadEntries.push(
+      ...txs.map(
+        (t) =>
+          ({
+            coll: 'transactions',
+            data: t,
+            docId: t.id,
+          } as const),
+      ),
+    )
+  }
+  if (profile) {
+    uploadEntries.push(
+      ...Object.keys(profile).map(
+        (key) =>
+          ({
+            coll: 'profile',
+            data: profile[key],
+            docId: key,
+          } as const),
+      ),
+    )
+  }
+
   // NOTE: do not wait for this promise because it will never resolve when offline
   // see: https://www.youtube.com/watch?v=XrltP8bOHT0&feature=youtu.be&t=673
-  privateUpload([
-    ...tags.map((t) => ({ coll: 'tags', data: t } as const)),
-    ...txs.map(
-      (t) =>
-        ({
-          coll: 'transactions',
-          data: t,
-        } as const),
-    ),
-  ])
+  privateUpload(uploadEntries)
   return Promise.resolve()
 }
 
@@ -90,9 +136,17 @@ export const removeFromFirebase = (
   // NOTE: do not wait for this promise because it will never resolve when offline
   // see: https://www.youtube.com/watch?v=XrltP8bOHT0&feature=youtu.be&t=673
   privateRemove([
-    ...tagIds.map((t): Entry<'tags', string> => ({ coll: 'tags', data: t })),
+    ...tagIds.map(
+      (id): RemoveEntry<'tags'> => ({
+        coll: 'tags',
+        docId: id,
+      }),
+    ),
     ...txIds.map(
-      (t): Entry<'transactions', string> => ({ coll: 'transactions', data: t }),
+      (id): RemoveEntry<'transactions'> => ({
+        coll: 'transactions',
+        docId: id,
+      }),
     ),
   ])
   return Promise.resolve()
@@ -171,7 +225,7 @@ export const addRepeatingTxs = (): Thunk => (
     }
   })
 
-  dispatch(uploadToFirebase(added, []))
+  dispatch(uploadToFirebase({ txs: added }))
   setRepeatingTxsAsInactive(inactive)
   return Promise.resolve()
 }

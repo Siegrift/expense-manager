@@ -1,4 +1,5 @@
 import { Tag, Transaction } from './addTransaction/state'
+import { Profile } from './settings/state'
 import { ObjectOf } from './types'
 
 export type ScreenTitle =
@@ -24,11 +25,12 @@ export interface State {
   // NOTE: tags and transactions are in sync with firestore, keep local data out of it
   tags: ObjectOf<Tag>
   transactions: ObjectOf<Transaction>
-  transactionList: {
-    confirmTxDeleteDialogOpen: boolean
-  }
   transactionSearch: TransactionSearch
   cursor: number
+  user: firebase.User | null
+  error: string | null
+  confirmTxDeleteDialogOpen: boolean
+  profile: ObjectOf<Profile>
 }
 
 const state: State = {
@@ -41,9 +43,10 @@ const state: State = {
     value: '',
   },
   cursor: 0,
-  transactionList: {
-    confirmTxDeleteDialogOpen: false,
-  },
+  user: null,
+  error: null,
+  confirmTxDeleteDialogOpen: false,
+  profile: {},
 }
 
 export const getInitialState = () => state

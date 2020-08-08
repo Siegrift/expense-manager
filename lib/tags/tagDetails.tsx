@@ -15,11 +15,14 @@ import RepeatOneIcon from '@material-ui/icons/RepeatOne'
 import { map } from '@siegrift/tsfunct'
 import format from 'date-fns/format'
 import Router from 'next/router'
+import { useSelector } from 'react-redux'
 
 import { Tag, Transaction } from '../addTransaction/state'
 import AmountField from '../components/amountField'
 import AppBar from '../components/appBar'
 import Paper from '../components/paper'
+import { CURRENCIES } from '../shared/currencies'
+import { defaultCurrencySel } from '../shared/selectors'
 import { formatBoolean, isAmountInValidFormat } from '../shared/utils'
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -103,6 +106,8 @@ const TagDetails = ({
   const [amount, setAmount] = useState(
     tag.defaultAmount ? tag.defaultAmount : '',
   )
+  const defaultCurrency = useSelector(defaultCurrencySel)
+
   const [shouldValidate, setShouldValidate] = useState({
     tagName: false,
     amount: false,
@@ -133,6 +138,7 @@ const TagDetails = ({
     }
   }
 
+  if (!defaultCurrency) return null
   return (
     <>
       <AppBar
@@ -168,6 +174,7 @@ const TagDetails = ({
             label="Default transaction amount"
             className={classes.amount}
             onPressEnter={onSaveHandler}
+            currency={CURRENCIES[defaultCurrency]}
           />
 
           <FormControlLabel

@@ -1,5 +1,5 @@
-import { CURRENCIES, DEFAULT_CURRENCY } from '../shared/currencies'
-import { ObjectOf } from '../types'
+import { Currency, DEFAULT_CURRENCY } from '../shared/currencies'
+import { ObjectOf, FirebaseField } from '../types'
 
 export enum TransactionTypes {
   fromUser = 'fromUser',
@@ -9,10 +9,8 @@ export enum TransactionTypes {
 
 export type TransactionType = keyof typeof TransactionTypes
 
-export interface Tag {
-  id: string
+export interface Tag extends FirebaseField {
   name: string
-  uid: string
   automatic: boolean
   defaultAmount?: string // can be empty
 }
@@ -29,20 +27,19 @@ export enum RepeatingOptions {
 export type RepeatingOption = keyof typeof RepeatingOptions
 
 export interface BaseTransaction {
+  rate?: number
   transactionType: TransactionType
   // NOTE: order might be important
   tagIds: string[]
-  currency: keyof typeof CURRENCIES
+  currency: Currency
   isExpense: boolean
   note: string
   repeating: RepeatingOption
 }
 
-export interface Transaction extends BaseTransaction {
-  id: string
+export interface Transaction extends BaseTransaction, FirebaseField {
   dateTime: Date
   amount: number
-  uid: string
 }
 
 export interface AddTransaction extends BaseTransaction {
@@ -56,12 +53,13 @@ export interface AddTransaction extends BaseTransaction {
 
 export const createDefaultAddTransactionState = (
   initialTagIds: string[],
+  initialCurrency?: Currency,
 ): AddTransaction => ({
   transactionType: TransactionTypes.fromUser,
   amount: '',
   tagIds: initialTagIds,
   newTags: {},
-  currency: DEFAULT_CURRENCY,
+  currency: initialCurrency || DEFAULT_CURRENCY,
   tagInputValue: '',
   isExpense: true,
   note: '',

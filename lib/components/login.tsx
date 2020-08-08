@@ -52,7 +52,7 @@ const Login = () => {
 
           <GoogleButton
             onClick={() => {
-              dispatch(authChangeAction('loggingIn'))
+              dispatch(authChangeAction('loggingIn', null))
               signIn()
             }}
             style={{ margin: 'auto', marginTop: '30vh' }}

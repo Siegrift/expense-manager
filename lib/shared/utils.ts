@@ -2,9 +2,10 @@ import { pipe } from '@siegrift/tsfunct'
 import chunk from 'lodash/chunk'
 import Router from 'next/router'
 
+import { ExchangeRates } from '../settings/state'
 import { ObjectOf } from '../types'
 
-import { CURRENCIES } from './currencies'
+import { CURRENCIES, Currency } from './currencies'
 
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -49,10 +50,8 @@ export const sorted = <T>(
 
 export const formatBoolean = (value: boolean) => (value ? 'yes' : 'no')
 
-export const formatMoney = (
-  amount: string | number,
-  currency: keyof typeof CURRENCIES,
-) => `${formatAmount(amount)}${CURRENCIES[currency]}`
+export const formatMoney = (amount: string | number, currency: Currency) =>
+  `${formatAmount(amount)} ${CURRENCIES[currency].symbol}`
 
 export const reverse = (str: string) => str.split('').reverse().join('')
 
@@ -71,4 +70,14 @@ export const formatAmount = (amount: string | number): string => {
   )(numTokens[0])
 
   return insertCommas + (numTokens[1] ? `.${numTokens[1]}` : '')
+}
+
+export const computeExchangeRate = (
+  rates: ExchangeRates['rates'],
+  source: Currency,
+  target: Currency,
+) => {
+  const sourceToEur = 1 / rates[source]
+  const targetToEur = 1 / rates[target]
+  return sourceToEur / targetToEur
 }

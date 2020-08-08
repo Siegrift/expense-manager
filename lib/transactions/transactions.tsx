@@ -6,31 +6,29 @@ import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 
-import Navigation from '../components/navigation'
+import ConfirmDialog from '../components/confirmDialog'
+import PageWrapper from '../components/pageWrapper'
 import Paper from '../components/paper'
 import SearchBar from '../components/searchBar'
 import { COMMANDS } from '../search/transactionSearch'
+import { BACKGROUND_COLOR } from '../shared/constants'
 
-import { changeTxSearchQuery, keyPressAction } from './actions'
+import {
+  changeTxSearchQuery,
+  keyPressAction,
+  removeTx,
+  setConfirmTxDeleteDialogOpen,
+} from './actions'
 import {
   applySearchOnTransactions,
   isValidQuerySel,
   txSearchQuerySel,
   valueOptionsSel,
+  confirmDeleteDialogForTxSel,
 } from './selectors'
-import Transaction from './transaction'
+import Transaction, { TransactionContent } from './transaction'
 
 const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {
-    height: 'calc(100vh - 56px)',
-    ['@media (max-height:500px)']: {
-      height: 'calc(100vh)',
-    },
-    width: '100vw',
-    display: 'flex',
-    flexDirection: 'column',
-    padding: theme.spacing(2),
-  },
   noTransactionsWrapper: {
     display: 'flex',
     flexDirection: 'column',
@@ -48,10 +46,11 @@ const Transactions = () => {
   const valueOptions = useSelector(valueOptionsSel)
   const classes = useStyles()
   const dispatch = useDispatch()
+  const confirmDeleteDialogForTx = useSelector(confirmDeleteDialogForTxSel)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (document.activeElement?.tagName === 'BODY') {
+      if (document.activeElement?.tagName !== 'INPUT') {
         dispatch(keyPressAction(e))
       }
     }
@@ -63,50 +62,85 @@ const Transactions = () => {
   }, [dispatch])
 
   return (
-    <>
-      <div className={classes.wrapper}>
-        <SearchBar
-          className={classes.searchBar}
-          commands={COMMANDS.map((c) => c.name)}
-          placeholder="Search transactions"
-          onQueryChange={(newQuery) => dispatch(changeTxSearchQuery(newQuery))}
-          query={txSearchQuery}
-          isValidQuery={isValidQuery}
-          valueOptions={valueOptions}
-        />
+    <PageWrapper>
+      <SearchBar
+        className={classes.searchBar}
+        commands={COMMANDS.map((c) => c.name)}
+        placeholder="Search transactions"
+        onQueryChange={(newQuery) => dispatch(changeTxSearchQuery(newQuery))}
+        query={txSearchQuery}
+        isValidQuery={isValidQuery}
+        valueOptions={valueOptions}
+      />
 
-        <Paper listContainer>
-          {transactions.length === 0 ? (
-            <div className={classes.noTransactionsWrapper}>
-              <Typography
-                variant="overline"
-                display="block"
-                gutterBottom
-                className={classes.noTransactions}
+      <Paper listContainer>
+        {transactions.length === 0 ? (
+          <div className={classes.noTransactionsWrapper}>
+            <Typography
+              variant="overline"
+              display="block"
+              gutterBottom
+              className={classes.noTransactions}
+            >
+              You have no transactions...
+            </Typography>
+          </div>
+        ) : (
+          <AutoSizer>
+            {({ height, width }) => {
+              return (
+                <FixedSizeList
+                  height={height}
+                  width={width}
+                  itemSize={100}
+                  itemCount={transactions.length}
+                >
+                  {Transaction}
+                </FixedSizeList>
+              )
+            }}
+          </AutoSizer>
+        )}
+      </Paper>
+
+      {true && (
+        <ConfirmDialog
+          ContentComponent={
+            <>
+              <p>Do you really want to remove the following transaction?</p>
+              <div
+                style={{
+                  backgroundColor: BACKGROUND_COLOR,
+                }}
               >
-                You have no transactions...
-              </Typography>
-            </div>
-          ) : (
-            <AutoSizer>
-              {({ height, width }) => {
-                return (
-                  <FixedSizeList
-                    height={height}
-                    width={width}
-                    itemSize={100}
-                    itemCount={transactions.length}
-                  >
-                    {Transaction}
-                  </FixedSizeList>
-                )
-              }}
-            </AutoSizer>
-          )}
-        </Paper>
-      </div>
-      <Navigation />
-    </>
+                <div
+                  style={{
+                    transform: 'scale(0.7)',
+                    backgroundColor: 'white',
+                    padding: 16,
+                    borderRadius: 8,
+                  }}
+                >
+                  <TransactionContent
+                    tx={confirmDeleteDialogForTx!}
+                    bigDevice={true}
+                  />
+                </div>
+              </div>
+              <i>
+                <b>This action can't be undone!</b>
+              </i>
+            </>
+          }
+          open={confirmDeleteDialogForTx !== null}
+          onCancel={() => dispatch(setConfirmTxDeleteDialogOpen(false))}
+          onConfirm={() => {
+            dispatch(removeTx(confirmDeleteDialogForTx!.id))
+            dispatch(setConfirmTxDeleteDialogOpen(false))
+          }}
+        />
+      )}
+    </PageWrapper>
   )
 }
 

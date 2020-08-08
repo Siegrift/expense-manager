@@ -12,17 +12,27 @@ import Select from '@material-ui/core/Select'
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import { DateTimePicker } from '@material-ui/pickers'
 import { fpSet, fpUpdate, get, pick, pipe, set } from '@siegrift/tsfunct'
 import difference from 'lodash/difference'
 import { useDispatch, useSelector } from 'react-redux'
 
 import AmountField from '../components/amountField'
-import Navigation from '../components/navigation'
+import CurrencySelect from '../components/currencySelect'
+import { Loading } from '../components/loading'
+import PageWrapper from '../components/pageWrapper'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
 import { CURRENCIES } from '../shared/currencies'
-import { isAmountInValidFormat } from '../shared/utils'
+import {
+  mainCurrencySel,
+  defaultCurrencySel,
+  exchangeRatesSel,
+} from '../shared/selectors'
+import { useRefreshExchangeRates } from '../shared/transaction/useRefreshExchangeRates'
+import { isAmountInValidFormat, computeExchangeRate } from '../shared/utils'
 
 import { addTransaction } from './actions'
 import { automaticTagIdsSel, tagsSel } from './selectors'
@@ -35,9 +45,6 @@ import {
 } from './state'
 
 const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
   chipField: { flex: 1 },
   amountInput: { marginLeft: theme.spacing(1) },
   row: {
@@ -69,8 +76,9 @@ const AddTransaction = () => {
   const dispatch = useDispatch()
 
   const automaticTagIds = useSelector(automaticTagIdsSel)
+  const defaultCurrency = useSelector(defaultCurrencySel)
   const [addTx, setAddTx] = useState(
-    createDefaultAddTransactionState(automaticTagIds),
+    createDefaultAddTransactionState(automaticTagIds, defaultCurrency),
   )
   const {
     amount,
@@ -87,7 +95,13 @@ const AddTransaction = () => {
   } = addTx
 
   const tags = useSelector(tagsSel)
+  const mainCurrency = useSelector(mainCurrencySel)
   const allTags = { ...tags, ...newTags }
+
+  const { loading, error } = useRefreshExchangeRates()
+  const exchangeRates = useSelector(exchangeRatesSel)
+  const settingsLoaded =
+    exchangeRates !== undefined && mainCurrency !== undefined
 
   const onAddTransaction = () => {
     // some fields were not filled correctly. Show incorrect and return.
@@ -97,17 +111,11 @@ const AddTransaction = () => {
     }
 
     dispatch(addTransaction(addTx))
-    setAddTx(createDefaultAddTransactionState(automaticTagIds))
+    setAddTx(createDefaultAddTransactionState(automaticTagIds, defaultCurrency))
   }
 
   return (
-    <Grid
-      container
-      direction="column"
-      justify="center"
-      alignItems="center"
-      className={classes.root}
-    >
+    <PageWrapper>
       <Paper className={classes.paper}>
         <Grid container className={classes.row}>
           <ButtonGroup variant="contained" fullWidth>
@@ -188,7 +196,7 @@ const AddTransaction = () => {
         <Grid container className={classes.row}>
           <AmountField
             isExpense={isExpense}
-            currencySymbol={CURRENCIES[currency]}
+            currency={CURRENCIES[currency]}
             isValidAmount={isAmountInValidFormat}
             shouldValidateAmount={shouldValidateAmount}
             label="Transaction amount"
@@ -205,24 +213,63 @@ const AddTransaction = () => {
             }}
           />
 
-          <TextField
-            select
-            label="Currency"
+          <CurrencySelect
             value={currency}
             className={classes.currency}
-            onChange={(e) => {
-              // NOTE: we need to save the value, because it might not exist when the callback is called
-              const value = (e.target.value as any) as keyof typeof CURRENCIES
+            onChange={(value) =>
               setAddTx((currAddTx) => set(currAddTx, ['currency'], value))
-            }}
-          >
-            {Object.keys(CURRENCIES).map((c) => (
-              <MenuItem key={c} value={c}>
-                {c}
-              </MenuItem>
-            ))}
-          </TextField>
+            }
+          />
         </Grid>
+
+        <Collapse in={currency !== mainCurrency} style={{ margin: 0 }}>
+          <Grid className={classes.row} style={{ flexWrap: 'wrap' }}>
+            {settingsLoaded && (
+              <>
+                <Typography variant="caption">
+                  {(parseFloat(amount) || 0).toFixed(
+                    CURRENCIES[currency!].scale,
+                  )}{' '}
+                  {currency}
+                  {' = '}
+                  <b>
+                    {(
+                      (parseFloat(amount) || 0) *
+                      computeExchangeRate(
+                        exchangeRates!.rates,
+                        currency,
+                        mainCurrency!,
+                      )
+                    ).toFixed(CURRENCIES[mainCurrency!].scale)}{' '}
+                    {mainCurrency}
+                  </b>
+                </Typography>
+                <Typography variant="caption" style={{ marginLeft: 8 }}>
+                  <i>(rates from {exchangeRates!.date})</i>
+                </Typography>
+              </>
+            )}
+            {loading && (
+              <Typography variant="caption">
+                <Loading
+                  size={15}
+                  imageStyle={{ display: 'inline', marginTop: '2px' }}
+                />
+                <span style={{ marginLeft: 4, verticalAlign: 'super' }}>
+                  Loading fresh exchange rates
+                </span>
+              </Typography>
+            )}
+            {error && (
+              <Typography variant="caption" style={{ color: 'red' }}>
+                <ErrorOutlineIcon fontSize="small" />
+                <span style={{ marginLeft: 4, verticalAlign: 'super' }}>
+                  Couldn't refresh exchange rates
+                </span>
+              </Typography>
+            )}
+          </Grid>
+        </Collapse>
 
         <Grid className={classes.row}>
           <TextField
@@ -259,10 +306,10 @@ const AddTransaction = () => {
           />
         </Grid>
 
-        <Collapse in={!useCurrentTime}>
+        {/* override margin set by parent component */}
+        <Collapse in={!useCurrentTime} style={{ margin: 0 }}>
           <Grid className={classes.row}>
             <DateTimePicker
-              autoOk
               ampm={false}
               disableFuture
               value={dateTime}
@@ -319,8 +366,7 @@ const AddTransaction = () => {
           </Button>
         </Grid>
       </Paper>
-      <Navigation />
-    </Grid>
+    </PageWrapper>
   )
 }
 

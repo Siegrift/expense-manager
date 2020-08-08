@@ -8,10 +8,11 @@ import Autocomplete, {
 import { omit } from '@siegrift/tsfunct'
 import classnames from 'classnames'
 import difference from 'lodash/difference'
+import { useSelector } from 'react-redux'
 import { v4 as uuid } from 'uuid'
 
 import { Tag } from '../addTransaction/state'
-import { getCurrentUserId } from '../firebase/util'
+import { currentUserIdSel } from '../shared/selectors'
 import { ObjectOf } from '../types'
 
 const useStyles = makeStyles({
@@ -49,6 +50,7 @@ const TagField = ({
   onRemoveTags,
 }: TagFieldProps) => {
   const classes = useStyles()
+  const userId = useSelector(currentUserIdSel)
 
   return (
     <div
@@ -79,15 +81,15 @@ const TagField = ({
           if (
             !filtered.find(
               (option) => params.getOptionLabel(option) === params.inputValue,
-            )
+            ) &&
+            userId
           ) {
             const id = uuid()
             filtered.push({
               name: `${ADD_NEW_OPTION_LABEL}${params.inputValue}`,
               automatic: false,
               id,
-              // TODO: firebase might not be loaded yet
-              uid: getCurrentUserId(),
+              uid: userId,
               createdByTagField: true,
             })
           }

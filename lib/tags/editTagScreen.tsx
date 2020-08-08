@@ -51,7 +51,9 @@ const EditTagScreenContent: React.FC<EditTagScreenContentProps> = ({ tag }) => {
         isRecurring,
         isRecentlyUsed,
       }}
-      onSave={(modifiedTag) => dispatch(uploadToFirebase([], [modifiedTag]))}
+      onSave={(modifiedTag) =>
+        dispatch(uploadToFirebase({ tags: [modifiedTag] }))
+      }
       onRemove={() => dispatch(removeFromFirebase([], [tag.id]))}
     />
   )

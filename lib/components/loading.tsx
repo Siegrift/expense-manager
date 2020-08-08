@@ -11,7 +11,7 @@ export interface LoadingProps {
   text?: string
 }
 
-const Loading: React.FC<LoadingProps> = ({
+export const Loading: React.FC<LoadingProps> = ({
   imageStyle,
   text,
   size,
@@ -20,17 +20,20 @@ const Loading: React.FC<LoadingProps> = ({
   return (
     <>
       <img
+        id="coin"
         src="../static/coin.svg"
         alt="coin"
         style={{ width: `${size}px`, ...imageStyle }}
       />
-      <Typography
-        variant="h3"
-        gutterBottom
-        style={{ textAlign: 'center', marginTop: '10vh', ...textStyle }}
-      >
-        {text}
-      </Typography>
+      {text && (
+        <Typography
+          variant="h3"
+          gutterBottom
+          style={{ textAlign: 'center', ...textStyle }}
+        >
+          {text}
+        </Typography>
+      )}
 
       <style>{`
         @keyframes rotation {
@@ -42,7 +45,7 @@ const Loading: React.FC<LoadingProps> = ({
           }
         }
 
-        img {
+        #coin {
           animation: rotation 2s infinite ease-in-out;
           display: block;
           margin-left: auto;
@@ -57,6 +60,7 @@ export const LoadingScreen = (props?: LoadingProps) => (
   <Loading
     imageStyle={{ marginTop: '20vh', width: '60vw' }}
     text="Loading..."
+    textStyle={{ marginTop: '10vh' }}
     {...props}
   />
 )

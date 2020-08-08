@@ -19,11 +19,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
 
 import { Transaction as TransactionState } from '../../addTransaction/state'
-import ConfirmDialog from '../../components/confirmDialog'
 import { useIsBigDevice } from '../../shared/hooks'
 import { formatMoney } from '../../shared/utils'
 import { State } from '../../state'
-import { removeTx, setCursor, setConfirmTxDeleteDialogOpen } from '../actions'
+import { setCursor, setConfirmTxDeleteDialogOpen } from '../actions'
 import { applySearchOnTransactions, cursorSel } from '../selectors'
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -59,24 +58,17 @@ const useStyles = makeStyles((theme: Theme) => ({
   cursor: {
     backgroundColor: 'rgba(0,0,0,0.1)',
   },
-  expenseId: {
-    color: 'gray',
-    fontSize: '0.5em',
-    verticalAlign: 'middle',
-    display: 'inline-block',
-    margin: '0 0 6px 12px',
-  },
 }))
 
 type TransactionContentProps = { tx: TransactionState; bigDevice: boolean }
 
-const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
+export const TransactionContent = ({
+  tx,
+  bigDevice,
+}: TransactionContentProps) => {
   const tags = useSelector((state: State) => state.tags)
   const dispatch = useDispatch()
   const classes = useStyles()
-  const confirmDeleteTxOpen = useSelector(
-    (state: State) => state.transactionList.confirmTxDeleteDialogOpen,
-  )
 
   return (
     <>
@@ -85,13 +77,15 @@ const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
           primary={
             <Typography
               variant="h4"
-              style={{ color: tx.isExpense ? 'red' : 'green' }}
+              style={{
+                color: tx.isExpense ? 'red' : 'green',
+                textAlign: 'left',
+              }}
             >
               {`${tx.isExpense ? '-' : '+'}${formatMoney(
                 tx.amount,
                 tx.currency,
               )}`}
-              <span className={classes.expenseId}>{tx.id.substr(0, 8)}...</span>
             </Typography>
           }
         />
@@ -104,7 +98,7 @@ const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
         </div>
       </div>
 
-      <div style={{ display: 'flex', width: '100%' }}>
+      <div style={{ display: 'flex', width: '100%', flexDirection: 'row' }}>
         <div className={classes.chipField}>
           {tx.tagIds.map((id) => {
             return (
@@ -126,49 +120,28 @@ const TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
               <NoteIcon className={classes.icon} color="primary" />
             </Tooltip>
           )}
-
-          {bigDevice && (
-            <>
-              <Divider orientation="vertical" flexItem style={{ width: 2 }} />
-              <Link href={`/transactions/${tx.id}`}>
-                <Tooltip title="(E)dit transaction">
-                  <IconButton
-                    className={classes.iconButton}
-                    data-cy="edit-icon"
-                  >
-                    <EditIcon color="primary" />
-                  </IconButton>
-                </Tooltip>
-              </Link>
-
-              <Tooltip title="(D)elete transaction">
-                <IconButton
-                  className={classes.iconButton}
-                  onClick={() => dispatch(setConfirmTxDeleteDialogOpen(true))}
-                >
-                  <DeleteIcon color="secondary" />
+        </div>
+        {bigDevice && (
+          <>
+            <Divider orientation="vertical" flexItem style={{ width: 2 }} />
+            <Link href={`/transactions/${tx.id}`}>
+              <Tooltip title="(E)dit transaction">
+                <IconButton className={classes.iconButton} data-cy="edit-icon">
+                  <EditIcon color="primary" />
                 </IconButton>
               </Tooltip>
+            </Link>
 
-              <ConfirmDialog
-                text={
-                  <>
-                    <p>
-                      Do you really want to remove the following transaction?
-                    </p>
-                    <b>{tx.id}</b>
-                    <p>
-                      <i>This action can't be undone!</i>
-                    </p>
-                  </>
-                }
-                open={confirmDeleteTxOpen}
-                onCancel={() => dispatch(setConfirmTxDeleteDialogOpen(false))}
-                onConfirm={() => dispatch(removeTx(tx.id))}
-              />
-            </>
-          )}
-        </div>
+            <Tooltip title="(D)elete transaction">
+              <IconButton
+                className={classes.iconButton}
+                onClick={() => dispatch(setConfirmTxDeleteDialogOpen(true))}
+              >
+                <DeleteIcon color="secondary" />
+              </IconButton>
+            </Tooltip>
+          </>
+        )}
       </div>
       <Divider className={classes.divider} />
     </>
@@ -186,12 +159,14 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
   if (bigDevice) {
     return (
       <ListItem
-        style={style}
+        style={style as any}
         className={classnames(
           classes.listItem,
           index === cursor && classes.cursor,
         )}
         onClick={() => dispatch(setCursor(index))}
+        ContainerComponent="div"
+        data-cy="transaction"
       >
         <TransactionContent tx={tx} bigDevice={bigDevice} />
       </ListItem>
@@ -199,7 +174,13 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
   } else {
     return (
       <Link href={`/transactions/${tx.id}`}>
-        <ListItem style={style} className={classes.listItem} button>
+        <ListItem
+          style={style as any}
+          className={classes.listItem}
+          button
+          ContainerComponent="div"
+          data-cy="transaction"
+        >
           <TransactionContent tx={tx} bigDevice={bigDevice} />
         </ListItem>
       </Link>

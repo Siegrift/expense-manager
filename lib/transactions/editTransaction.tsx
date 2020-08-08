@@ -16,9 +16,15 @@ import Router, { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { ObjectOf } from '../../lib/types'
-import { RepeatingOption, RepeatingOptions, Tag } from '../addTransaction/state'
+import {
+  RepeatingOption,
+  RepeatingOptions,
+  Tag,
+  Transaction,
+} from '../addTransaction/state'
 import AmountField from '../components/amountField'
 import AppBar from '../components/appBar'
+import CurrencySelect from '../components/currencySelect'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
 import { tagsSel } from '../settings/selectors'
@@ -55,36 +61,30 @@ const useStyles = makeStyles((theme: Theme) => ({
   currency: { width: 105, marginLeft: theme.spacing(2) },
 }))
 
-const EditTransaction = () => {
-  const router = useRouter()
+interface EditTransactionContentProps {
+  tx: Transaction
+}
+
+const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
   const classes = useStyles()
+  const dispatch = useDispatch()
   const availableTags = useSelector(tagsSel)
-  // TODO: including all of these is needed because hooks need to be called on each render
-  // can be fixed by making useRedirectIfNotSignedIn a HOC
-  const reduxTx = useSelector(transactionByIdSel(router.query.id as string))
-  // FIXME: next build prerenders these and the router id is not valid and build fails on next line
-  if (!reduxTx) {
-    return null
-  }
   // NOTE: don't forget to add the property to save tx
-  const [amount, setAmount] = useState('' + reduxTx.amount)
-  const [isExpense, setIsExpense] = useState(reduxTx.isExpense)
-  const [note, setNote] = useState(reduxTx.note)
-  const [currency, setCurrency] = useState(reduxTx.currency)
-  const [dateTime, setDateTime] = useState(reduxTx.dateTime)
-  const [repeating, setRepeating] = useState(reduxTx.repeating)
-  const [tagIds, setTagIds] = useState(reduxTx.tagIds)
+  const [amount, setAmount] = useState('' + tx.amount)
+  const [isExpense, setIsExpense] = useState(tx.isExpense)
+  const [note, setNote] = useState(tx.note)
+  const [currency, setCurrency] = useState(tx.currency)
+  const [dateTime, setDateTime] = useState(tx.dateTime)
+  const [repeating, setRepeating] = useState(tx.repeating)
+  const [tagIds, setTagIds] = useState(tx.tagIds)
   const [newTags, setNewTags] = useState<ObjectOf<Tag>>({})
   const [tagInputValue, setTagInputValue] = useState('')
   const [shouldValidate, setShouldValidate] = useState(false)
-  const dispatch = useDispatch()
-  // TODO: validate that txId is a valid txs id
-  const editedTxId = router.query.id as string
 
   const onSaveHandler = () => {
     if (isAmountInValidFormat(amount)) {
       dispatch(
-        saveTxEdit(editedTxId, newTags, {
+        saveTxEdit(tx.id, newTags, {
           amount: Number.parseFloat(amount),
           isExpense,
           note,
@@ -107,7 +107,7 @@ const EditTransaction = () => {
         onSave={onSaveHandler}
         onRemove={() => {
           // TODO: confirm dialog (use different text when removing repeating tx)
-          dispatch(removeTx(editedTxId))
+          dispatch(removeTx(tx.id))
           Router.push('/transactions')
         }}
         appBarTitle="Edit transaction"
@@ -165,7 +165,7 @@ const EditTransaction = () => {
           <Grid container className={classes.row}>
             <Grid item className={classes.amount}>
               <AmountField
-                currencySymbol={CURRENCIES[currency]}
+                currency={CURRENCIES[currency]}
                 isValidAmount={isAmountInValidFormat}
                 shouldValidateAmount={shouldValidate}
                 label="Transaction amount"
@@ -177,29 +177,16 @@ const EditTransaction = () => {
                 onPressEnter={onSaveHandler}
               />
 
-              <TextField
-                select
-                label="Currency"
+              <CurrencySelect
+                onChange={setCurrency}
                 value={currency}
                 className={classes.currency}
-                onChange={(e) =>
-                  setCurrency(
-                    (e.target.value as any) as keyof typeof CURRENCIES,
-                  )
-                }
-              >
-                {Object.keys(CURRENCIES).map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </TextField>
+              />
             </Grid>
           </Grid>
 
           <Grid className={classes.row}>
             <DateTimePicker
-              autoOk
               ampm={false}
               disableFuture
               value={dateTime}
@@ -248,6 +235,14 @@ const EditTransaction = () => {
       </div>
     </>
   )
+}
+
+const EditTransaction = () => {
+  const router = useRouter()
+  const reduxTx = useSelector(transactionByIdSel(router.query.id as string))
+
+  if (!reduxTx) return null
+  return <EditTransactionContent tx={reduxTx} />
 }
 
 export default EditTransaction

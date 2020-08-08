@@ -65,7 +65,12 @@ const TagItem: React.FC<ListChildComponentProps> = ({ index, style }) => {
 
   return (
     <Link href={`/tags/${tag.id}`}>
-      <ListItem button style={style} className={classes.listItem}>
+      <ListItem
+        button
+        style={style as any}
+        className={classes.listItem}
+        ContainerComponent="div"
+      >
         <div style={{ display: 'flex', width: '100%' }}>
           <ListItemText
             primary={

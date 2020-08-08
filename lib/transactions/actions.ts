@@ -17,7 +17,7 @@ export const saveTxEdit = (
   logger.log('Save edited transaction')
   // TODO: what to do with tags that are not in any expense (deleted by edit)
   const tx = { ...getState().transactions[id], ...editedFields }
-  await dispatch(uploadToFirebase([tx], Object.values(newTags)))
+  await dispatch(uploadToFirebase({ txs: [tx], tags: Object.values(newTags) }))
 }
 
 export const removeTx = (txId: string): Thunk => async (
@@ -46,8 +46,7 @@ export const setCursor = (newCursor: number): Action<number> => ({
 
 export const setConfirmTxDeleteDialogOpen = (open: boolean): Action => ({
   type: `${open ? 'Open' : 'Close'} confirm delete tx dialog`,
-  reducer: (state) =>
-    set(state, ['transactionList', 'confirmTxDeleteDialogOpen'], open),
+  reducer: (state) => set(state, ['confirmTxDeleteDialogOpen'], open),
 })
 
 export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
