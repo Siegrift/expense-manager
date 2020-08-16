@@ -8,7 +8,6 @@ import { Provider as ReduxProvider } from 'react-redux'
 import { Store, applyMiddleware, createStore } from 'redux'
 import thunk from 'redux-thunk'
 
-import { TestApi } from './api'
 import rootReducer from './redux/rootReducer'
 import { State, getInitialState } from './state'
 import theme from './theme'
@@ -24,14 +23,12 @@ export const reduxify = (Component: React.FC, store: Store) => {
     </ReduxProvider>
   )
 }
-// TODO: maybe move this to the files alongside real impl.
 export const configureTestStore = (
   state: Partial<State> = getInitialState(),
 ) => {
   const logger = { log: () => null }
   const thunkExtra = {
     logger,
-    api: new TestApi(logger),
   }
   const middlewares = [thunk.withExtraArgument(thunkExtra)]
   const store = createStore<State, any, unknown, unknown>(
