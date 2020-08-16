@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 
 import { useMediaQuery, useTheme } from '@material-ui/core'
+import { useSelector } from 'react-redux'
 
 import { ExchangeRates } from '../settings/state'
 
 import { request } from './request'
+import { currentUserIdSel } from './selectors'
 
 export const useIsBigDevice = () => {
   const theme = useTheme()
@@ -27,4 +29,20 @@ export const useFetch = (url: string) => {
     fetchData()
   }, [])
   return { loading: response === null, error, data: response }
+}
+
+export const useFirebaseLoaded = () => {
+  const userId = useSelector(currentUserIdSel)
+  return userId !== null
+}
+
+export const useEffectAfterFirebaseLoaded = (effectCb: () => void) => {
+  const loaded = useFirebaseLoaded()
+  const [executed, setExecuted] = useState(false)
+
+  useEffect(() => {
+    if (!loaded || executed) return
+    effectCb()
+    setExecuted(true)
+  }, [loaded, executed])
 }
