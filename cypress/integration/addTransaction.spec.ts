@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import { initializeFixtures } from './common'
 
 describe('Add transaction', () => {
