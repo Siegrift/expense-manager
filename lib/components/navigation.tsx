@@ -46,13 +46,6 @@ const Navigation = () => {
   const dispatch = useDispatch()
   const classes = useStyles()
 
-  useEffect(() => {
-    // Prefetch all of the navigation pages
-    navigationItems.forEach(({ screen }) => {
-      Router.prefetch(`/${screen}`)
-    })
-  }, [])
-
   return (
     <BottomNavigation
       value={currentScreen}

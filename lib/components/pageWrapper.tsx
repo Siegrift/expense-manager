@@ -8,7 +8,11 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import Navigation from '../components/navigation'
 import { setAppError } from '../shared/actions'
-import { appErrorSel } from '../shared/selectors'
+import { appErrorSel, signInStatusSel } from '../shared/selectors'
+import { redirectTo } from '../shared/utils'
+
+import ConfirmDialog from './confirmDialog'
+import { LoadingOverlay } from './loading'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -33,6 +37,7 @@ interface PageWrapperProps {
 const PageWrapper = ({ children }: PageWrapperProps) => {
   const classes = useStyles()
   const error = useSelector(appErrorSel)
+  const signInStatus = useSelector(signInStatusSel)
   const dispatch = useDispatch()
 
   return (
@@ -55,6 +60,19 @@ const PageWrapper = ({ children }: PageWrapperProps) => {
           </Snackbar>
         )}
       </Grid>
+      {signInStatus === 'loggedOut' && (
+        <ConfirmDialog
+          onConfirm={() => redirectTo('/login')}
+          title="Please sign in"
+          open={true}
+          ContentComponent={
+            'You appear to be logged out. Redirect to login page?'
+          }
+        />
+      )}
+      {(signInStatus === 'loggingIn' || signInStatus === 'unknown') && (
+        <LoadingOverlay />
+      )}
       <Navigation />
     </>
   )

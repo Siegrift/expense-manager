@@ -38,12 +38,6 @@ const Settings = () => {
   const [deleteAllDataDialogOpen, setDeleteAllDataDialogOpen] = useState(false)
   const settings = useSelector(settingsSel)
 
-  useEffect(() => {
-    // Prefetch the /add page as the user will go there after the login
-    // see: firebase.ts
-    Router.prefetch('/add')
-  }, [])
-
   return (
     <PageWrapper>
       <button onClick={signOut} aria-label="sign out">
