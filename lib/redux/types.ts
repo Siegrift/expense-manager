@@ -1,13 +1,11 @@
 import { Action as ReduxAction } from 'redux'
 import { ThunkAction } from 'redux-thunk'
 
-import { Api } from '../api'
 import { State } from '../state'
 import { Logger } from '../types'
 
 export interface ThunkExtraArgument {
   logger: Logger
-  api: Api
 }
 
 export interface Action<Payload = void> extends ReduxAction<string> {

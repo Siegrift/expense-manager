@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import Button from '@material-ui/core/Button'
 import { Theme, makeStyles } from '@material-ui/core/styles'
-import Router from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 
 import ConfirmDialog from '../components/confirmDialog'
@@ -37,12 +36,6 @@ const Settings = () => {
   const dispatch = useDispatch()
   const [deleteAllDataDialogOpen, setDeleteAllDataDialogOpen] = useState(false)
   const settings = useSelector(settingsSel)
-
-  useEffect(() => {
-    // Prefetch the /add page as the user will go there after the login
-    // see: firebase.ts
-    Router.prefetch('/add')
-  }, [])
 
   return (
     <PageWrapper>

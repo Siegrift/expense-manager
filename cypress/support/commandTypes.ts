@@ -1,10 +1,5 @@
-/// <reference types="cypress" />
-
-// https://docs.cypress.io/guides/tooling/typescript-support.html#Types-for-custom-commands
-
-// in cypress/support/index.d.ts
-// load type definitions that come with Cypress module
-
+// this file cannot contain any imports/exports and is automatically picked up by TS.
+// https://github.com/cypress-io/cypress/issues/1065#issuecomment-351769720
 declare namespace Cypress {
   interface Chainable {
     dataCy(value: string): Chainable<Element>

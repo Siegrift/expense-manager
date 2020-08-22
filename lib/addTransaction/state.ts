@@ -51,15 +51,19 @@ export interface AddTransaction extends BaseTransaction {
   shouldValidateAmount: boolean
 }
 
+type CreateStateProps = {
+  initialTagIds: string[]
+  initialCurrency: Currency
+}
+
 export const createDefaultAddTransactionState = (
-  initialTagIds: string[],
-  initialCurrency?: Currency,
+  initialProps?: CreateStateProps,
 ): AddTransaction => ({
   transactionType: TransactionTypes.fromUser,
   amount: '',
-  tagIds: initialTagIds,
+  tagIds: initialProps?.initialTagIds || [],
   newTags: {},
-  currency: initialCurrency || DEFAULT_CURRENCY,
+  currency: initialProps?.initialCurrency || DEFAULT_CURRENCY,
   tagInputValue: '',
   isExpense: true,
   note: '',

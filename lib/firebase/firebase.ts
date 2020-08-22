@@ -1,4 +1,3 @@
-import Router from 'next/router'
 import { Store } from 'redux'
 
 import { authChangeAction } from './actions'
@@ -60,25 +59,6 @@ export const initializeFirebase = async (store: Store) => {
     store.dispatch(
       authChangeAction(user ? 'loggedIn' : 'loggedOut', user) as any,
     )
-    if (user) {
-      user.getIdToken().then(async (token) => {
-        await fetch('/api/set-cookie', {
-          method: 'POST',
-          headers: new Headers({ 'Content-Type': 'application/json' }),
-          credentials: 'same-origin',
-          body: JSON.stringify({ token }),
-        })
-
-        if (Router.pathname === '/login') Router.push('/add')
-      })
-    } else {
-      await fetch('/api/remove-cookie', {
-        method: 'POST',
-        credentials: 'same-origin',
-      })
-
-      Router.push('/login')
-    }
   })
 }
 

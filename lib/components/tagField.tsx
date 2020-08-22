@@ -65,7 +65,9 @@ const TagField = ({
         clearOnEscape
         autoHighlight
         options={Object.values(tags)}
-        getOptionLabel={(option) => option.name}
+        getOptionLabel={(option) => {
+          return option?.name
+        }}
         renderInput={(params) => {
           return (
             <TextField

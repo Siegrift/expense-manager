@@ -30,3 +30,5 @@ export const settingsSel = createSelector(
   profileSel,
   (profile) => profile?.settings,
 )
+
+export const signInStatusSel = (state: State) => state.signInStatus
