@@ -34,6 +34,16 @@ class MyDocument extends Document {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           />
+          {/* https://web.dev/uses-rel-preconnect/?utm_source=lighthouse&utm_medium=node#improve-page-load-speed-with-preconnect */}
+          <link rel="preconnect" href="https://api.exchangeratesapi.io"></link>
+          <link
+            rel="preconnect"
+            href="https://firebaseremoteconfig.googleapis.com"
+          ></link>
+          <link
+            rel="preconnect"
+            href="https://firebaseinstallations.googleapis.com"
+          ></link>
         </Head>
         <body>
           <Main />
