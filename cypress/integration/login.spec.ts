@@ -1,9 +1,4 @@
 describe('login', () => {
-  it('shows login page', () => {
-    cy.visit('/')
-    cy.findAllByText('Sign in with Google', { timeout: 1500 }).should('exist')
-  })
-
   it('if signed in redirects to /add and shows form', () => {
     cy.login()
 
@@ -25,5 +20,23 @@ describe('login', () => {
     cy.cypressFirebaseLogin(Cypress.env('testUid'))
 
     cy.location('pathname').should('equal', '/add')
+  })
+
+  it('should not show scrollbar in any resolution', () => {
+    cy.visit('/login')
+    cy.findAllByText('Sign in with Google')
+
+    const checkPage = () => {
+      cy.document().then((doc) => {
+        cy.wrap(doc.documentElement.scrollHeight).should(
+          'not.be.above',
+          doc.documentElement.clientHeight,
+        )
+      })
+    }
+
+    checkPage()
+    cy.viewport(360, 600)
+    checkPage()
   })
 })

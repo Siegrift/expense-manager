@@ -3,6 +3,8 @@ import 'cypress-plugin-tab'
 import './commands'
 
 beforeEach(() => {
+  cy.logout()
+
   const removeTestData = (coll: string) => {
     cy.callFirestore('get', coll).then((data) => {
       if (!data) return
