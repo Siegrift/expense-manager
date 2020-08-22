@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import Button from '@material-ui/core/Button'
 import { Theme, makeStyles } from '@material-ui/core/styles'
-import Router from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 
 import ConfirmDialog from '../components/confirmDialog'

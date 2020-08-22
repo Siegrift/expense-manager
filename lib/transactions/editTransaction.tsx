@@ -1,35 +1,16 @@
 import React, { useState } from 'react'
 
-import Button from '@material-ui/core/Button'
-import ButtonGroup from '@material-ui/core/ButtonGroup'
-import FormControl from '@material-ui/core/FormControl'
-import Grid from '@material-ui/core/Grid'
-import InputLabel from '@material-ui/core/InputLabel'
-import MenuItem from '@material-ui/core/MenuItem'
-import Select from '@material-ui/core/Select'
 import { Theme, makeStyles } from '@material-ui/core/styles'
-import TextField from '@material-ui/core/TextField'
-import { DateTimePicker } from '@material-ui/pickers'
 import { pick } from '@siegrift/tsfunct'
 import difference from 'lodash/difference'
 import Router, { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { ObjectOf } from '../../lib/types'
-import {
-  RepeatingOption,
-  RepeatingOptions,
-  Tag,
-  Transaction,
-} from '../addTransaction/state'
-import AmountField from '../components/amountField'
+import { Tag, Transaction } from '../addTransaction/state'
 import AppBar from '../components/appBar'
-import CurrencySelect from '../components/currencySelect'
-import Paper from '../components/paper'
-import TagField from '../components/tagField'
 import TransactionForm from '../components/transactionForm'
 import { tagsSel } from '../settings/selectors'
-import { CURRENCIES } from '../shared/currencies'
 import { isAmountInValidFormat } from '../shared/utils'
 
 import { removeTx, saveTxEdit } from './actions'

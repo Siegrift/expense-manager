@@ -1,5 +1,3 @@
-import { v4 as uuid } from 'uuid'
-
 import { DEFAULT_CURRENCY, Currency } from '../shared/currencies'
 import { FirebaseField } from '../types'
 

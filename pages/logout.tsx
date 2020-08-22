@@ -1,6 +1,4 @@
-import React, { useEffect } from 'react'
-
-import Router from 'next/router'
+import React from 'react'
 
 import { getFirebase } from '../lib/firebase/firebase'
 
