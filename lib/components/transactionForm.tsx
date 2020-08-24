@@ -240,7 +240,7 @@ const TransactionForm = (props: TransactionFormProps) => {
           </Grid>
 
           {/* override margin set by parent component */}
-          <Collapse in={!useCurrentTime} style={{ margin: 0 }}>
+          <Collapse in={!useCurrentTime.value} style={{ margin: 0 }}>
             <Grid className={classes.row}>
               <DateTimePicker
                 ampm={false}
@@ -279,17 +279,19 @@ const TransactionForm = (props: TransactionFormProps) => {
         </FormControl>
       </Grid>
 
-      <Grid className={classes.row}>
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          onClick={onSubmit}
-          aria-label="add transaction"
-        >
-          Add transaction
-        </Button>
-      </Grid>
+      {variant === 'add' && (
+        <Grid className={classes.row}>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={onSubmit}
+            aria-label="add transaction"
+          >
+            Add transaction
+          </Button>
+        </Grid>
+      )}
     </Paper>
   )
 }

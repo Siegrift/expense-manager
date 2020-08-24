@@ -36,6 +36,8 @@ interface MuiInputProps {
   isExpense?: boolean
 }
 
+const amountFieldId = 'amount-field'
+
 const MuiInput: React.FC<MuiInputProps> = ({
   clearAmount,
   openCalculator,
@@ -49,7 +51,7 @@ const MuiInput: React.FC<MuiInputProps> = ({
     <Input
       {...others}
       inputProps={{ inputMode: 'numeric' }}
-      id="amount-id"
+      id={amountFieldId}
       placeholder="0.00"
       value={value}
       startAdornment={
@@ -85,6 +87,7 @@ const MuiInput: React.FC<MuiInputProps> = ({
           </>
         </InputAdornment>
       }
+      autoComplete="off"
     />
   )
 }
@@ -122,7 +125,7 @@ const AmountField = ({
         className={className}
         style={{ flex: 1 }}
       >
-        <InputLabel htmlFor="amount-id">{label}</InputLabel>
+        <InputLabel htmlFor={amountFieldId}>{label}</InputLabel>
         <NumberFormat
           prefix={`${currency.symbol} `}
           thousandSeparator=","

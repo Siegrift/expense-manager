@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
@@ -12,6 +12,7 @@ import Paper from '../components/paper'
 import SearchBar from '../components/searchBar'
 import { COMMANDS } from '../search/transactionSearch'
 import { BACKGROUND_COLOR } from '../shared/constants'
+import { useKeyDownAction } from '../shared/hooks'
 
 import {
   changeTxSearchQuery,
@@ -48,18 +49,11 @@ const Transactions = () => {
   const dispatch = useDispatch()
   const confirmDeleteDialogForTx = useSelector(confirmDeleteDialogForTxSel)
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (document.activeElement?.tagName !== 'INPUT') {
-        dispatch(keyPressAction(e))
-      }
+  useKeyDownAction((e: KeyboardEvent) => {
+    if (document.activeElement?.tagName !== 'INPUT') {
+      dispatch(keyPressAction(e))
     }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [dispatch])
+  })
 
   return (
     <PageWrapper>

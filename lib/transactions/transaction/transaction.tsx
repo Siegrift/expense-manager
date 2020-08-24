@@ -4,7 +4,6 @@ import Chip from '@material-ui/core/Chip'
 import Divider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
 import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import Tooltip from '@material-ui/core/Tooltip'
 import Typography from '@material-ui/core/Typography'
@@ -44,6 +43,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flex: 1,
     width: '100%',
+    overflow: 'auto',
+    whiteSpace: 'nowrap',
+    justifyContent: 'space-between',
   },
   iconPanel: {
     alignSelf: 'center',
@@ -58,6 +60,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   cursor: {
     backgroundColor: 'rgba(0,0,0,0.1)',
   },
+  dateTimeWrapper: { margin: `auto 0 auto ${theme.spacing(4)}px` },
 }))
 
 type TransactionContentProps = { tx: TransactionState; bigDevice: boolean }
@@ -73,28 +76,23 @@ export const TransactionContent = ({
   return (
     <>
       <div className={classes.listItemFirstRow}>
-        <ListItemText
-          primary={
-            <Typography
-              variant="h4"
-              style={{
-                color: tx.isExpense ? 'red' : 'green',
-                textAlign: 'left',
-              }}
-            >
-              {`${tx.isExpense ? '-' : '+'}${formatMoney(
-                tx.amount,
-                tx.currency,
-              )}`}
+        <Typography
+          variant="h4"
+          style={{
+            color: tx.isExpense ? 'red' : 'green',
+            textAlign: 'left',
+          }}
+        >
+          {`${tx.isExpense ? '-' : '+'}${formatMoney(tx.amount, tx.currency)}`}
+        </Typography>
+        <div className={classes.dateTimeWrapper}>
+          <Tooltip title={tx.dateTime.toLocaleString()}>
+            <Typography variant="body1" style={{ alignSelf: 'flex-end' }}>
+              {`${formatDistance(tx.dateTime, new Date(), {
+                includeSeconds: false,
+              })} ago`}
             </Typography>
-          }
-        />
-        <div style={{ margin: 'auto' }}>
-          <Typography variant="body1" style={{ alignSelf: 'flex-end' }}>
-            {`${formatDistance(tx.dateTime, new Date(), {
-              includeSeconds: true,
-            })} ago`}
-          </Typography>
+          </Tooltip>
         </div>
       </div>
 

@@ -46,3 +46,12 @@ export const useEffectAfterFirebaseLoaded = (effectCb: () => void) => {
     setExecuted(true)
   }, [loaded, executed])
 }
+
+export const useKeyDownAction = (action: (e: KeyboardEvent) => void) => {
+  useEffect(() => {
+    window.addEventListener('keydown', action)
+    return () => {
+      window.removeEventListener('keydown', action)
+    }
+  }, [action])
+}
