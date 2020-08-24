@@ -24,21 +24,20 @@ const nextConfig = {
     FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
     FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
   },
-  // NOTE: this is present in the example, but breaks on dev
-  // target: "serverless",
   transformManifest: (manifest) => ['/'].concat(manifest), // add the homepage to the cache
   // Trying to set NODE_ENV=production when running yarn dev causes a build-time error so we
   // turn on the SW in dev mode so that we can actually test it
   generateInDevMode: false,
+  // https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.GenerateSW#GenerateSW
   workboxOpts: {
     swDest: 'static/service-worker.js',
     runtimeCaching: [
       {
         urlPattern: /^https?.*/,
-        handler: 'NetworkFirst',
+        // https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-strategies
+        handler: 'StaleWhileRevalidate',
         options: {
           cacheName: 'https-calls',
-          networkTimeoutSeconds: 15,
           expiration: {
             maxEntries: 150,
             maxAgeSeconds: 30 * 24 * 60 * 60, // 1 month
