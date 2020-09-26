@@ -70,7 +70,7 @@ export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
       if (cursor + 1 < txs.length) dispatch(setCursor(cursor + 1))
       break
     case 'E':
-      Router.push('/transactions/[id]', `/transactions/${txs[cursor].id}`)
+      Router.push(`/transactions/details?id=${txs[cursor].id}`)
       break
     case 'D':
       dispatch(setConfirmTxDeleteDialogOpen(true))

@@ -64,7 +64,7 @@ const TagItem: React.FC<ListChildComponentProps> = ({ index, style }) => {
   const classes = useStyles()
 
   return (
-    <Link href={`/tags/${tag.id}`}>
+    <Link href={`/tags/details?id=${tag.id}`}>
       <ListItem
         button
         style={style as any}

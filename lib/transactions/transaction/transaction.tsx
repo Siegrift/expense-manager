@@ -122,7 +122,7 @@ export const TransactionContent = ({
         {bigDevice && (
           <>
             <Divider orientation="vertical" flexItem style={{ width: 2 }} />
-            <Link href={`/transactions/${tx.id}`}>
+            <Link href={`/transactions/details?id=${tx.id}`}>
               <Tooltip title="(E)dit transaction">
                 <IconButton className={classes.iconButton} data-cy="edit-icon">
                   <EditIcon color="primary" />
@@ -171,7 +171,7 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
     )
   } else {
     return (
-      <Link href={`/transactions/${tx.id}`}>
+      <Link href={`/transactions/details?id=${tx.id}`}>
         <ListItem
           style={style as any}
           className={classes.listItem}

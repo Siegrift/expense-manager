@@ -29,6 +29,11 @@ const nextConfig = {
   // https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.GenerateSW#GenerateSW
   workboxOpts: {
     swDest: 'static/service-worker.js',
+    // NOTE: Nextjs dynamic routing breaks the service worker caching
+    // https://github.com/hanford/next-offline/issues/209
+    // We are using static slugs and passing id as a parameter instead.
+    // TODO: rewrite to dynamic routing once the issue is fixed
+    ignoreURLParametersMatching: [/.*/],
     runtimeCaching: [
       {
         // MUST be the same as "start_url" in manifest.json
