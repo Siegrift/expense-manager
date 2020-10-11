@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
-const Transactions = () => {
+const Tags = () => {
   const tagsLength = Object.values(useSelector(tagsSel)).length
   const classes = useStyles()
 
@@ -79,4 +79,4 @@ const Transactions = () => {
   )
 }
 
-export default Transactions
+export default Tags

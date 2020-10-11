@@ -8,7 +8,6 @@ import Paper from '../components/paper'
 const useStyles = makeStyles((theme: Theme) => ({
   chartWrapper: {
     height: '300px',
-    minHeight: '250px',
     width: '100%',
     '&:not(:last-child)': {
       marginBottom: theme.spacing(2),

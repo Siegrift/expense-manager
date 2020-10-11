@@ -50,15 +50,18 @@ export const sorted = <T>(
 
 export const formatBoolean = (value: boolean) => (value ? 'yes' : 'no')
 
-export const formatMoney = (amount: string | number, currency: Currency) =>
-  `${formatAmount(amount)} ${CURRENCIES[currency].symbol}`
+export const formatMoney = (amount: number, currency: Currency) =>
+  `${formatAmount(amount, CURRENCIES[currency].scale)} ${
+    CURRENCIES[currency].symbol
+  }`
 
 export const reverse = (str: string) => str.split('').reverse().join('')
 
-export const formatAmount = (amount: string | number): string => {
+export const formatAmount = (amount: number, scale = 0): string => {
+  amount = round(amount, scale)
   const strAmount = '' + amount
 
-  if (strAmount[0] === '-') return `-${formatAmount(strAmount.substr(1))}`
+  if (strAmount[0] === '-') return `-${formatAmount(-1 * amount, scale)}`
 
   const numTokens = strAmount.split('.')
   const insertCommas = pipe(
@@ -81,3 +84,6 @@ export const computeExchangeRate = (
   const targetToEur = 1 / rates[target]
   return sourceToEur / targetToEur
 }
+
+export const round = (amount: number, decimalPlaces: number) =>
+  Math.round(amount * 10 ** decimalPlaces) / 10 ** decimalPlaces

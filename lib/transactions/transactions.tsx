@@ -1,10 +1,7 @@
 import React from 'react'
 
 import { Theme, makeStyles } from '@material-ui/core/styles'
-import Typography from '@material-ui/core/Typography'
 import { useDispatch, useSelector } from 'react-redux'
-import AutoSizer from 'react-virtualized-auto-sizer'
-import { FixedSizeList } from 'react-window'
 
 import ConfirmDialog from '../components/confirmDialog'
 import PageWrapper from '../components/pageWrapper'
@@ -27,16 +24,10 @@ import {
   valueOptionsSel,
   confirmDeleteDialogForTxSel,
 } from './selectors'
-import Transaction, { TransactionContent } from './transaction'
+import { TransactionContent } from './transaction'
+import TransactionList from './transactionList'
 
 const useStyles = makeStyles((theme: Theme) => ({
-  noTransactionsWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    height: '100%',
-  },
-  noTransactions: { textAlign: 'center' },
   searchBar: { marginBottom: theme.spacing(2) },
 }))
 
@@ -68,33 +59,7 @@ const Transactions = () => {
       />
 
       <Paper listContainer>
-        {transactions.length === 0 ? (
-          <div className={classes.noTransactionsWrapper}>
-            <Typography
-              variant="overline"
-              display="block"
-              gutterBottom
-              className={classes.noTransactions}
-            >
-              You have no transactions...
-            </Typography>
-          </div>
-        ) : (
-          <AutoSizer>
-            {({ height, width }) => {
-              return (
-                <FixedSizeList
-                  height={height}
-                  width={width}
-                  itemSize={100}
-                  itemCount={transactions.length}
-                >
-                  {Transaction}
-                </FixedSizeList>
-              )
-            }}
-          </AutoSizer>
-        )}
+        <TransactionList transactions={transactions} />
       </Paper>
 
       {true && (

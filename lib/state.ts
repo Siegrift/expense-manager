@@ -8,6 +8,7 @@ export type ScreenTitle =
   | 'charts'
   | 'tags'
   | 'settings'
+  | 'overview'
 
 export type SignInStatus = 'loggedIn' | 'loggingIn' | 'loggedOut' | 'unknown'
 
@@ -22,15 +23,15 @@ export interface State {
   // use firebase.auth().currentUser to get the current user
   signInStatus: SignInStatus
   currentScreen: ScreenTitle
-  // NOTE: tags and transactions are in sync with firestore, keep local data out of it
+  // NOTE: tags, transactions and profile are in sync with firestore, keep local data out of it
   tags: ObjectOf<Tag>
   transactions: ObjectOf<Transaction>
+  profile: ObjectOf<Profile>
   transactionSearch: TransactionSearch
   cursor: number
   user: firebase.User | null
   error: string | null
   confirmTxDeleteDialogOpen: boolean
-  profile: ObjectOf<Profile>
 }
 
 const state: State = {
