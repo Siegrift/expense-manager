@@ -32,3 +32,5 @@ export const settingsSel = createSelector(
 )
 
 export const signInStatusSel = (state: State) => state.signInStatus
+
+export const transactionsSel = (state: State) => state.transactions

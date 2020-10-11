@@ -1,138 +1,140 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 
-import { ResponsiveLine } from '@nivo/line'
-import { update } from '@siegrift/tsfunct'
-import format from 'date-fns/format'
-import isWithinInterval from 'date-fns/isWithinInterval'
-import subDays from 'date-fns/subDays'
-import range from 'lodash/range'
+import ToggleButton from '@material-ui/lab/ToggleButton'
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+import { Line } from '@nivo/line'
 import { useSelector } from 'react-redux'
 
-import { DEFAULT_CURRENCY } from '../shared/currencies'
-import { State } from '../state'
+import { CURRENCIES } from '../shared/currencies'
+import { useIsBigDevice } from '../shared/hooks'
+import { mainCurrencySel } from '../shared/selectors'
 
-interface LineChartData {
-  amount: number
-  dataIndex: number
-  isExpense: boolean
+import { recentBalanceDataSel, displayDataSel, DisplayMode } from './selectors'
+
+const DATE_FORMAT = 'd.MM'
+
+interface Props {
+  width: number
+  height: number
+  hideToggles?: boolean
 }
 
-const DAYS_TO_DISPLAY = 7
+const RecentBalance = ({ width, height, hideToggles }: Props) => {
+  const mainCurrency = useSelector(mainCurrencySel)
+  const [displayMode, setDisplayMode] = useState<DisplayMode>('best-fit')
+  const isBigDevice = useIsBigDevice()
+  const overridenDisplayMode = !isBigDevice ? 'best-fit' : displayMode
 
-const RecentBalance = () => {
-  const transactions = useSelector((state: State) => state.transactions)
+  const { daysToDisplay, xAxisMergeSize } = useSelector(
+    displayDataSel(width, overridenDisplayMode),
+  )
 
-  const now = new Date()
-  const days = range(DAYS_TO_DISPLAY)
-    .map((i) => format(subDays(now, i), 'MM-dd'))
-    .reverse()
-  const groupedTransactions = Object.values(transactions)
-    .filter((tx) =>
-      // isWithinInterval is inclusive
-      isWithinInterval(tx.dateTime, {
-        start: subDays(now, DAYS_TO_DISPLAY - 1),
-        end: now,
-      }),
-    )
-    .map(
-      (tx): LineChartData => ({
-        amount: tx.amount,
-        isExpense: tx.isExpense,
-        dataIndex: days.indexOf(format(tx.dateTime, 'MM-dd')),
-      }),
-    )
-    .reduce(
-      (acc, tx) => update(acc, [tx.dataIndex], (d) => [...d, tx]),
-      range(DAYS_TO_DISPLAY).map(() => [] as LineChartData[]),
-    )
+  const { days, data } = useSelector(
+    recentBalanceDataSel(daysToDisplay, DATE_FORMAT),
+  )
 
-  const data = [
-    {
-      id: 'expense',
-      color: 'rgb(244, 117, 96)',
-      data: days.map((day, index) => ({ x: day, y: 0, index })),
-    },
-    {
-      id: 'income',
-      color: 'rgb(38, 217, 98)',
-      data: days.map((day, index) => ({ x: day, y: 0, index })),
-    },
-  ]
-
-  groupedTransactions.forEach((txs, dataInd) => {
-    txs.forEach((tx) => {
-      data[tx.isExpense ? 0 : 1].data[dataInd].y += tx.amount
-    })
-  })
-
-  return (
-    <ResponsiveLine
-      data={data}
-      margin={{ top: 30, right: 30, bottom: 40, left: 40 }}
-      xScale={{ type: 'point' }}
-      yScale={{ type: 'linear', stacked: false, min: 'auto', max: 'auto' }}
-      colors={{ datum: 'color' }}
-      axisTop={null}
-      axisRight={null}
-      axisBottom={{
-        orient: 'bottom',
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: 0,
-        legendOffset: 36,
-        legendPosition: 'middle',
-      }}
-      axisLeft={{
-        orient: 'left',
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: 0,
-        legendOffset: -40,
-        legendPosition: 'middle',
-      }}
-      pointSize={3}
-      pointColor={{ theme: 'background' }}
-      pointBorderWidth={2}
-      pointBorderColor={{ from: 'serieColor' }}
-      pointLabel="y"
-      pointLabelYOffset={-12}
-      useMesh
-      enableArea
-      enableSlices="x"
-      sliceTooltip={({ slice }: any) => {
-        return (
+  const showSlice = useCallback(({ slice }: any) => {
+    return (
+      <div
+        style={{
+          background: 'white',
+          padding: '9px 12px',
+          border: '1px solid #ccc',
+          transform:
+            // move the left tooltips a bit to the right
+            daysToDisplay - slice.points[0].index < daysToDisplay / 4
+              ? 'translateX(-60px)'
+              : 'none',
+        }}
+      >
+        {overridenDisplayMode === 'all' &&
+          `Date: ${days[slice.points[0].data.index]}`}
+        {slice.points.map((point: any) => (
           <div
+            key={point.id}
             style={{
-              background: 'white',
-              padding: '9px 12px',
-              border: '1px solid #ccc',
-              // TODO: maybe this can be styled a bit better
-              transform:
-                DAYS_TO_DISPLAY - slice.points[0].index < 3
-                  ? 'translateX(-60px)'
-                  : 'none',
+              color: point.serieColor,
+              padding: '3px 0',
             }}
           >
-            {slice.points.map((point: any) => (
-              <div
-                key={point.id}
-                style={{
-                  color: point.serieColor,
-                  padding: '3px 0',
-                }}
-              >
-                <strong>
-                  {point.serieId === 'income' ? '+' : '-'}
-                  {point.data.yFormatted}
-                  {/* TODO: not all of amounts are euros */}
-                  {DEFAULT_CURRENCY}
-                </strong>
-              </div>
-            ))}
+            <strong>
+              {days[point.x]}
+              {point.serieId === 'income' ? '+' : '-'}
+              {point.data.yFormatted}{' '}
+              {mainCurrency && CURRENCIES[mainCurrency].symbol}
+            </strong>
           </div>
-        )
+        ))}
+      </div>
+    )
+  }, [])
+
+  return (
+    <div
+      style={{
+        position:
+          'relative' /* to make sure the toggle absolutely positioned toggle buttons are scoped */,
       }}
-    />
+    >
+      <Line
+        width={width}
+        height={height}
+        data={data}
+        margin={{ top: 30, right: 15, bottom: 40, left: 50 }}
+        xScale={{
+          type: 'point',
+        }}
+        enableGridX={false}
+        yScale={{ type: 'linear' }}
+        enableGridY={true}
+        colors={{ datum: 'color' }}
+        axisTop={null}
+        axisRight={null}
+        axisBottom={{
+          orient: 'bottom',
+          tickSize: 5,
+          tickPadding: 5,
+          format: (v) =>
+            (v as number) % xAxisMergeSize === 0 ? days[`${v}`] : '',
+        }}
+        axisLeft={{
+          orient: 'left',
+          tickSize: 5,
+          tickPadding: 5,
+          format: (v) =>
+            `${v} ${mainCurrency ? CURRENCIES[mainCurrency].symbol : ''}`,
+        }}
+        pointSize={3}
+        pointColor={{ theme: 'background' }}
+        pointBorderWidth={2}
+        pointBorderColor={{ from: 'serieColor' }}
+        enableArea
+        enableSlices="x"
+        curve="monotoneX"
+        sliceTooltip={showSlice}
+        animate={false}
+      />
+      {!hideToggles && isBigDevice && (
+        <ToggleButtonGroup
+          value={displayMode}
+          exclusive
+          onChange={(_, newDisplayMode) => setDisplayMode(newDisplayMode)}
+          style={{
+            position: 'absolute',
+            top: -5,
+            padding: '0 10px',
+            right: 5,
+          }}
+        >
+          <ToggleButton style={{ padding: '0 10px' }} value="best-fit">
+            Best fit
+          </ToggleButton>
+          <ToggleButton style={{ padding: '0 10px' }} value="all">
+            All
+          </ToggleButton>
+        </ToggleButtonGroup>
+      )}
+    </div>
   )
 }
 export default RecentBalance

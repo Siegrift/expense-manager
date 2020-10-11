@@ -10,17 +10,26 @@ import TagPercentages from './tagPercentages'
 const Charts = () => {
   return (
     <PageWrapper>
-      <ChartWrapper label="Recent balance">
-        <RecentBalance />
-      </ChartWrapper>
+      <ChartWrapper
+        label="Recent balance"
+        renderChart={({ width, height }) => (
+          <RecentBalance width={width} height={height} />
+        )}
+      />
 
-      <ChartWrapper label="All Transactions">
-        <AllTransactions />
-      </ChartWrapper>
+      <ChartWrapper
+        label="All Transactions"
+        renderChart={({ width, height }) => (
+          <AllTransactions width={width} height={height} />
+        )}
+      />
 
-      <ChartWrapper label="Tag percentages">
-        <TagPercentages />
-      </ChartWrapper>
+      <ChartWrapper
+        label="Tag percentages"
+        renderChart={({ width, height }) => (
+          <TagPercentages width={width} height={height} />
+        )}
+      />
     </PageWrapper>
   )
 }

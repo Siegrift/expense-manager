@@ -8,6 +8,7 @@ import classnames from 'classnames'
 import Link from 'next/link'
 import { useSelector } from 'react-redux'
 
+import ChartWrapper from '../charts/chartWrapper'
 import RecentBalance from '../charts/recentBalance'
 import PageWrapper from '../components/pageWrapper'
 import Paper from '../components/paper'
@@ -24,10 +25,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   relativeBalance: { fontWeight: 'bold', color: 'red' },
   chartWrapper: {
     ['@media (max-height:500px)']: {
-      height: '200px',
+      height: '200px !important',
     },
-    height: '250px',
-    width: '100%',
+    height: '250px !important',
   },
   link: { fontStyle: 'italic', display: 'inline-block', cursor: 'pointer' },
 }))
@@ -46,16 +46,21 @@ const Overview = () => {
             display: 'flex',
             justifyContent: 'space-around',
             marginTop: 24,
+            marginBottom: -15,
           }}
         >
           <Typography variant="overline" style={{ textAlign: 'center' }}>
-            Charts
+            Relative balance
           </Typography>
         </div>
 
-        <div className={classes.chartWrapper}>
-          <RecentBalance />
-        </div>
+        <ChartWrapper
+          className={classes.chartWrapper}
+          Container="div"
+          renderChart={({ width, height }) => (
+            <RecentBalance width={width} height={height} hideToggles />
+          )}
+        />
         <Link href={`/charts`}>
           <MuiLink
             className={classnames(classes.marginBottom, classes.link)}
@@ -77,7 +82,7 @@ const Overview = () => {
           }}
         >
           <Typography variant="overline" style={{ textAlign: 'center' }}>
-            Info
+            Last 7 days stats
           </Typography>
         </div>
         <div className={classes.row}>
