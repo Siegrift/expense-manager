@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import { Line } from '@nivo/line'
+import format from 'date-fns/format'
 import { useSelector } from 'react-redux'
 
 import { CURRENCIES } from '../shared/currencies'
@@ -12,6 +13,7 @@ import { mainCurrencySel } from '../shared/selectors'
 import { recentBalanceDataSel, displayDataSel, DisplayMode } from './selectors'
 
 const DATE_FORMAT = 'd.MM'
+const SLICE_DATE_FORMAT = 'd.MM.yyyy'
 
 interface Props {
   width: number
@@ -29,45 +31,51 @@ const RecentBalance = ({ width, height, hideToggles }: Props) => {
     displayDataSel(width, overridenDisplayMode),
   )
 
-  const { days, data } = useSelector(
+  const { days, formattedDays, data } = useSelector(
     recentBalanceDataSel(daysToDisplay, DATE_FORMAT),
   )
 
-  const showSlice = useCallback(({ slice }: any) => {
-    return (
-      <div
-        style={{
-          background: 'white',
-          padding: '9px 12px',
-          border: '1px solid #ccc',
-          transform:
-            // move the left tooltips a bit to the right
-            daysToDisplay - slice.points[0].index < daysToDisplay / 4
-              ? 'translateX(-60px)'
-              : 'none',
-        }}
-      >
-        {overridenDisplayMode === 'all' &&
-          `Date: ${days[slice.points[0].data.index]}`}
-        {slice.points.map((point: any) => (
-          <div
-            key={point.id}
-            style={{
-              color: point.serieColor,
-              padding: '3px 0',
-            }}
-          >
-            <strong>
-              {days[point.x]}
-              {point.serieId === 'income' ? '+' : '-'}
-              {point.data.yFormatted}{' '}
-              {mainCurrency && CURRENCIES[mainCurrency].symbol}
-            </strong>
-          </div>
-        ))}
-      </div>
-    )
-  }, [])
+  const showSlice = useCallback(
+    ({ slice }: any) => {
+      return (
+        <div
+          style={{
+            background: 'white',
+            padding: '9px 12px',
+            border: '1px solid #ccc',
+            transform:
+              // move the left tooltips a bit to the right
+              daysToDisplay - slice.points[0].index < daysToDisplay / 4
+                ? 'translateX(-60px)'
+                : 'none',
+          }}
+        >
+          {overridenDisplayMode === 'all' &&
+            `Date: ${format(
+              days[slice.points[0].data.index],
+              SLICE_DATE_FORMAT,
+            )}`}
+          {slice.points.map((point: any) => (
+            <div
+              key={point.id}
+              style={{
+                color: point.serieColor,
+                padding: '3px 0',
+              }}
+            >
+              <strong>
+                {formattedDays[point.x]}
+                {point.serieId === 'income' ? '+' : '-'}
+                {point.data.yFormatted}{' '}
+                {mainCurrency && CURRENCIES[mainCurrency].symbol}
+              </strong>
+            </div>
+          ))}
+        </div>
+      )
+    },
+    [overridenDisplayMode, formattedDays, daysToDisplay, mainCurrency],
+  )
 
   return (
     <div
@@ -95,7 +103,7 @@ const RecentBalance = ({ width, height, hideToggles }: Props) => {
           tickSize: 5,
           tickPadding: 5,
           format: (v) =>
-            (v as number) % xAxisMergeSize === 0 ? days[`${v}`] : '',
+            (v as number) % xAxisMergeSize === 0 ? formattedDays[`${v}`] : '',
         }}
         axisLeft={{
           orient: 'left',
@@ -118,7 +126,9 @@ const RecentBalance = ({ width, height, hideToggles }: Props) => {
         <ToggleButtonGroup
           value={displayMode}
           exclusive
-          onChange={(_, newDisplayMode) => setDisplayMode(newDisplayMode)}
+          onChange={(_, newDisplayMode) => {
+            if (newDisplayMode !== null) setDisplayMode(newDisplayMode)
+          }}
           style={{
             position: 'absolute',
             top: -5,

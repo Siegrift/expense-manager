@@ -86,8 +86,9 @@ export const recentBalanceDataSel = (
 
     const now = new Date()
     const days = range(daysToDisplay)
-      .map((i) => format(subDays(now, i), dateFormat))
+      .map((i) => subDays(now, i))
       .reverse()
+    const formattedDays = days.map((day) => format(day, dateFormat))
 
     const groupedTransactions = Object.values(transactions)
       .filter((tx) =>
@@ -104,7 +105,7 @@ export const recentBalanceDataSel = (
           // TODO: convert the amount to the mainCurrency
           amount: tx.amount,
           isExpense: tx.isExpense,
-          dataIndex: days.indexOf(format(tx.dateTime, dateFormat)),
+          dataIndex: formattedDays.indexOf(format(tx.dateTime, dateFormat)),
         }),
       )
       .reduce(
@@ -116,12 +117,12 @@ export const recentBalanceDataSel = (
       {
         id: 'expense',
         color: 'rgb(244, 117, 96)',
-        data: days.map((_, index) => ({ x: index, y: 0, index })),
+        data: formattedDays.map((_, index) => ({ x: index, y: 0, index })),
       },
       {
         id: 'income',
         color: 'rgb(38, 217, 98)',
-        data: days.map((_, index) => ({ x: index, y: 0, index })),
+        data: formattedDays.map((_, index) => ({ x: index, y: 0, index })),
       },
     ]
 
@@ -131,5 +132,5 @@ export const recentBalanceDataSel = (
       })
     })
 
-    return { days, data }
+    return { days, formattedDays, data }
   })
