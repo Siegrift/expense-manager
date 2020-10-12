@@ -163,7 +163,6 @@ const AddTransaction = () => {
           handler: () =>
             setAddTx((currAddTx) => ({
               ...currAddTx,
-              useCurrentTime: !useCurrentTime,
               dateTime: !useCurrentTime ? new Date() : undefined,
             })),
         }}
@@ -173,7 +172,6 @@ const AddTransaction = () => {
             setAddTx((currAddTx) => ({
               ...currAddTx,
               useCurrentTime: !useCurrentTime,
-              dateTime: !useCurrentTime ? new Date() : undefined,
             })),
         }}
         repeating={{

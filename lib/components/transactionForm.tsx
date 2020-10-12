@@ -231,7 +231,9 @@ const TransactionForm = (props: TransactionFormProps) => {
               control={
                 <Switch
                   checked={useCurrentTime.value}
-                  onChange={() => useCurrentTime.handler(!useCurrentTime.value)}
+                  onChange={() => {
+                    useCurrentTime.handler(!useCurrentTime.value)
+                  }}
                   color="primary"
                 />
               }
