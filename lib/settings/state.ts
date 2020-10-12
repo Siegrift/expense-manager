@@ -2,6 +2,11 @@ import { DEFAULT_CURRENCY, Currency } from '../shared/currencies'
 import { FirebaseField } from '../types'
 
 export interface Settings {
+  /**
+   * All of the transactions will save the rate of the currency of a transaction at the time when the transaction was
+   * saved. This rate is computed against the `mainCurrency`. This means that changing the main
+   * currency implies changing the rate of all transactions.
+   */
   mainCurrency: Currency
   defaultCurrency: Currency
 }

@@ -9,7 +9,11 @@ import CurrencySelect from '../components/currencySelect'
 import Loading from '../components/loading'
 import PageWrapper from '../components/pageWrapper'
 import { getFirebase } from '../firebase/firebase'
-import { settingsSel } from '../shared/selectors'
+import {
+  settingsSel,
+  signInStatusSel,
+  transactionsSel,
+} from '../shared/selectors'
 
 import {
   clearAllData,
@@ -36,6 +40,8 @@ const Settings = () => {
   const dispatch = useDispatch()
   const [deleteAllDataDialogOpen, setDeleteAllDataDialogOpen] = useState(false)
   const settings = useSelector(settingsSel)
+  const signInStatus = useSelector(signInStatusSel)
+  const txs = useSelector(transactionsSel)
 
   return (
     <PageWrapper>
@@ -46,12 +52,15 @@ const Settings = () => {
         {!settings && <Loading />}
         {settings && (
           <>
-            <CurrencySelect
-              value={settings.mainCurrency}
-              onChange={(curr) => dispatch(changeMainCurrency(curr))}
-              label="Main currency"
-              className={classes.marginBottom}
-            />
+            {/* only support changing main currency if there are no transactions yet. */}
+            {signInStatus === 'loggedIn' && Object.values(txs).length === 0 && (
+              <CurrencySelect
+                value={settings.mainCurrency}
+                onChange={(curr) => dispatch(changeMainCurrency(curr))}
+                label="Main currency"
+                className={classes.marginBottom}
+              />
+            )}
             <CurrencySelect
               value={settings.defaultCurrency}
               onChange={(curr) => dispatch(changeDefaultCurrency(curr))}
