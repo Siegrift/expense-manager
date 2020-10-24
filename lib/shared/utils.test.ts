@@ -15,10 +15,10 @@ describe('utils', () => {
     })
 
     test('works with floating point', () => {
-      expect(formatAmount(54.23)).toBe('54.23')
-      expect(formatAmount(12345.23)).toBe('12,345.23')
-      expect(formatAmount(123.23)).toBe('123.23')
-      expect(formatAmount(0.0)).toBe('0.0')
+      expect(formatAmount(54.23, 2)).toBe('54.23')
+      expect(formatAmount(12345.23, 2)).toBe('12,345.23')
+      expect(formatAmount(123.23, 2)).toBe('123.23')
+      expect(formatAmount(0.0, 2)).toBe('0')
     })
   })
 })
