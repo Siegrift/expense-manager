@@ -132,5 +132,6 @@ export const recentBalanceDataSel = (
       })
     })
 
+    // the y values are not rounded! Make sure to round in the component
     return { days, formattedDays, data }
   })

@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 import { CURRENCIES } from '../shared/currencies'
 import { useIsBigDevice } from '../shared/hooks'
 import { mainCurrencySel } from '../shared/selectors'
+import { formatMoney } from '../shared/utils'
 
 import { recentBalanceDataSel, displayDataSel, DisplayMode } from './selectors'
 
@@ -37,6 +38,7 @@ const RecentBalance = ({ width, height, hideToggles }: Props) => {
 
   const showSlice = useCallback(
     ({ slice }: any) => {
+      if (!mainCurrency) return null
       return (
         <div
           style={{
@@ -66,8 +68,7 @@ const RecentBalance = ({ width, height, hideToggles }: Props) => {
               <strong>
                 {formattedDays[point.x]}
                 {point.serieId === 'income' ? '+' : '-'}
-                {point.data.yFormatted}{' '}
-                {mainCurrency && CURRENCIES[mainCurrency].symbol}
+                {formatMoney(point.data.y, mainCurrency)}
               </strong>
             </div>
           ))}
