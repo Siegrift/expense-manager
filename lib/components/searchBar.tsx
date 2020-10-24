@@ -89,7 +89,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               autocompleted, and the search is performed automatically.
             </Typography>
             <Typography gutterBottom>
-              For advanced querying and filtering you can use the
+              For advanced querying and filtering you can use the{' '}
               <b>search query language</b> where you can specify how, and in
               which fields you want to search.
             </Typography>
