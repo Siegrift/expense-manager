@@ -259,6 +259,21 @@ const TransactionForm = (props: TransactionFormProps) => {
         </>
       )}
 
+      {variant === 'edit' && (
+        <Grid className={classes.row}>
+          <DateTimePicker
+            ampm={false}
+            disableFuture
+            value={dateTime.value}
+            onChange={dateTime.handler}
+            label="Transaction date"
+            renderInput={(props) => (
+              <TextField {...props} style={{ flex: 1 }} />
+            )}
+          />
+        </Grid>
+      )}
+
       <Grid className={classes.row}>
         <FormControl style={{ flex: 1 }}>
           <InputLabel htmlFor="tx-repeating">Repeating</InputLabel>
