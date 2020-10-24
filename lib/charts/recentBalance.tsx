@@ -66,7 +66,6 @@ const RecentBalance = ({ width, height, hideToggles }: Props) => {
               }}
             >
               <strong>
-                {formattedDays[point.x]}
                 {point.serieId === 'income' ? '+' : '-'}
                 {formatMoney(point.data.y, mainCurrency)}
               </strong>
