@@ -30,8 +30,8 @@ export const txsInfoSel = createSelector(
     return {
       income: formatMoney(income, currency),
       expense: formatMoney(expense, currency),
-      relativeBalance: formatMoney(expense - income, currency),
-      average: formatMoney((expense - income) / NUMBER_OF_DAYS, currency),
+      relativeBalance: formatMoney(income - expense, currency),
+      average: formatMoney((income - expense) / NUMBER_OF_DAYS, currency),
     }
   },
 )
