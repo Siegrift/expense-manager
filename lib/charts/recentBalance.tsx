@@ -3,7 +3,9 @@ import React, { useCallback, useState } from 'react'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import { Line } from '@nivo/line'
+import endOfDay from 'date-fns/endOfDay'
 import format from 'date-fns/format'
+import subDays from 'date-fns/subDays'
 import { useSelector } from 'react-redux'
 
 import { CURRENCIES } from '../shared/currencies'
@@ -13,7 +15,7 @@ import { formatMoney } from '../shared/utils'
 
 import { recentBalanceDataSel, displayDataSel, DisplayMode } from './selectors'
 
-const DATE_FORMAT = 'd.MM'
+const AXIS_DATE_FORMAT = 'd.MM'
 const SLICE_DATE_FORMAT = 'd.MM.yyyy'
 
 interface Props {
@@ -32,13 +34,13 @@ const RecentBalance = ({ width, height, hideToggles }: Props) => {
     displayDataSel(width, overridenDisplayMode),
   )
 
-  const { days, formattedDays, data } = useSelector(
-    recentBalanceDataSel(daysToDisplay, DATE_FORMAT),
-  )
+  const { data } = useSelector(recentBalanceDataSel(daysToDisplay))
+  const endOfToday = endOfDay(new Date())
 
   const showSlice = useCallback(
     ({ slice }: any) => {
       if (!mainCurrency) return null
+
       return (
         <div
           style={{
@@ -54,7 +56,10 @@ const RecentBalance = ({ width, height, hideToggles }: Props) => {
         >
           {overridenDisplayMode === 'all' &&
             `Date: ${format(
-              days[slice.points[0].data.index],
+              subDays(
+                endOfToday,
+                daysToDisplay - (slice.points[0].data.index + 1),
+              ),
               SLICE_DATE_FORMAT,
             )}`}
           {slice.points.map((point: any) => (
@@ -74,7 +79,7 @@ const RecentBalance = ({ width, height, hideToggles }: Props) => {
         </div>
       )
     },
-    [overridenDisplayMode, formattedDays, daysToDisplay, mainCurrency],
+    [overridenDisplayMode, daysToDisplay, mainCurrency],
   )
 
   return (
@@ -103,7 +108,12 @@ const RecentBalance = ({ width, height, hideToggles }: Props) => {
           tickSize: 5,
           tickPadding: 5,
           format: (v) =>
-            (v as number) % xAxisMergeSize === 0 ? formattedDays[`${v}`] : '',
+            (v as number) % xAxisMergeSize === 0
+              ? format(
+                  subDays(endOfToday, daysToDisplay - ((v as number) + 1)),
+                  AXIS_DATE_FORMAT,
+                )
+              : '',
         }}
         axisLeft={{
           orient: 'left',

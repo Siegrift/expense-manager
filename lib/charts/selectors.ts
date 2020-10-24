@@ -1,7 +1,8 @@
 import { update } from '@siegrift/tsfunct'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
-import format from 'date-fns/format'
+import endOfDay from 'date-fns/endOfDay'
 import isWithinInterval from 'date-fns/isWithinInterval'
+import startOfDay from 'date-fns/startOfDay'
 import subDays from 'date-fns/subDays'
 import filter from 'lodash/filter'
 import map from 'lodash/map'
@@ -73,10 +74,7 @@ export const displayDataSel = (width: number, displayMode: DisplayMode) =>
     return { xAxisMergeSize, daysToDisplay }
   })
 
-export const recentBalanceDataSel = (
-  daysToDisplay: number,
-  dateFormat: string,
-) =>
+export const recentBalanceDataSel = (daysToDisplay: number) =>
   createSelector(transactionsSel, (transactions) => {
     interface LineChartData {
       amount: number
@@ -84,28 +82,26 @@ export const recentBalanceDataSel = (
       isExpense: boolean
     }
 
-    const now = new Date()
-    const days = range(daysToDisplay)
-      .map((i) => subDays(now, i))
-      .reverse()
-    const formattedDays = days.map((day) => format(day, dateFormat))
+    const startOfToday = startOfDay(new Date())
+    const endOfToday = endOfDay(new Date())
 
     const groupedTransactions = Object.values(transactions)
       .filter((tx) =>
         // isWithinInterval is inclusive
         {
           return isWithinInterval(tx.dateTime, {
-            start: subDays(now, daysToDisplay - 1),
-            end: now,
+            start: subDays(startOfToday, daysToDisplay - 1),
+            end: endOfToday,
           })
         },
       )
       .map(
         (tx): LineChartData => ({
-          // TODO: convert the amount to the mainCurrency
-          amount: tx.amount,
+          amount: tx.amount * (tx.rate ?? 1),
           isExpense: tx.isExpense,
-          dataIndex: formattedDays.indexOf(format(tx.dateTime, dateFormat)),
+          dataIndex:
+            daysToDisplay -
+            (differenceInCalendarDays(endOfToday, tx.dateTime) + 1),
         }),
       )
       .reduce(
@@ -117,12 +113,20 @@ export const recentBalanceDataSel = (
       {
         id: 'expense',
         color: 'rgb(244, 117, 96)',
-        data: formattedDays.map((_, index) => ({ x: index, y: 0, index })),
+        data: range(daysToDisplay).map((_, index) => ({
+          x: index,
+          y: 0,
+          index,
+        })),
       },
       {
         id: 'income',
         color: 'rgb(38, 217, 98)',
-        data: formattedDays.map((_, index) => ({ x: index, y: 0, index })),
+        data: range(daysToDisplay).map((_, index) => ({
+          x: index,
+          y: 0,
+          index,
+        })),
       },
     ]
 
@@ -133,5 +137,5 @@ export const recentBalanceDataSel = (
     })
 
     // the y values are not rounded! Make sure to round in the component
-    return { days, formattedDays, data }
+    return { data }
   })

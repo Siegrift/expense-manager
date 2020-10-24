@@ -13,6 +13,11 @@ export const useIsBigDevice = () => {
   return useMediaQuery(theme.breakpoints.up('sm'))
 }
 
+export const useIsVeryBigDevice = () => {
+  const theme = useTheme()
+  return useMediaQuery(theme.breakpoints.up('md'))
+}
+
 // inspired by: https://scotch.io/tutorials/create-a-custom-usefetch-react-hook
 export const useFetch = (url: string) => {
   const [response, setResponse] = useState<ExchangeRates | null>(null)

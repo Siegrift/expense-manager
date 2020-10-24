@@ -4,10 +4,12 @@ import Grid from '@material-ui/core/Grid'
 import Snackbar from '@material-ui/core/Snackbar'
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import Alert from '@material-ui/lab/Alert'
+import classnames from 'classnames'
 import { useSelector, useDispatch } from 'react-redux'
 
-import Navigation from '../components/navigation'
+import Navigation, { DRAWER_WIDTH } from '../components/navigation'
 import { setAppError } from '../shared/actions'
+import { useIsVeryBigDevice } from '../shared/hooks'
 import { appErrorSel, signInStatusSel } from '../shared/selectors'
 import { redirectTo } from '../shared/utils'
 
@@ -28,6 +30,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'stretch',
     flexDirection: 'column',
   },
+  veryBigDeviceRoot: {
+    height: '100%',
+    left: `${DRAWER_WIDTH}px`,
+    margin: 'auto',
+    width: `calc(100% - ${DRAWER_WIDTH}px)`,
+    position: 'absolute',
+  },
 }))
 
 interface PageWrapperProps {
@@ -38,11 +47,18 @@ const PageWrapper = ({ children }: PageWrapperProps) => {
   const classes = useStyles()
   const error = useSelector(appErrorSel)
   const signInStatus = useSelector(signInStatusSel)
+  const veryBigDevice = useIsVeryBigDevice()
   const dispatch = useDispatch()
 
   return (
     <>
-      <Grid container className={classes.root}>
+      <Grid
+        container
+        className={classnames(
+          classes.root,
+          veryBigDevice && classes.veryBigDeviceRoot,
+        )}
+      >
         {children}
         {error && (
           <Snackbar
