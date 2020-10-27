@@ -1,101 +1,100 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`settings actions import/export processing imported txs creates new tags and txs 1`] = `
+exports[`settings actions import/export csv format creates new tags and txs 1`] = `
 Object {
   "errorReason": undefined,
-  "tags": Map {
-    "Tickets" => Object {
+  "profile": Object {},
+  "tags": Object {
+    "0": Object {
       "automatic": false,
-      "id": "uuid0",
+      "id": 0,
       "name": "Tickets",
-      "uid": "id",
+      "uid": null,
     },
-    "Shopping" => Object {
+    "2": Object {
       "automatic": false,
-      "id": "uuid2",
+      "id": 2,
       "name": "Shopping",
-      "uid": "id",
+      "uid": null,
     },
   },
-  "txs": Array [
-    Object {
+  "transactions": Object {
+    "1": Object {
       "amount": 1,
       "currency": "EUR",
       "dateTime": 2017-08-19T00:00:00.000Z,
-      "id": "uuid1",
+      "id": 1,
       "isExpense": true,
       "note": "",
       "repeating": "none",
       "tagIds": Array [
         "id1",
-        "uuid0",
+        0,
       ],
-      "transactionType": "imported",
-      "uid": "id",
+      "uid": null,
     },
-    Object {
+    "3": Object {
       "amount": 0.7,
       "currency": "EUR",
       "dateTime": 2017-08-16T00:00:00.000Z,
-      "id": "uuid3",
+      "id": 3,
       "isExpense": true,
       "note": "",
       "repeating": "annually",
       "tagIds": Array [
-        "uuid2",
+        2,
       ],
-      "transactionType": "imported",
-      "uid": "id",
+      "uid": null,
     },
-  ],
+  },
 }
 `;
 
-exports[`settings actions import/export processing imported txs creates new tags and txs 2`] = `
+exports[`settings actions import/export csv format creates new tags and txs 2`] = `
 Object {
   "errorReason": undefined,
-  "tags": Map {
-    "A" => Object {
+  "profile": Object {},
+  "tags": Object {
+    "4": Object {
       "automatic": false,
-      "id": "uuid4",
+      "id": 4,
       "name": "A",
-      "uid": "id",
+      "uid": null,
     },
-    "B" => Object {
+    "5": Object {
       "automatic": false,
-      "id": "uuid5",
+      "id": 5,
       "name": "B",
-      "uid": "id",
+      "uid": null,
     },
-    "C" => Object {
+    "6": Object {
       "automatic": false,
-      "id": "uuid6",
+      "id": 6,
       "name": "C",
-      "uid": "id",
+      "uid": null,
     },
   },
-  "txs": Array [
-    Object {
+  "transactions": Object {
+    "7": Object {
       "amount": 1.56,
       "currency": "EUR",
       "dateTime": 2016-02-16T00:00:00.000Z,
-      "id": "uuid7",
+      "id": 7,
       "isExpense": true,
       "note": "",
       "repeating": "monthly",
       "tagIds": Array [
-        "uuid4",
-        "uuid5",
-        "uuid6",
+        4,
+        5,
+        6,
       ],
-      "transactionType": "imported",
-      "uid": "id",
+      "uid": null,
     },
-  ],
+  },
 }
 `;
 
-exports[`settings actions import/export processing imported txs exporting imported txs yields identity 1`] = `
+exports[`settings actions import/export csv format exporting imported txs yields identity 1`] = `
 "2017-08-19T00:00:00.000Z,-1,Travel|Tickets,,EUR,none
 2017-08-16T00:00:00.000Z,-0.7,Shopping,,EUR,monthly"
 `;

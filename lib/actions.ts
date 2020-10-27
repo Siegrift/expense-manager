@@ -187,7 +187,6 @@ export const addRepeatingTxs = (): Thunk => (
           const newTx: Transaction = {
             ...tx,
             id: uuid(),
-            transactionType: 'repeated',
             dateTime: newDate,
           }
 

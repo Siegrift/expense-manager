@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 
 import Button from '@material-ui/core/Button'
 import { Theme, makeStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
+import Alert from '@material-ui/lab/Alert'
 import { useDispatch, useSelector } from 'react-redux'
 
 import ConfirmDialog from '../components/confirmDialog'
@@ -19,6 +21,8 @@ import {
   clearAllData,
   exportToCSV,
   importFromCSV,
+  exportToJSON,
+  importFromJSON,
   changeDefaultCurrency,
   changeMainCurrency,
 } from './actions'
@@ -71,22 +75,29 @@ const Settings = () => {
       </SettingsPanel>
 
       <SettingsPanel name="import and export">
+        <Typography
+          variant="subtitle2"
+          gutterBottom
+          style={{ textTransform: 'initial' }}
+        >
+          JSON
+        </Typography>
         <input
-          id="choose-import-file"
+          id="choose-json-file"
           type="file"
           style={{ display: 'none' }}
-          onChange={(e) => dispatch(importFromCSV(e))}
+          onChange={(e) => dispatch(importFromJSON(e))}
         />
-        <label htmlFor="choose-import-file">
+        <label htmlFor="choose-json-file">
           <Button
             variant="contained"
             className={classes.marginBottom}
             fullWidth
             color="primary"
-            aria-label="import from csv file"
+            aria-label="import from json"
             component="span"
           >
-            Import from csv file
+            Import from json
           </Button>
         </label>
 
@@ -95,10 +106,55 @@ const Settings = () => {
           className={classes.marginBottom}
           fullWidth
           color="primary"
-          aria-label="export to csv file"
+          aria-label="export to json"
+          onClick={() => dispatch(exportToJSON())}
+        >
+          Export to json
+        </Button>
+
+        <Typography
+          variant="subtitle2"
+          gutterBottom
+          style={{ textTransform: 'initial' }}
+        >
+          CSV
+        </Typography>
+        <Alert
+          severity="warning"
+          style={{ marginBottom: 8, textTransform: 'initial' }}
+        >
+          Exporting to CSV discards some internal information. Use this format
+          only when you want to view the data in another tool (e.g. excel). For
+          backups, prefer using the <b>JSON format</b>.
+        </Alert>
+        <input
+          id="choose-csv-file"
+          type="file"
+          style={{ display: 'none' }}
+          onChange={(e) => dispatch(importFromCSV(e))}
+        />
+        <label htmlFor="choose-csv-file">
+          <Button
+            variant="contained"
+            className={classes.marginBottom}
+            fullWidth
+            color="primary"
+            aria-label="import from csv"
+            component="span"
+          >
+            Import from csv
+          </Button>
+        </label>
+
+        <Button
+          variant="contained"
+          className={classes.marginBottom}
+          fullWidth
+          color="primary"
+          aria-label="export to csv"
           onClick={() => dispatch(exportToCSV())}
         >
-          Export to csv file
+          Export to csv
         </Button>
       </SettingsPanel>
 

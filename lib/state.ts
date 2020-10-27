@@ -18,15 +18,19 @@ export interface TransactionSearch {
   searchQuery?: string
 }
 
-export interface State {
-  cnt: number
-  // use firebase.auth().currentUser to get the current user
-  signInStatus: SignInStatus
-  currentScreen: ScreenTitle
-  // NOTE: tags, transactions and profile are in sync with firestore, keep local data out of it
+/**
+ * This is the state that should be saved in backup.
+ */
+export interface SerializableState {
   tags: ObjectOf<Tag>
   transactions: ObjectOf<Transaction>
   profile: ObjectOf<Profile>
+}
+
+export interface State extends SerializableState {
+  // use firebase.auth().currentUser to get the current user
+  signInStatus: SignInStatus
+  currentScreen: ScreenTitle
   transactionSearch: TransactionSearch
   cursor: number
   user: firebase.User | null
@@ -35,7 +39,6 @@ export interface State {
 }
 
 const state: State = {
-  cnt: 0,
   signInStatus: 'unknown',
   currentScreen: 'add',
   tags: {},

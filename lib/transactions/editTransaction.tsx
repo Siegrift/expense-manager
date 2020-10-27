@@ -10,11 +10,10 @@ import { ObjectOf } from '../../lib/types'
 import { Tag, Transaction } from '../addTransaction/state'
 import AppBar from '../components/appBar'
 import TransactionForm from '../components/transactionForm'
-import { tagsSel } from '../settings/selectors'
 import { isAmountInValidFormat } from '../shared/utils'
 
 import { removeTx, saveTxEdit } from './actions'
-import { transactionByIdSel } from './selectors'
+import { transactionByIdSel, tagsSel } from './selectors'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {

@@ -39,14 +39,7 @@ export const addTransaction = (addTx: AddTransaction): Thunk => async (
 
     const tx = {
       id,
-      ...pick(addTx, [
-        'transactionType',
-        'tagIds',
-        'currency',
-        'isExpense',
-        'note',
-        'repeating',
-      ]),
+      ...pick(addTx, ['tagIds', 'currency', 'isExpense', 'note', 'repeating']),
       amount: Number.parseFloat(addTx.amount),
       dateTime: addTx.useCurrentTime ? new Date() : addTx.dateTime!,
       uid: userId,
