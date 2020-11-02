@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import Button from '@material-ui/core/Button'
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+import LogoutIcon from '@material-ui/icons/ExitToApp'
 import Alert from '@material-ui/lab/Alert'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -29,14 +30,12 @@ import {
 import BackupFiles from './backupFiles'
 import SettingsPanel from './settingsPanel'
 
-async function signOut() {
-  // Sign out of Firebase
-  await getFirebase().auth().signOut()
-}
-
 const useStyles = makeStyles((theme: Theme) => ({
   marginBottom: {
     marginBottom: theme.spacing(1),
+  },
+  signOutButton: {
+    marginTop: theme.spacing(2),
   },
 }))
 
@@ -50,9 +49,6 @@ const Settings = () => {
 
   return (
     <PageWrapper>
-      <button onClick={signOut} aria-label="sign out">
-        google sign out
-      </button>
       <SettingsPanel name="settings">
         {!settings && <Loading />}
         {settings && (
@@ -175,6 +171,20 @@ const Settings = () => {
           Clear all expense manager data
         </Button>
       </SettingsPanel>
+
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={() => {
+          getFirebase().auth().signOut()
+        }}
+        aria-label="sign out"
+        className={classes.signOutButton}
+        startIcon={<LogoutIcon />}
+      >
+        Sign out
+      </Button>
+
       <ConfirmDialog
         open={deleteAllDataDialogOpen}
         onConfirm={() => {
