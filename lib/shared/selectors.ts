@@ -34,3 +34,9 @@ export const settingsSel = createSelector(
 export const signInStatusSel = (state: State) => state.signInStatus
 
 export const transactionsSel = (state: State) => state.transactions
+
+// TODO: use this selector to check if firebase is loaded instead of currentUserIdSel
+export const firebaseLoadedSel = createSelector(
+  currentUserIdSel,
+  (userId) => userId !== null,
+)

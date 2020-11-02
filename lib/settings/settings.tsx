@@ -26,6 +26,7 @@ import {
   changeDefaultCurrency,
   changeMainCurrency,
 } from './actions'
+import BackupFiles from './backupFiles'
 import SettingsPanel from './settingsPanel'
 
 async function signOut() {
@@ -156,6 +157,10 @@ const Settings = () => {
         >
           Export to csv
         </Button>
+      </SettingsPanel>
+
+      <SettingsPanel name="backup">
+        <BackupFiles />
       </SettingsPanel>
 
       <SettingsPanel name="clear data">

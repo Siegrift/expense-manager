@@ -34,3 +34,11 @@ _We use fixed version of next, because deploying with firebase works only after 
 ## Upgrade deps
 
 Run `yarn upgrade --latest`
+
+## Cloud storage
+
+In order to download files from cloud storage from web you need to configure CORS. See the
+documentation here https://firebase.google.com/docs/storage/web/download-files?authuser=0#cors_configuration.
+
+We are using commited `cors.json` file for this matter.
+Make sure you are logged in. You can use `gcloud auth login` to log in.

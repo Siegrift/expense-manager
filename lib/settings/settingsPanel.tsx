@@ -27,6 +27,7 @@ const SettingsPanel: React.FunctionComponent<SettingsPanelProps> = (props) => {
       onChange={() => setExpanded(!expanded)}
       aria-label={props.name}
       style={{ textTransform: 'capitalize' }}
+      TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>{props.name}</Typography>

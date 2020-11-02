@@ -27,6 +27,18 @@ export function downloadFile(filename: string, text: string) {
   document.body.removeChild(element)
 }
 
+// inspired by https://firebase.google.com/docs/storage/web/download-files?authuser=0#download_data_via_url
+export function downloadTextFromUrl(url: string): Promise<string> {
+  return new Promise((res, rej) => {
+    const xhr = new XMLHttpRequest()
+    xhr.responseType = 'text'
+    xhr.onload = () => res(xhr.response)
+    xhr.onerror = rej
+    xhr.open('GET', url)
+    xhr.send()
+  })
+}
+
 export function isValidDate(date: unknown) {
   return date instanceof Date && !isNaN(date as any)
 }

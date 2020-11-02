@@ -25,6 +25,7 @@ export const initializeFirebase = async (store: Store) => {
   await import('firebase/auth')
   await import('firebase/firestore')
   await import('firebase/performance')
+  await import('firebase/storage')
 
   firebaseInstance = firebase
 
