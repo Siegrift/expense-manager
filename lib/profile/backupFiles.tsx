@@ -18,10 +18,20 @@ import { update } from '@siegrift/tsfunct'
 import format from 'date-fns/format'
 import isBefore from 'date-fns/isBefore'
 import parse from 'date-fns/parse'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Loading from '../components/loading'
 import { getFirebase } from '../firebase/firebase'
+import {
+  createErrorNotification,
+  createSuccessNotification,
+  setSnackbarNotification,
+  withErrorHandler,
+} from '../shared/actions'
+import {
+  REQUEST_TIMEOUT_ERROR,
+  UPLOADING_DATA_ERROR,
+} from '../shared/constants'
 import { currentUserIdSel, firebaseLoadedSel } from '../shared/selectors'
 import { delay, downloadTextFromUrl, downloadFile } from '../shared/utils'
 
@@ -56,6 +66,7 @@ const BackupFilesList = () => {
   const userId = useSelector(currentUserIdSel)
   const jsonData = useSelector(jsonFromDataSel)
   const somethingSelected = !!listItems && !listItems.find((i) => i.checked)
+  const dispatch = useDispatch()
 
   const handleToggle = (index: number) => () => {
     setListItems(update(listItems!, [index, 'checked'], (val) => !val))
@@ -89,11 +100,21 @@ const BackupFilesList = () => {
             return isBefore(dd1, dd2) ? 1 : -1
           })
           setListItems(d.map((str) => ({ filename: str, checked: false })))
+        } else {
+          dispatch(
+            setSnackbarNotification(
+              createErrorNotification(REQUEST_TIMEOUT_ERROR),
+            ),
+          )
         }
       })
       .catch((error) => {
-        // TODO: use app error
-        console.log(error)
+        dispatch(
+          setSnackbarNotification(
+            createErrorNotification(UPLOADING_DATA_ERROR),
+            error,
+          ),
+        )
       })
   }, [firebaseLoaded])
 
@@ -164,13 +185,19 @@ const BackupFilesList = () => {
               color="primary"
               variant="outlined"
               startIcon={<BackupIcon />}
-              onClick={async () => {
+              onClick={() => {
                 const storageRef = getFirebase().storage().ref().child(userId!)
                 const filename = format(new Date(), BACKUP_FILENAME_FORMAT)
 
-                await storageRef.child(filename).putString(jsonData)
-                setListItems([{ filename, checked: false }, ...listItems])
-                // TODO: sucess notification or error
+                withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+                  await storageRef.child(filename).putString(jsonData)
+                  setListItems([{ filename, checked: false }, ...listItems])
+                  dispatch(
+                    setSnackbarNotification(
+                      createSuccessNotification('Backup successful'),
+                    ),
+                  )
+                })
               }}
             >
               Backup now
@@ -183,7 +210,7 @@ const BackupFilesList = () => {
               color="secondary"
               variant="contained"
               startIcon={<DeleteIcon />}
-              onClick={async () => {
+              onClick={() => {
                 // TODO: ask for confirmation before removing
                 const storageRef = getFirebase().storage().ref().child(userId!)
                 const promises = listItems
@@ -191,11 +218,20 @@ const BackupFilesList = () => {
                   .map((item) => storageRef.child(item.filename).delete())
 
                 // wait for completion, TODO: maybe show loading overlay
-                await Promise.all(promises)
-                // delete the removed ones from state
-                const preserved = listItems.filter(({ checked }) => !checked)
-                setListItems(preserved)
-                // TODO: success notification or error
+                withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+                  await Promise.all(promises)
+                  // delete the removed ones from state
+                  const preserved = listItems.filter(({ checked }) => !checked)
+                  setListItems(preserved)
+
+                  dispatch(
+                    setSnackbarNotification(
+                      createSuccessNotification(
+                        'Selected files were successfully removed',
+                      ),
+                    ),
+                  )
+                })
               }}
               disabled={somethingSelected}
             >

@@ -4,6 +4,10 @@ import Router from 'next/router'
 import { removeFromFirebase, uploadToFirebase } from '../actions'
 import { Tag, Transaction } from '../addTransaction/state'
 import { Action, Thunk } from '../redux/types'
+import {
+  createSuccessNotification,
+  setSnackbarNotification,
+} from '../shared/actions'
 import { TransactionSearch } from '../state'
 import { ObjectOf } from '../types'
 
@@ -18,6 +22,11 @@ export const saveTxEdit = (
   // TODO: what to do with tags that are not in any expense (deleted by edit)
   const tx = { ...getState().transactions[id], ...editedFields }
   await dispatch(uploadToFirebase({ txs: [tx], tags: Object.values(newTags) }))
+  dispatch(
+    setSnackbarNotification(
+      createSuccessNotification('Transaction edit successful'),
+    ),
+  )
 }
 
 export const removeTx = (txId: string): Thunk => async (
@@ -28,6 +37,11 @@ export const removeTx = (txId: string): Thunk => async (
   logger.log('Remove transaction')
   // TODO: what to do with tags that are not in any expense (deleted by edit)
   await dispatch(removeFromFirebase([txId], []))
+  dispatch(
+    setSnackbarNotification(
+      createSuccessNotification('Transaction successfully removed'),
+    ),
+  )
 }
 
 export const changeTxSearchQuery = (

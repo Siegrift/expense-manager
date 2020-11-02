@@ -1,3 +1,5 @@
+import { Color as NotificationSeverity } from '@material-ui/lab/Alert'
+
 import { Tag, Transaction } from './addTransaction/state'
 import { Profile } from './profile/state'
 import { ObjectOf } from './types'
@@ -27,6 +29,11 @@ export interface SerializableState {
   profile: ObjectOf<Profile>
 }
 
+export interface NotificationState {
+  severity: NotificationSeverity
+  message: string
+}
+
 export interface State extends SerializableState {
   // use firebase.auth().currentUser to get the current user
   signInStatus: SignInStatus
@@ -34,7 +41,7 @@ export interface State extends SerializableState {
   transactionSearch: TransactionSearch
   cursor: number
   user: firebase.User | null
-  error: string | null
+  notification: NotificationState | null
   // TODO: refactor this to store multiple types of confirm dialogs
   confirmTxDeleteDialogOpen: boolean
 }
@@ -49,7 +56,7 @@ const state: State = {
   },
   cursor: 0,
   user: null,
-  error: null,
+  notification: null,
   confirmTxDeleteDialogOpen: false,
   profile: {},
 }

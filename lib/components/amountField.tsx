@@ -25,7 +25,7 @@ interface AmountFieldProps {
   label: string
   className?: string
   currency: CurrencyValue
-  onPressEnter: () => void
+  onPressEnter: (e: React.SyntheticEvent) => void
   isExpense?: boolean
 }
 
@@ -159,7 +159,7 @@ const AmountField = ({
             }
           }}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') onPressEnter()
+            if (e.key === 'Enter') onPressEnter(e)
           }}
           isExpense={isExpense}
         />

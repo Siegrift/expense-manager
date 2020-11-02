@@ -7,6 +7,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import PageWrapper from '../components/pageWrapper'
 import TransactionForm from '../components/transactionForm'
 import {
+  createErrorNotification,
+  setSnackbarNotification,
+} from '../shared/actions'
+import { INVALID_TRANSACTION_FORM_FIELDS } from '../shared/constants'
+import {
   useEffectAfterFirebaseLoaded,
   useFirebaseLoaded,
 } from '../shared/hooks'
@@ -54,12 +59,19 @@ const AddTransaction = () => {
   const tags = useSelector(tagsSel)
   const allTags = { ...tags, ...newTags }
 
-  const onAddTransaction = () => {
+  const onAddTransaction = (e: React.SyntheticEvent) => {
+    e.stopPropagation()
+
     if (!dataLoaded) return
 
     // some fields were not filled correctly. Show incorrect ones and return.
     if (!allFieldsAreValid(addTx)) {
       setAddTx((currAddTx) => set(currAddTx, ['shouldValidateAmount'], true))
+      dispatch(
+        setSnackbarNotification(
+          createErrorNotification(INVALID_TRANSACTION_FORM_FIELDS),
+        ),
+      )
       return
     }
 

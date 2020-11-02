@@ -8,9 +8,9 @@ import classnames from 'classnames'
 import { useSelector, useDispatch } from 'react-redux'
 
 import Navigation, { DRAWER_WIDTH } from '../components/navigation'
-import { setAppError } from '../shared/actions'
+import { setSnackbarNotification } from '../shared/actions'
 import { useIsVeryBigDevice } from '../shared/hooks'
-import { appErrorSel, signInStatusSel } from '../shared/selectors'
+import { snackbarNotificationSel, signInStatusSel } from '../shared/selectors'
 import { redirectTo } from '../shared/utils'
 
 import ConfirmDialog from './confirmDialog'
@@ -45,7 +45,7 @@ interface PageWrapperProps {
 
 const PageWrapper = ({ children }: PageWrapperProps) => {
   const classes = useStyles()
-  const error = useSelector(appErrorSel)
+  const notification = useSelector(snackbarNotificationSel)
   const signInStatus = useSelector(signInStatusSel)
   const veryBigDevice = useIsVeryBigDevice()
   const dispatch = useDispatch()
@@ -60,18 +60,21 @@ const PageWrapper = ({ children }: PageWrapperProps) => {
         )}
       >
         {children}
-        {error && (
+        {notification && (
           <Snackbar
-            open={!!error}
-            onClose={() => dispatch(setAppError(null))}
+            autoHideDuration={3000} // hide after max 3s
+            open={!!notification}
+            onClose={(_, reason) =>
+              dispatch(setSnackbarNotification(null, reason))
+            }
             anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
           >
             <Alert
-              onClose={() => dispatch(setAppError(null))}
-              severity="error"
+              onClose={() => dispatch(setSnackbarNotification(null))}
+              severity={notification.severity}
               variant="filled"
             >
-              {error}
+              {notification.message}
             </Alert>
           </Snackbar>
         )}

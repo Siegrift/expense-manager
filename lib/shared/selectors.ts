@@ -4,7 +4,7 @@ import { State } from '../state'
 
 export const currentUserIdSel = (state: State) => state.user?.uid ?? null
 
-export const appErrorSel = (state: State) => state.error
+export const snackbarNotificationSel = (state: State) => state.notification
 
 export const profileSel = (state: State) => {
   const profiles = Object.values(state.profile)

@@ -10,6 +10,11 @@ import { ObjectOf } from '../../lib/types'
 import { Tag, Transaction } from '../addTransaction/state'
 import AppBar from '../components/appBar'
 import TransactionForm from '../components/transactionForm'
+import {
+  createErrorNotification,
+  setSnackbarNotification,
+} from '../shared/actions'
+import { INVALID_TRANSACTION_FORM_FIELDS } from '../shared/constants'
 import { isAmountInValidFormat } from '../shared/utils'
 
 import { removeTx, saveTxEdit } from './actions'
@@ -61,7 +66,9 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
   const [tagInputValue, setTagInputValue] = useState('')
   const [shouldValidate, setShouldValidate] = useState(false)
 
-  const onSaveHandler = () => {
+  const onSaveHandler = (e: React.SyntheticEvent) => {
+    e.stopPropagation()
+
     if (isAmountInValidFormat(amount)) {
       dispatch(
         saveTxEdit(tx.id, newTags, {
@@ -77,6 +84,11 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
       Router.push('/transactions')
     } else {
       setShouldValidate(true)
+      dispatch(
+        setSnackbarNotification(
+          createErrorNotification(INVALID_TRANSACTION_FORM_FIELDS),
+        ),
+      )
     }
   }
 
@@ -85,7 +97,9 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
       <AppBar
         returnUrl="/transactions"
         onSave={onSaveHandler}
-        onRemove={() => {
+        onRemove={(e) => {
+          e.stopPropagation()
+
           // TODO: confirm dialog (use different text when removing repeating tx)
           dispatch(removeTx(tx.id))
           Router.push('/transactions')

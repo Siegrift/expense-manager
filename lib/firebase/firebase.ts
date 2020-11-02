@@ -1,5 +1,10 @@
 import { Store } from 'redux'
 
+import {
+  createErrorNotification,
+  setSnackbarNotification,
+} from '../shared/actions'
+
 import { authChangeAction } from './actions'
 
 const firebaseConfig = {
@@ -32,10 +37,10 @@ export const initializeFirebase = async (store: Store) => {
   // firebase can be initialized only once, but crashes on hot update
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig)
-  }
 
-  // enable firebase performance
-  firebase.performance()
+    // enable firebase performance
+    firebase.performance()
+  }
 
   // persistance only works in browsers
   if (typeof window !== 'undefined') {
@@ -43,15 +48,26 @@ export const initializeFirebase = async (store: Store) => {
       .firestore()
       .enablePersistence({ synchronizeTabs: true })
       .catch((err) => {
-        // TODO: handle errors
         if (err.code === 'failed-precondition') {
           // Multiple tabs open, persistence can only be enabled
           // in one tab at a a time.
-          console.error(err)
+          store.dispatch(
+            setSnackbarNotification(
+              createErrorNotification(
+                'Expense manager is opened on mutliple tabs. Local persistance is disabled!',
+              ),
+            ),
+          )
         } else if (err.code === 'unimplemented') {
           // The current browser does not support all of the
           // features required to enable persistence
-          console.error(err)
+          store.dispatch(
+            setSnackbarNotification(
+              createErrorNotification(
+                'Underlying platform (browser) does not support persistance',
+              ),
+            ),
+          )
         }
       })
   }

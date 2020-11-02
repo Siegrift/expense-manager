@@ -75,7 +75,7 @@ interface BaseProps {
   dateTime: FieldProps<Date | undefined | null>
   repeating: FieldProps<RepeatingOption>
   note: FieldProps<string>
-  onSubmit: () => void
+  onSubmit: (e: React.SyntheticEvent) => void
 }
 
 type AddTxFormVariantProps = {
@@ -219,7 +219,7 @@ const TransactionForm = (props: TransactionFormProps) => {
           value={note.value}
           onChange={(e) => note.handler(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') onSubmit()
+            if (e.key === 'Enter') onSubmit(e)
           }}
         />
       </Grid>

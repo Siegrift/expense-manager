@@ -93,9 +93,11 @@ const Transactions = () => {
           }
           open={confirmDeleteDialogForTx !== null}
           onCancel={() => dispatch(setConfirmTxDeleteDialogOpen(false))}
-          onConfirm={() => {
-            dispatch(removeTx(confirmDeleteDialogForTx!.id))
+          onConfirm={(e) => {
+            e.stopPropagation()
+
             dispatch(setConfirmTxDeleteDialogOpen(false))
+            dispatch(removeTx(confirmDeleteDialogForTx!.id))
           }}
         />
       )}

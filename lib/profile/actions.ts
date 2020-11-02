@@ -3,8 +3,13 @@ import { set } from '@siegrift/tsfunct'
 import { uploadToFirebase } from '../actions'
 import { getFirebase } from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
-import { setAppError, withErrorHandler } from '../shared/actions'
-import { NO_USER_ID_ERROR } from '../shared/constants'
+import {
+  createErrorNotification,
+  createSuccessNotification,
+  setSnackbarNotification,
+  withErrorHandler,
+} from '../shared/actions'
+import { NO_USER_ID_ERROR, UPLOADING_DATA_ERROR } from '../shared/constants'
 import { Currency } from '../shared/currencies'
 import { currentUserIdSel, profileSel } from '../shared/selectors'
 import { downloadFile } from '../shared/utils'
@@ -26,7 +31,7 @@ const importData = (
   const reader = new FileReader()
 
   if (!userId) {
-    dispatch(setAppError(NO_USER_ID_ERROR))
+    dispatch(setSnackbarNotification(createErrorNotification(NO_USER_ID_ERROR)))
     return Promise.resolve()
   }
 
@@ -37,16 +42,23 @@ const importData = (
       )(getState())
 
       if (errorReason) {
-        dispatch(setAppError(errorReason))
+        dispatch(setSnackbarNotification(createErrorNotification(errorReason)))
       } else {
-        // TODO: display success notification
-        await dispatch(
-          uploadToFirebase({
-            txs: Object.values(transactions),
-            tags: Object.values(tags),
-            profile: Object.values(profile),
-          }),
-        )
+        withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+          await dispatch(
+            uploadToFirebase({
+              txs: Object.values(transactions),
+              tags: Object.values(tags),
+              profile: Object.values(profile),
+            }),
+          )
+
+          dispatch(
+            setSnackbarNotification(
+              createSuccessNotification('Data imported successfully'),
+            ),
+          )
+        })
       }
 
       res()
@@ -81,7 +93,7 @@ export const clearAllData = (): Thunk => async (
 
   const userId = currentUserIdSel(getState())
   if (!userId) {
-    dispatch(setAppError(NO_USER_ID_ERROR))
+    dispatch(setSnackbarNotification(createErrorNotification(NO_USER_ID_ERROR)))
     return Promise.resolve()
   }
 
