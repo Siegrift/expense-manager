@@ -128,6 +128,7 @@ const BackupFilesList = () => {
         <div className={classes.buttonsWrapper}>
           <div className={classes.buttons}>
             <Button
+              size="small"
               color="primary"
               variant="outlined"
               startIcon={<SelectAllIcon />}
@@ -144,6 +145,7 @@ const BackupFilesList = () => {
               Select older
             </Button>
             <Button
+              size="small"
               color="primary"
               variant="outlined"
               startIcon={<UnselectAllIcon />}
@@ -158,6 +160,7 @@ const BackupFilesList = () => {
             </Button>
 
             <Button
+              size="small"
               color="primary"
               variant="outlined"
               startIcon={<BackupIcon />}
@@ -176,6 +179,7 @@ const BackupFilesList = () => {
 
           <div className={classes.buttons}>
             <Button
+              size="small"
               color="secondary"
               variant="contained"
               startIcon={<DeleteIcon />}
@@ -198,6 +202,7 @@ const BackupFilesList = () => {
               Remove
             </Button>
             <Button
+              size="small"
               color="primary"
               variant="contained"
               startIcon={<DownloadIcon />}
