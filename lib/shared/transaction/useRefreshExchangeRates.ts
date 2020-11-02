@@ -4,7 +4,7 @@ import { set } from '@siegrift/tsfunct'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { uploadToFirebase } from '../../actions'
-import { Profile } from '../../settings/state'
+import { Profile } from '../../profile/state'
 import { setAppError } from '../actions'
 import { exchangeRatesUrl } from '../currencies'
 import { useFetch } from '../hooks'

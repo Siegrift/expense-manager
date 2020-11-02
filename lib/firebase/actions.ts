@@ -3,8 +3,8 @@ import { batch } from 'react-redux'
 
 import { addRepeatingTxs } from '../actions'
 import { getFirebase } from '../firebase/firebase'
+import { getInitialState as getInitialProfileState } from '../profile/state'
 import { Action, Thunk } from '../redux/types'
-import { getInitialState as getInitialProfileState } from '../settings/state'
 import { withErrorHandler } from '../shared/actions'
 import { SignInStatus, State } from '../state'
 

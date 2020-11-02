@@ -9,8 +9,8 @@ import { v4 as uuid } from 'uuid'
 
 import { Tag, Transaction } from './addTransaction/state'
 import { getFirebase } from './firebase/firebase'
+import { Profile } from './profile/state'
 import { Action, Thunk } from './redux/types'
-import { Profile } from './settings/state'
 import { ScreenTitle } from './state'
 import { FirebaseField, ObjectOf } from './types'
 

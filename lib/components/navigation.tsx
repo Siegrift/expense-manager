@@ -10,11 +10,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import { SvgIconProps } from '@material-ui/core/SvgIcon'
 import Typography from '@material-ui/core/Typography'
+import ProfileIcon from '@material-ui/icons/AccountCircle'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import BarChartIcon from '@material-ui/icons/BarChart'
 import OverviewIcon from '@material-ui/icons/Home'
 import ListIcon from '@material-ui/icons/List'
-import SettingsIcon from '@material-ui/icons/Settings'
 import TagIcon from '@material-ui/icons/Style'
 import classnames from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
@@ -72,7 +72,7 @@ const navigationItems: NavigationItem[] = [
   { screen: 'transactions', Icon: ListIcon, hideOnSmallDevice: true },
   { screen: 'charts', Icon: BarChartIcon, hideOnSmallDevice: true },
   { screen: 'tags', Icon: TagIcon },
-  { screen: 'settings', Icon: SettingsIcon },
+  { screen: 'profile', Icon: ProfileIcon },
 ]
 
 const Navigation = () => {

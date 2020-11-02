@@ -2,7 +2,7 @@ import { pipe } from '@siegrift/tsfunct'
 import chunk from 'lodash/chunk'
 import Router from 'next/router'
 
-import { ExchangeRates } from '../settings/state'
+import { ExchangeRates } from '../profile/state'
 import { ObjectOf } from '../types'
 
 import { CURRENCIES, Currency } from './currencies'

@@ -28,7 +28,7 @@ import {
   changeMainCurrency,
 } from './actions'
 import BackupFiles from './backupFiles'
-import SettingsPanel from './settingsPanel'
+import SettingsPanel from './profileSection'
 
 const useStyles = makeStyles((theme: Theme) => ({
   marginBottom: {
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
-const Settings = () => {
+const Profile = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const [deleteAllDataDialogOpen, setDeleteAllDataDialogOpen] = useState(false)
@@ -204,4 +204,4 @@ const Settings = () => {
   )
 }
 
-export default Settings
+export default Profile

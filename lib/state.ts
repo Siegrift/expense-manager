@@ -1,5 +1,5 @@
 import { Tag, Transaction } from './addTransaction/state'
-import { Profile } from './settings/state'
+import { Profile } from './profile/state'
 import { ObjectOf } from './types'
 
 export type ScreenTitle =
@@ -7,7 +7,7 @@ export type ScreenTitle =
   | 'transactions'
   | 'charts'
   | 'tags'
-  | 'settings'
+  | 'profile'
   | 'overview'
 
 export type SignInStatus = 'loggedIn' | 'loggingIn' | 'loggedOut' | 'unknown'
