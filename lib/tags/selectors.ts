@@ -66,3 +66,8 @@ export const isRecentlyUsedSel = (tagId: string) =>
 
 export const tagByIdSel = (id: string) =>
   createSelector(tagsSel, (tags) => tags[id])
+
+export const transactionsWithTag = (tagId: string) =>
+  createSelector(transactionsSel, (txs) =>
+    Object.values(txs).filter((tx) => tx.tagIds.includes(tagId)),
+  )

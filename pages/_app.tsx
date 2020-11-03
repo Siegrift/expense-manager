@@ -90,6 +90,11 @@ class ExpenseManagerApp extends App {
                   rel="preconnect"
                   href="https://firebaseinstallations.googleapis.com"
                 ></link>
+                {/* React highlight (for showing backups) */}
+                <link
+                  rel="stylesheet"
+                  href="https://highlightjs.org/static/demo/styles/idea.css"
+                />
               </Head>
               <CssBaseline />
               {/* Custom global styles */}

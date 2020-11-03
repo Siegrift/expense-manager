@@ -42,7 +42,6 @@ export interface State extends SerializableState {
   cursor: number
   user: firebase.User | null
   notification: NotificationState | null
-  // TODO: refactor this to store multiple types of confirm dialogs
   confirmTxDeleteDialogOpen: boolean
 }
 

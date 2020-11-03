@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ObjectOf } from '../../lib/types'
 import { Tag, Transaction } from '../addTransaction/state'
 import AppBar from '../components/appBar'
+import ConfirmDialog from '../components/confirmDialog'
 import TransactionForm from '../components/transactionForm'
 import {
   createErrorNotification,
@@ -65,6 +66,7 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
   const [newTags, setNewTags] = useState<ObjectOf<Tag>>({})
   const [tagInputValue, setTagInputValue] = useState('')
   const [shouldValidate, setShouldValidate] = useState(false)
+  const [showTxRemoveDialog, setShowTxRemoveDialog] = useState(false)
 
   const onSaveHandler = (e: React.SyntheticEvent) => {
     e.stopPropagation()
@@ -100,13 +102,10 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
         onRemove={(e) => {
           e.stopPropagation()
 
-          // TODO: confirm dialog (use different text when removing repeating tx)
-          dispatch(removeTx(tx.id))
-          Router.push('/transactions')
+          setShowTxRemoveDialog(true)
         }}
         appBarTitle="Edit transaction"
       />
-
       <div className={classes.root}>
         <TransactionForm
           variant="edit"
@@ -154,6 +153,20 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
           onSubmit={onSaveHandler}
         />
       </div>
+      {showTxRemoveDialog && (
+        <ConfirmDialog
+          onConfirm={(e) => {
+            e.stopPropagation()
+
+            dispatch(removeTx(tx.id))
+            Router.push('/transactions')
+          }}
+          onCancel={() => setShowTxRemoveDialog(false)}
+          title="Do you really want to remove this transacation?"
+          open={true}
+          ContentComponent="You won't be able to undo this action"
+        />
+      )}
     </>
   )
 }

@@ -3,9 +3,10 @@ import * as React from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { removeFromFirebase, uploadToFirebase } from '../actions'
+import { uploadToFirebase } from '../actions'
 import { Tag } from '../addTransaction/state'
 
+import { removeTag } from './actions'
 import {
   isRecentlyUsedSel,
   isRecurringTagSel,
@@ -54,7 +55,7 @@ const EditTagScreenContent: React.FC<EditTagScreenContentProps> = ({ tag }) => {
       onSave={(modifiedTag) =>
         dispatch(uploadToFirebase({ tags: [modifiedTag] }))
       }
-      onRemove={() => dispatch(removeFromFirebase([], [tag.id]))}
+      onRemove={() => dispatch(removeTag(tag.id))}
     />
   )
 }

@@ -196,7 +196,7 @@ const Profile = () => {
         ContentComponent={
           <>
             <p>Are you sure you want to clear all expense manager data?</p>
-            <b>You will not be able to revert this option!</b>
+            <b>You will not be able to revert this action!</b>
           </>
         }
       />

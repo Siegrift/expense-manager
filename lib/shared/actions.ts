@@ -29,9 +29,11 @@ export const withErrorHandler = (
 ) => {
   try {
     cb()
+    return true
   } catch (err) {
     dispatch(
       setSnackbarNotification(createErrorNotification(message ?? ''), err),
     )
+    return false
   }
 }

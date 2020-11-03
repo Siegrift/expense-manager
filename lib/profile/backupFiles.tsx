@@ -2,6 +2,10 @@ import React from 'react'
 
 import Button from '@material-ui/core/Button'
 import Checkbox from '@material-ui/core/Checkbox'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogTitle from '@material-ui/core/DialogTitle'
 import Divider from '@material-ui/core/Divider'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -18,8 +22,10 @@ import { update } from '@siegrift/tsfunct'
 import format from 'date-fns/format'
 import isBefore from 'date-fns/isBefore'
 import parse from 'date-fns/parse'
+import Highlight from 'react-highlight.js'
 import { useDispatch, useSelector } from 'react-redux'
 
+import ConfirmDialog from '../components/confirmDialog'
 import Loading from '../components/loading'
 import { getFirebase } from '../firebase/firebase'
 import {
@@ -50,11 +56,19 @@ const useStyles = makeStyles((theme: Theme) => ({
       margin: theme.spacing(1),
     },
   },
+  showFileDialogPaper: {
+    width: '100%',
+  },
 }))
 
 interface ListItemData {
   filename: string
   checked: boolean
+}
+
+interface ShowFileContent {
+  filename: string
+  content: string | null | undefined
 }
 
 const BackupFilesList = () => {
@@ -65,8 +79,11 @@ const BackupFilesList = () => {
   const firebaseLoaded = useSelector(firebaseLoadedSel)
   const userId = useSelector(currentUserIdSel)
   const jsonData = useSelector(jsonFromDataSel)
-  const somethingSelected = !!listItems && !listItems.find((i) => i.checked)
   const dispatch = useDispatch()
+  const [showRemoveFileDialog, setShowRemoveFileDialog] = React.useState(false)
+  const [showFile, setShowFile] = React.useState<ShowFileContent | null>(null)
+
+  const somethingSelected = !!listItems && !listItems.find((i) => i.checked)
 
   const handleToggle = (index: number) => () => {
     setListItems(update(listItems!, [index, 'checked'], (val) => !val))
@@ -129,137 +146,204 @@ const BackupFilesList = () => {
     )
   else {
     return (
-      <List dense>
-        {listItems.map(({ filename, checked }, index) => {
-          return (
-            <ListItem key={filename} button>
-              <ListItemText primary={filename} />
-              <ListItemSecondaryAction>
-                <Checkbox
-                  edge="end"
-                  onChange={handleToggle(index)}
-                  checked={checked}
-                />
-              </ListItemSecondaryAction>
-            </ListItem>
-          )
-        })}
-        <Divider />
+      <>
+        <List dense>
+          {listItems.map(({ filename, checked }, index) => {
+            return (
+              <ListItem
+                key={filename}
+                button
+                onClick={() => {
+                  setShowFile({ filename, content: undefined })
+                  const success = withErrorHandler(
+                    'Unable to download file content',
+                    dispatch,
+                    async () => {
+                      const storageRef = getFirebase()
+                        .storage()
+                        .ref()
+                        .child(userId!)
 
-        <div className={classes.buttonsWrapper}>
-          <div className={classes.buttons}>
-            <Button
-              size="small"
-              color="primary"
-              variant="outlined"
-              startIcon={<SelectAllIcon />}
-              onClick={() => {
-                const firstInd = listItems.findIndex((item) => item.checked)
-                setListItems(
-                  listItems.map((item, i) =>
-                    i < firstInd ? item : { ...item, checked: true },
-                  ),
-                )
-              }}
-              disabled={somethingSelected}
-            >
-              Select older
-            </Button>
-            <Button
-              size="small"
-              color="primary"
-              variant="outlined"
-              startIcon={<UnselectAllIcon />}
-              onClick={() => {
-                setListItems(
-                  listItems.map((item) => ({ ...item, checked: false })),
-                )
-              }}
-              disabled={somethingSelected}
-            >
-              Unselect all
-            </Button>
+                      const content = await downloadTextFromUrl(
+                        await storageRef.child(filename).getDownloadURL(),
+                      )
 
-            <Button
-              size="small"
-              color="primary"
-              variant="outlined"
-              startIcon={<BackupIcon />}
-              onClick={() => {
-                const storageRef = getFirebase().storage().ref().child(userId!)
-                const filename = format(new Date(), BACKUP_FILENAME_FORMAT)
+                      setShowFile({ filename, content })
+                    },
+                  )
 
-                withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
-                  await storageRef.child(filename).putString(jsonData)
-                  setListItems([{ filename, checked: false }, ...listItems])
-                  dispatch(
-                    setSnackbarNotification(
-                      createSuccessNotification('Backup successful'),
+                  if (!success) setShowFile({ filename, content: null })
+                }}
+              >
+                <ListItemText primary={filename} />
+                <ListItemSecondaryAction>
+                  <Checkbox
+                    edge="end"
+                    onChange={handleToggle(index)}
+                    checked={checked}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+            )
+          })}
+          <Divider />
+
+          <div className={classes.buttonsWrapper}>
+            <div className={classes.buttons}>
+              <Button
+                size="small"
+                color="primary"
+                variant="outlined"
+                startIcon={<SelectAllIcon />}
+                onClick={() => {
+                  const firstInd = listItems.findIndex((item) => item.checked)
+                  setListItems(
+                    listItems.map((item, i) =>
+                      i < firstInd ? item : { ...item, checked: true },
                     ),
                   )
-                })
-              }}
-            >
-              Backup now
-            </Button>
-          </div>
+                }}
+                disabled={somethingSelected}
+              >
+                Select older
+              </Button>
+              <Button
+                size="small"
+                color="primary"
+                variant="outlined"
+                startIcon={<UnselectAllIcon />}
+                onClick={() => {
+                  setListItems(
+                    listItems.map((item) => ({ ...item, checked: false })),
+                  )
+                }}
+                disabled={somethingSelected}
+              >
+                Unselect all
+              </Button>
 
-          <div className={classes.buttons}>
-            <Button
-              size="small"
-              color="secondary"
-              variant="contained"
-              startIcon={<DeleteIcon />}
-              onClick={() => {
-                // TODO: ask for confirmation before removing
-                const storageRef = getFirebase().storage().ref().child(userId!)
-                const promises = listItems
-                  .filter(({ checked }) => checked)
-                  .map((item) => storageRef.child(item.filename).delete())
+              <Button
+                size="small"
+                color="primary"
+                variant="outlined"
+                startIcon={<BackupIcon />}
+                onClick={() => {
+                  const storageRef = getFirebase()
+                    .storage()
+                    .ref()
+                    .child(userId!)
+                  const filename = format(new Date(), BACKUP_FILENAME_FORMAT)
 
-                // wait for completion, TODO: maybe show loading overlay
-                withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
-                  await Promise.all(promises)
-                  // delete the removed ones from state
-                  const preserved = listItems.filter(({ checked }) => !checked)
-                  setListItems(preserved)
-
-                  dispatch(
-                    setSnackbarNotification(
-                      createSuccessNotification(
-                        'Selected files were successfully removed',
+                  withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+                    await storageRef.child(filename).putString(jsonData)
+                    setListItems([{ filename, checked: false }, ...listItems])
+                    dispatch(
+                      setSnackbarNotification(
+                        createSuccessNotification('Backup successful'),
                       ),
-                    ),
-                  )
-                })
-              }}
-              disabled={somethingSelected}
-            >
-              Remove
-            </Button>
-            <Button
-              size="small"
-              color="primary"
-              variant="contained"
-              startIcon={<DownloadIcon />}
-              onClick={() => {
-                const storageRef = getFirebase().storage().ref().child(userId!)
-                listItems.forEach(async (item) => {
-                  if (item.checked) {
-                    const text = await downloadTextFromUrl(
-                      await storageRef.child(item.filename).getDownloadURL(),
                     )
-                    downloadFile(item.filename, text)
-                  }
-                })
-              }}
-              disabled={somethingSelected}
-            >
-              Download
-            </Button>
+                  })
+                }}
+              >
+                Backup now
+              </Button>
+            </div>
+
+            <div className={classes.buttons}>
+              <Button
+                size="small"
+                color="secondary"
+                variant="contained"
+                startIcon={<DeleteIcon />}
+                onClick={() => setShowRemoveFileDialog(true)}
+                disabled={somethingSelected}
+              >
+                Remove
+              </Button>
+              <Button
+                size="small"
+                color="primary"
+                variant="contained"
+                startIcon={<DownloadIcon />}
+                onClick={() => {
+                  const storageRef = getFirebase()
+                    .storage()
+                    .ref()
+                    .child(userId!)
+                  listItems.forEach(async (item) => {
+                    if (item.checked) {
+                      const text = await downloadTextFromUrl(
+                        await storageRef.child(item.filename).getDownloadURL(),
+                      )
+                      downloadFile(item.filename, text)
+                    }
+                  })
+                }}
+                disabled={somethingSelected}
+              >
+                Download
+              </Button>
+            </div>
           </div>
-        </div>
-      </List>
+        </List>
+
+        <ConfirmDialog
+          onConfirm={(e) => {
+            e.stopPropagation()
+
+            const storageRef = getFirebase().storage().ref().child(userId!)
+            const promises = listItems
+              .filter(({ checked }) => checked)
+              .map((item) => storageRef.child(item.filename).delete())
+
+            // wait for completion, TODO: maybe show loading overlay
+            withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+              await Promise.all(promises)
+              // delete the removed ones from state
+              const preserved = listItems.filter(({ checked }) => !checked)
+              setListItems(preserved)
+
+              dispatch(
+                setSnackbarNotification(
+                  createSuccessNotification(
+                    'Selected files were successfully removed',
+                  ),
+                ),
+              )
+            })
+
+            setShowRemoveFileDialog(false)
+          }}
+          onCancel={() => setShowRemoveFileDialog(false)}
+          title="Do you really want to remove this file(s)?"
+          open={showRemoveFileDialog}
+          ContentComponent="You won't be able to undo this action"
+        />
+
+        {showFile && (
+          <Dialog
+            onClose={() => setShowFile(null)}
+            open={true}
+            classes={{ paper: classes.showFileDialogPaper }}
+          >
+            <DialogTitle>{`Backup - ${showFile.filename}`}</DialogTitle>
+            <DialogContent dividers>
+              <Highlight language="json">
+                {showFile.content ?? 'Loading...'}
+              </Highlight>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                autoFocus
+                onClick={() => setShowFile(null)}
+                color="primary"
+              >
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
+        )}
+      </>
     )
   }
 }
