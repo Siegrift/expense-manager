@@ -22,7 +22,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'space-between',
   },
   marginBottom: { marginBottom: theme.spacing(1) },
-  relativeBalance: { fontWeight: 'bold', color: 'red' },
+  relativeBalancePos: { fontWeight: 'bold', color: 'green' },
+  relativeBalanceNeg: { fontWeight: 'bold', color: 'red' },
   chartWrapper: {
     ['@media (max-height:500px)']: {
       height: '200px !important',
@@ -95,14 +96,26 @@ const Overview = () => {
         </div>
         <div className={classes.row}>
           <Typography>Relative balance</Typography>
-          <Typography className={classes.relativeBalance}>
+          <Typography
+            className={
+              txsInfo?.relativeBalance ?? 0 <= 0
+                ? classes.relativeBalancePos
+                : classes.relativeBalanceNeg
+            }
+          >
             {txsInfo?.relativeBalance}
           </Typography>
         </div>
         <div className={classes.row}>
           <Typography>Avarage per day</Typography>
-          <Typography className={classes.relativeBalance}>
-            {txsInfo?.average}
+          <Typography
+            className={
+              txsInfo?.average ?? 0 <= 0
+                ? classes.relativeBalancePos
+                : classes.relativeBalanceNeg
+            }
+          >
+            ~{txsInfo?.average}
           </Typography>
         </div>
 
@@ -118,7 +131,7 @@ const Overview = () => {
           </Typography>
         </div>
         <div style={{ height: 250 }}>
-          {/* TODO: implement keyboard events */}
+          {/* TODO: implement keyboard events and disable URL change on row click */}
           <TransactionList transactions={txs} />
         </div>
         <Link href={`/transactions`}>
