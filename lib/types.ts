@@ -7,3 +7,8 @@ export interface Logger {
 }
 
 export type FirebaseField = { uid: string; id: string }
+
+export interface DateRange {
+  start: Date
+  end: Date
+}

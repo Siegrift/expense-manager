@@ -13,11 +13,7 @@ import {
 } from '../profile/backupCommons'
 import { getInitialState as getInitialProfileState } from '../profile/state'
 import { Action, Thunk } from '../redux/types'
-import {
-  createErrorNotification,
-  setSnackbarNotification,
-  withErrorHandler,
-} from '../shared/actions'
+import { withErrorHandler } from '../shared/actions'
 import { SignInStatus, State } from '../state'
 
 import { FirestoneQuery, getQueries } from './firestoneQueries'

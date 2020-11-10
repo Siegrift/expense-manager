@@ -12,6 +12,7 @@ import { CURRENCIES } from '../shared/currencies'
 import { useIsBigDevice } from '../shared/hooks'
 import { mainCurrencySel } from '../shared/selectors'
 import { formatMoney } from '../shared/utils'
+import { DateRange } from '../types'
 
 import { recentBalanceDataSel, displayDataSel, DisplayMode } from './selectors'
 
@@ -21,20 +22,22 @@ const SLICE_DATE_FORMAT = 'd.MM.yyyy'
 interface Props {
   width: number
   height: number
-  hideToggles?: boolean
+  dateRange?: DateRange
 }
 
-const RecentBalance = ({ width, height, hideToggles }: Props) => {
+const RecentBalance = ({ width, height, dateRange }: Props) => {
   const mainCurrency = useSelector(mainCurrencySel)
   const [displayMode, setDisplayMode] = useState<DisplayMode>('best-fit')
   const isBigDevice = useIsBigDevice()
   const overridenDisplayMode = !isBigDevice ? 'best-fit' : displayMode
 
-  const { daysToDisplay, xAxisMergeSize } = useSelector(
-    displayDataSel(width, overridenDisplayMode),
+  const { daysToDisplay, xAxisMergeSize, ...computedDateRange } = useSelector(
+    displayDataSel(width, overridenDisplayMode, dateRange),
   )
 
-  const { data } = useSelector(recentBalanceDataSel(daysToDisplay))
+  const { data } = useSelector(
+    recentBalanceDataSel(daysToDisplay, computedDateRange),
+  )
   const endOfToday = endOfDay(new Date())
 
   const showSlice = useCallback(
@@ -107,13 +110,14 @@ const RecentBalance = ({ width, height, hideToggles }: Props) => {
           orient: 'bottom',
           tickSize: 5,
           tickPadding: 5,
-          format: (v) =>
-            (v as number) % xAxisMergeSize === 0
+          format: (v) => {
+            return (v as number) % xAxisMergeSize === 0
               ? format(
                   subDays(endOfToday, daysToDisplay - ((v as number) + 1)),
                   AXIS_DATE_FORMAT,
                 )
-              : '',
+              : ''
+          },
         }}
         axisLeft={{
           orient: 'left',
@@ -132,7 +136,7 @@ const RecentBalance = ({ width, height, hideToggles }: Props) => {
         sliceTooltip={showSlice}
         animate={false}
       />
-      {!hideToggles && isBigDevice && (
+      {!dateRange && isBigDevice && (
         <ToggleButtonGroup
           value={displayMode}
           exclusive

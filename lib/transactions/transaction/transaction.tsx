@@ -144,7 +144,11 @@ const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
           <Tooltip title="(D)elete transaction">
             <IconButton
               className={classes.iconButton}
-              onClick={() => dispatch(setConfirmTxDeleteDialogOpen(true))}
+              onClick={(e) => {
+                e.stopPropagation()
+
+                dispatch(setConfirmTxDeleteDialogOpen(true))
+              }}
             >
               <DeleteIcon color="secondary" />
             </IconButton>

@@ -1,25 +1,49 @@
 import React from 'react'
 
+import Divider from '@material-ui/core/Divider'
+import FormControl from '@material-ui/core/FormControl'
+import InputLabel from '@material-ui/core/InputLabel'
 import MuiLink from '@material-ui/core/Link'
+import MenuItem from '@material-ui/core/MenuItem'
+import Select from '@material-ui/core/Select'
 import { Theme, makeStyles } from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import LaunchIcon from '@material-ui/icons/Launch'
+import { DateTimePicker } from '@material-ui/pickers'
 import classnames from 'classnames'
 import Link from 'next/link'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 import ChartWrapper from '../charts/chartWrapper'
 import RecentBalance from '../charts/recentBalance'
 import PageWrapper from '../components/pageWrapper'
 import Paper from '../components/paper'
+import { OverviewPeriod } from '../state'
 import TransactionList from '../transactions/transactionList'
 
-import { overviewTransactionsSel, txsInfoSel } from './selectors'
+import { setOverviewPeriod } from './actions'
+import {
+  overviewPeriodSel,
+  overviewTransactionsSel,
+  dateRangeSel,
+  txsInfoSel,
+} from './selectors'
+
+type OverviewLabels = { [k in OverviewPeriod]: string }
+const overviewLabels: OverviewLabels = {
+  week: 'Week (last 7 days)',
+  wtd: 'Week to date',
+  month: 'Month (last 30 days)',
+  mtd: 'Month to date',
+}
 
 const useStyles = makeStyles((theme: Theme) => ({
-  row: {
+  infoRow: {
     display: 'flex',
     justifyContent: 'space-between',
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
   },
   marginBottom: { marginBottom: theme.spacing(1) },
   relativeBalancePos: { fontWeight: 'bold', color: 'green' },
@@ -30,17 +54,81 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     height: '250px !important',
   },
-  link: { fontStyle: 'italic', display: 'inline-block', cursor: 'pointer' },
+  link: {
+    fontStyle: 'italic',
+    display: 'inline-block',
+    cursor: 'pointer',
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+  },
+  periodSelectWrapper: {
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+    display: 'flex',
+    flex: 1,
+    justifyContent: 'space-between',
+    '& > *': {
+      margin: theme.spacing(1),
+    },
+    flexWrap: 'wrap',
+  },
 }))
 
 const Overview = () => {
   const classes = useStyles()
 
   const txs = useSelector(overviewTransactionsSel)
+  const period = useSelector(overviewPeriodSel)
   const txsInfo = useSelector(txsInfoSel)
+  const dispatch = useDispatch()
+  const dateRange = useSelector(dateRangeSel)
 
   return (
     <PageWrapper>
+      <Paper style={{ marginBottom: 16, display: 'flex' }}>
+        <div className={classes.periodSelectWrapper}>
+          <FormControl style={{ flex: 1, minWidth: 200 }}>
+            <InputLabel>Overview period</InputLabel>
+            <Select
+              value={period}
+              renderValue={(val) => overviewLabels[val as OverviewPeriod]}
+              onChange={(e) =>
+                dispatch(setOverviewPeriod(e.target.value as OverviewPeriod))
+              }
+            >
+              {Object.keys(overviewLabels).map((label) => (
+                <MenuItem key={label} value={label}>
+                  {overviewLabels[label]}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <DateTimePicker
+            ampm={false}
+            disableFuture
+            disabled
+            value={dateRange.start}
+            onChange={() => console.log('change start date')}
+            label="Start date"
+            renderInput={(props) => (
+              <TextField {...props} style={{ flex: 1, minWidth: 180 }} />
+            )}
+          />
+          <DateTimePicker
+            ampm={false}
+            disableFuture
+            disabled
+            value={dateRange.end}
+            onChange={() => console.log('change end date')}
+            label="End date"
+            renderInput={(props) => (
+              <TextField {...props} style={{ flex: 1, minWidth: 180 }} />
+            )}
+          />
+        </div>
+      </Paper>
+
       <Paper>
         <div
           style={{
@@ -59,7 +147,11 @@ const Overview = () => {
           className={classes.chartWrapper}
           Container="div"
           renderChart={({ width, height }) => (
-            <RecentBalance width={width} height={height} hideToggles />
+            <RecentBalance
+              width={width}
+              height={height}
+              dateRange={dateRange}
+            />
           )}
         />
         <Link href={`/charts`}>
@@ -83,39 +175,58 @@ const Overview = () => {
           }}
         >
           <Typography variant="overline" style={{ textAlign: 'center' }}>
-            Last 7 days stats
+            Statistics
           </Typography>
         </div>
-        <div className={classes.row}>
+        <div className={classes.infoRow}>
           <Typography>Income</Typography>
           <Typography>{txsInfo?.income}</Typography>
         </div>
-        <div className={classes.row}>
+        <div className={classes.infoRow}>
           <Typography>Expense</Typography>
           <Typography>{txsInfo?.expense}</Typography>
         </div>
-        <div className={classes.row}>
+        <div className={classes.infoRow}>
+          <Typography>Number of transactions</Typography>
+          <Typography>{txsInfo?.totalTransactions}</Typography>
+        </div>
+
+        <Divider />
+
+        <div className={classes.infoRow}>
+          <Typography>Average per transaction</Typography>
+          <Typography
+            className={
+              txsInfo?.averagePerTransaction.startsWith('-')
+                ? classes.relativeBalanceNeg
+                : classes.relativeBalancePos
+            }
+          >
+            {txsInfo?.averagePerTransaction}
+          </Typography>
+        </div>
+        <div className={classes.infoRow}>
           <Typography>Relative balance</Typography>
           <Typography
             className={
-              txsInfo?.relativeBalance ?? 0 <= 0
-                ? classes.relativeBalancePos
-                : classes.relativeBalanceNeg
+              txsInfo?.relativeBalance.startsWith('-')
+                ? classes.relativeBalanceNeg
+                : classes.relativeBalancePos
             }
           >
             {txsInfo?.relativeBalance}
           </Typography>
         </div>
-        <div className={classes.row}>
+        <div className={classes.infoRow}>
           <Typography>Avarage per day</Typography>
           <Typography
             className={
-              txsInfo?.average ?? 0 <= 0
-                ? classes.relativeBalancePos
-                : classes.relativeBalanceNeg
+              txsInfo?.averagePerDay.startsWith('-')
+                ? classes.relativeBalanceNeg
+                : classes.relativeBalancePos
             }
           >
-            ~{txsInfo?.average}
+            {txsInfo?.averagePerDay}
           </Typography>
         </div>
 
@@ -131,7 +242,7 @@ const Overview = () => {
           </Typography>
         </div>
         <div style={{ height: 250 }}>
-          {/* TODO: implement keyboard events and disable URL change on row click */}
+          {/* TODO: implement keyboard events and delete transaction handling */}
           <TransactionList transactions={txs} />
         </div>
         <Link href={`/transactions`}>
