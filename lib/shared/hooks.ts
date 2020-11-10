@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import { useSelector } from 'react-redux'
 
-import { ExchangeRates } from '../settings/state'
+import { ExchangeRates } from '../profile/state'
 
 import { request } from './request'
 import { currentUserIdSel } from './selectors'
@@ -11,6 +11,11 @@ import { currentUserIdSel } from './selectors'
 export const useIsBigDevice = () => {
   const theme = useTheme()
   return useMediaQuery(theme.breakpoints.up('sm'))
+}
+
+export const useIsVeryBigDevice = () => {
+  const theme = useTheme()
+  return useMediaQuery(theme.breakpoints.up('md'))
 }
 
 // inspired by: https://scotch.io/tutorials/create-a-custom-usefetch-react-hook

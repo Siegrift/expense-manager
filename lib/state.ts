@@ -1,5 +1,7 @@
+import { Color as NotificationSeverity } from '@material-ui/lab/Alert'
+
 import { Tag, Transaction } from './addTransaction/state'
-import { Profile } from './settings/state'
+import { Profile } from './profile/state'
 import { ObjectOf } from './types'
 
 export type ScreenTitle =
@@ -7,7 +9,8 @@ export type ScreenTitle =
   | 'transactions'
   | 'charts'
   | 'tags'
-  | 'settings'
+  | 'profile'
+  | 'overview'
 
 export type SignInStatus = 'loggedIn' | 'loggingIn' | 'loggedOut' | 'unknown'
 
@@ -17,24 +20,36 @@ export interface TransactionSearch {
   searchQuery?: string
 }
 
-export interface State {
-  cnt: number
-  // use firebase.auth().currentUser to get the current user
-  signInStatus: SignInStatus
-  currentScreen: ScreenTitle
-  // NOTE: tags and transactions are in sync with firestore, keep local data out of it
+/**
+ * This is the state that should be saved in backup.
+ */
+export interface SerializableState {
   tags: ObjectOf<Tag>
   transactions: ObjectOf<Transaction>
-  transactionSearch: TransactionSearch
-  cursor: number
-  user: firebase.User | null
-  error: string | null
-  confirmTxDeleteDialogOpen: boolean
   profile: ObjectOf<Profile>
 }
 
+export interface NotificationState {
+  severity: NotificationSeverity
+  message: string
+}
+
+// TODO: add custom date range
+export type OverviewPeriod = 'week' | 'wtd' | 'month' | 'mtd'
+
+export interface State extends SerializableState {
+  // use firebase.auth().currentUser to get the current user
+  signInStatus: SignInStatus
+  currentScreen: ScreenTitle
+  transactionSearch: TransactionSearch
+  cursor: number
+  user: firebase.User | null
+  notification: NotificationState | null
+  confirmTxDeleteDialogOpen: boolean
+  overviewPeriod: OverviewPeriod
+}
+
 const state: State = {
-  cnt: 0,
   signInStatus: 'unknown',
   currentScreen: 'add',
   tags: {},
@@ -44,9 +59,10 @@ const state: State = {
   },
   cursor: 0,
   user: null,
-  error: null,
+  notification: null,
   confirmTxDeleteDialogOpen: false,
   profile: {},
+  overviewPeriod: 'week',
 }
 
 export const getInitialState = () => state

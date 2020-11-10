@@ -11,8 +11,8 @@ import Link from 'next/link'
 
 interface AppBarProps {
   returnUrl?: string
-  onSave?: () => void
-  onRemove?: () => void
+  onSave?: (e: React.SyntheticEvent) => void
+  onRemove?: (e: React.SyntheticEvent) => void
   appBarTitle: string
 }
 

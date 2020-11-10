@@ -20,6 +20,7 @@ import { useSelector } from 'react-redux'
 import { Tag, Transaction } from '../addTransaction/state'
 import AmountField from '../components/amountField'
 import AppBar from '../components/appBar'
+import ConfirmDialog from '../components/confirmDialog'
 import Paper from '../components/paper'
 import { CURRENCIES } from '../shared/currencies'
 import { defaultCurrencySel } from '../shared/selectors'
@@ -107,17 +108,11 @@ const TagDetails = ({
     tag.defaultAmount ? tag.defaultAmount : '',
   )
   const defaultCurrency = useSelector(defaultCurrencySel)
-
   const [shouldValidate, setShouldValidate] = useState({
     tagName: false,
     amount: false,
   })
-  const onRemoveTag = () => {
-    if (onRemove) {
-      onRemove()
-      Router.push('/tags')
-    }
-  }
+  const [showRemoveTagDialog, setShowRemoveTagDialog] = useState(false)
 
   const onSaveHandler = () => {
     if (isValidDefaultAmount(amount) && tagName) {
@@ -145,7 +140,7 @@ const TagDetails = ({
         appBarTitle={appBarTitle}
         returnUrl="/tags"
         onSave={onSaveHandler}
-        onRemove={onRemove && onRemoveTag}
+        onRemove={onRemove ? () => setShowRemoveTagDialog(true) : undefined}
       />
 
       <div className={classes.root}>
@@ -236,6 +231,23 @@ const TagDetails = ({
           </Paper>
         )}
       </div>
+
+      {showRemoveTagDialog && (
+        <ConfirmDialog
+          onConfirm={(e) => {
+            e.stopPropagation()
+
+            if (onRemove) {
+              onRemove()
+              Router.push('/tags')
+            }
+          }}
+          onCancel={() => setShowRemoveTagDialog(false)}
+          title="Do you really want to remove this tag?"
+          open={true}
+          ContentComponent="You won't be able to undo this action"
+        />
+      )}
     </>
   )
 }

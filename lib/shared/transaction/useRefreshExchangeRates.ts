@@ -4,8 +4,8 @@ import { set } from '@siegrift/tsfunct'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { uploadToFirebase } from '../../actions'
-import { Profile } from '../../settings/state'
-import { setAppError } from '../actions'
+import { Profile } from '../../profile/state'
+import { createErrorNotification, setSnackbarNotification } from '../actions'
 import { exchangeRatesUrl } from '../currencies'
 import { useFetch } from '../hooks'
 import { currentUserIdSel, profileSel } from '../selectors'
@@ -32,7 +32,9 @@ export const useRefreshExchangeRates = () => {
         }),
       )
     } else if (fetchData.error) {
-      dispatch(setAppError(fetchData.error))
+      dispatch(
+        setSnackbarNotification(createErrorNotification(fetchData.error)),
+      )
     }
   }, [firebaseLoaded, fetchData.data])
 

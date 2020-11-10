@@ -4,7 +4,7 @@ import { State } from '../state'
 
 export const currentUserIdSel = (state: State) => state.user?.uid ?? null
 
-export const appErrorSel = (state: State) => state.error
+export const snackbarNotificationSel = (state: State) => state.notification
 
 export const profileSel = (state: State) => {
   const profiles = Object.values(state.profile)
@@ -32,3 +32,11 @@ export const settingsSel = createSelector(
 )
 
 export const signInStatusSel = (state: State) => state.signInStatus
+
+export const transactionsSel = (state: State) => state.transactions
+
+// TODO: use this selector to check if firebase is loaded instead of currentUserIdSel
+export const firebaseLoadedSel = createSelector(
+  currentUserIdSel,
+  (userId) => userId !== null,
+)

@@ -1,14 +1,6 @@
 import { Currency, DEFAULT_CURRENCY } from '../shared/currencies'
 import { ObjectOf, FirebaseField } from '../types'
 
-export enum TransactionTypes {
-  fromUser = 'fromUser',
-  imported = 'imported',
-  repeated = 'repeated',
-}
-
-export type TransactionType = keyof typeof TransactionTypes
-
 export interface Tag extends FirebaseField {
   name: string
   automatic: boolean
@@ -28,7 +20,6 @@ export type RepeatingOption = keyof typeof RepeatingOptions
 
 export interface BaseTransaction {
   rate?: number
-  transactionType: TransactionType
   // NOTE: order might be important
   tagIds: string[]
   currency: Currency
@@ -59,7 +50,6 @@ type CreateStateProps = {
 export const createDefaultAddTransactionState = (
   initialProps?: CreateStateProps,
 ): AddTransaction => ({
-  transactionType: TransactionTypes.fromUser,
   amount: '',
   tagIds: initialProps?.initialTagIds || [],
   newTags: {},

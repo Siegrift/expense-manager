@@ -2,24 +2,40 @@ import { set } from '@siegrift/tsfunct'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { Action } from '../redux/types'
+import { NotificationState } from '../state'
 
-export const setAppError = (
-  message: string | null,
-  err?: Error,
+// these two methods are the most common usage of notifications
+export const createErrorNotification = (
+  message: string,
+): NotificationState => ({ severity: 'error', message })
+export const createSuccessNotification = (
+  message: string,
+): NotificationState => ({ severity: 'success', message })
+
+export const setSnackbarNotification = (
+  notification: NotificationState | null,
+  err?: Error | string,
 ): Action<any> => ({
   type: 'Set app error',
-  payload: { message, err },
-  reducer: (state) => set(state, ['error'], message),
+  payload: { notification, err },
+  reducer: (state) => set(state, ['notification'], notification),
 })
 
-export const withErrorHandler = (
+// TODO: replace with awaited when TS
+type PromiseVal<T> = T extends Promise<infer X> ? X : T
+
+// not really an action, just a small utility
+export const withErrorHandler = async <T>(
   message: string | null,
   dispatch: ThunkDispatch<any, any, any>,
-  cb: () => void,
-) => {
+  cb: () => T,
+): Promise<PromiseVal<T> | undefined> => {
   try {
-    cb()
+    return (await cb()) as any
   } catch (err) {
-    dispatch(setAppError(message, err))
+    dispatch(
+      setSnackbarNotification(createErrorNotification(message ?? ''), err),
+    )
+    return undefined
   }
 }

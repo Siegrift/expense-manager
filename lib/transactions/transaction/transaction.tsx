@@ -14,6 +14,7 @@ import RepeatOneIcon from '@material-ui/icons/RepeatOne'
 import classnames from 'classnames'
 import formatDistance from 'date-fns/formatDistance'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
 
@@ -21,8 +22,8 @@ import { Transaction as TransactionState } from '../../addTransaction/state'
 import { useIsBigDevice } from '../../shared/hooks'
 import { formatMoney } from '../../shared/utils'
 import { State } from '../../state'
-import { setCursor, setConfirmTxDeleteDialogOpen } from '../actions'
-import { applySearchOnTransactions, cursorSel } from '../selectors'
+import { setConfirmTxDeleteDialogOpen } from '../actions'
+import { cursorSel } from '../selectors'
 
 const useStyles = makeStyles((theme: Theme) => ({
   listItem: {
@@ -33,6 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflow: 'auto',
     display: 'flex',
     width: '100%',
+    margin: 'auto',
   },
   divider: {
     width: '100%',
@@ -43,10 +45,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flex: 1,
     width: '100%',
-    overflow: 'auto',
+    overflowX: 'auto',
     whiteSpace: 'nowrap',
     justifyContent: 'space-between',
   },
+  listItemSecondRow: { display: 'flex', width: '100%', flexDirection: 'row' },
   iconPanel: {
     alignSelf: 'center',
     display: 'flex',
@@ -60,99 +63,142 @@ const useStyles = makeStyles((theme: Theme) => ({
   cursor: {
     backgroundColor: 'rgba(0,0,0,0.1)',
   },
-  dateTimeWrapper: { margin: `auto 0 auto ${theme.spacing(4)}px` },
+  amountWrapper: { margin: `auto ${theme.spacing(4)}px auto 0` },
+  dateTimeWrapper: { margin: 'auto' },
 }))
 
 type TransactionContentProps = { tx: TransactionState; bigDevice: boolean }
 
-export const TransactionContent = ({
-  tx,
-  bigDevice,
-}: TransactionContentProps) => {
+const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
   const tags = useSelector((state: State) => state.tags)
   const dispatch = useDispatch()
   const classes = useStyles()
 
-  return (
-    <>
-      <div className={classes.listItemFirstRow}>
-        <Typography
-          variant="h4"
-          style={{
-            color: tx.isExpense ? 'red' : 'green',
-            textAlign: 'left',
-          }}
-        >
-          {`${tx.isExpense ? '-' : '+'}${formatMoney(tx.amount, tx.currency)}`}
-        </Typography>
-        <div className={classes.dateTimeWrapper}>
-          <Tooltip title={tx.dateTime.toLocaleString()}>
-            <Typography variant="body1" style={{ alignSelf: 'flex-end' }}>
-              {`${formatDistance(tx.dateTime, new Date(), {
-                includeSeconds: false,
-              })} ago`}
-            </Typography>
-          </Tooltip>
-        </div>
-      </div>
+  const Amount = (
+    <div className={classes.amountWrapper}>
+      <Typography
+        variant="h4"
+        style={{
+          color: tx.isExpense ? 'red' : 'green',
+          textAlign: 'left',
+        }}
+      >
+        {`${tx.isExpense ? '-' : '+'}${formatMoney(tx.amount, tx.currency)}`}
+      </Typography>
+    </div>
+  )
+  const DateComponent = (
+    <Tooltip title={tx.dateTime.toLocaleString()}>
+      <Typography
+        variant="body1"
+        style={{ alignSelf: 'flex-end', margin: 'auto 8px' }}
+      >
+        {`${formatDistance(tx.dateTime, new Date(), {
+          includeSeconds: false,
+        })} ago`}
+      </Typography>
+    </Tooltip>
+  )
 
-      <div style={{ display: 'flex', width: '100%', flexDirection: 'row' }}>
-        <div className={classes.chipField}>
-          {tx.tagIds.map((id) => {
-            return (
-              <Chip key={id} label={tags[id].name} onDelete={null as any} />
-            )
-          })}
-        </div>
-        <div className={classes.iconPanel}>
-          {tx.repeating !== 'none' && (
-            <Tooltip title="Repeating transaction">
-              <RepeatOneIcon
-                className={classes.icon}
-                color={tx.repeating === 'inactive' ? 'disabled' : 'primary'}
-              />
-            </Tooltip>
-          )}
-          {tx.note !== '' && (
-            <Tooltip title="Contains note">
-              <NoteIcon className={classes.icon} color="primary" />
-            </Tooltip>
-          )}
-        </div>
-        {bigDevice && (
-          <>
-            <Divider orientation="vertical" flexItem style={{ width: 2 }} />
-            <Link href={`/transactions/${tx.id}`}>
-              <Tooltip title="(E)dit transaction">
-                <IconButton className={classes.iconButton} data-cy="edit-icon">
-                  <EditIcon color="primary" />
-                </IconButton>
-              </Tooltip>
-            </Link>
+  const Tags = (
+    <div className={classes.chipField}>
+      {tx.tagIds.map((id) => {
+        return (
+          <Chip
+            key={id}
+            label={tags[id].name}
+            onDelete={null as any}
+            style={{ margin: 2 }}
+          />
+        )
+      })}
+    </div>
+  )
 
-            <Tooltip title="(D)elete transaction">
-              <IconButton
-                className={classes.iconButton}
-                onClick={() => dispatch(setConfirmTxDeleteDialogOpen(true))}
-              >
-                <DeleteIcon color="secondary" />
+  const Icons = (
+    <div className={classes.iconPanel}>
+      {tx.repeating !== 'none' && (
+        <Tooltip title="Repeating transaction">
+          <RepeatOneIcon
+            className={classes.icon}
+            color={tx.repeating === 'inactive' ? 'disabled' : 'primary'}
+          />
+        </Tooltip>
+      )}
+      {tx.note !== '' && (
+        <Tooltip title="Contains note">
+          <NoteIcon className={classes.icon} color="primary" />
+        </Tooltip>
+      )}
+      {bigDevice && (
+        <>
+          <Divider orientation="vertical" flexItem style={{ width: 2 }} />
+          <Link href={`/transactions/details?id=${tx.id}`}>
+            <Tooltip title="(E)dit transaction">
+              <IconButton className={classes.iconButton} data-cy="edit-icon">
+                <EditIcon color="primary" />
               </IconButton>
             </Tooltip>
-          </>
-        )}
-      </div>
-      <Divider className={classes.divider} />
-    </>
+          </Link>
+
+          <Tooltip title="(D)elete transaction">
+            <IconButton
+              className={classes.iconButton}
+              onClick={(e) => {
+                e.stopPropagation()
+
+                dispatch(setConfirmTxDeleteDialogOpen(true))
+              }}
+            >
+              <DeleteIcon color="secondary" />
+            </IconButton>
+          </Tooltip>
+        </>
+      )}
+    </div>
   )
+
+  if (bigDevice) {
+    return (
+      <>
+        <div className={classes.listItemFirstRow}>
+          {Amount}
+          {Tags}
+          {DateComponent}
+          {Icons}
+        </div>
+        <Divider className={classes.divider} />
+      </>
+    )
+  } else {
+    return (
+      <>
+        <div className={classes.listItemFirstRow}>
+          {Amount}
+          {DateComponent}
+        </div>
+        <div className={classes.listItemSecondRow}>
+          {Tags}
+          {Icons}
+        </div>
+        <Divider className={classes.divider} />
+      </>
+    )
+  }
 }
 
-const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
+export const TransactionContent = React.memo(_TransactionContent)
+
+const Transaction: React.FC<ListChildComponentProps> = ({
+  index,
+  style,
+  data /* passed as itemData from react-window list (https://react-window.now.sh/#/api/FixedSizeList) */,
+}) => {
   const classes = useStyles()
-  const transactions = useSelector(applySearchOnTransactions)
-  const tx = transactions[index]
+  const tx: TransactionState = data[index]
   const bigDevice = useIsBigDevice()
   const cursor = useSelector(cursorSel)
-  const dispatch = useDispatch()
+  const router = useRouter()
 
   if (bigDevice) {
     return (
@@ -162,7 +208,9 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
           classes.listItem,
           index === cursor && classes.cursor,
         )}
-        onClick={() => dispatch(setCursor(index))}
+        onClick={() =>
+          router.replace(`/transactions`, `/transactions#${tx.id}`)
+        }
         ContainerComponent="div"
         data-cy="transaction"
       >
@@ -171,7 +219,7 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
     )
   } else {
     return (
-      <Link href={`/transactions/${tx.id}`}>
+      <Link href={`/transactions/details?id=${tx.id}`}>
         <ListItem
           style={style as any}
           className={classes.listItem}
@@ -186,4 +234,4 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
   }
 }
 
-export default Transaction
+export default React.memo(Transaction)

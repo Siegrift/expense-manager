@@ -1,13 +1,18 @@
 import React from 'react'
 
-import { PieDatum, ResponsivePie } from '@nivo/pie'
+import { PieDatum, Pie } from '@nivo/pie'
 import { useSelector } from 'react-redux'
 
 import { tagSharesSel } from './selectors'
 
 const NUMBER_OF_TAGS_SHOWN = 10
 
-const TagPercentages = () => {
+interface Props {
+  width: number
+  height: number
+}
+
+const TagPercentages = ({ width, height }: Props) => {
   const tagPercentages = useSelector(tagSharesSel)
   const data = [
     ...tagPercentages
@@ -23,7 +28,9 @@ const TagPercentages = () => {
     ),
   ]
   return (
-    <ResponsivePie
+    <Pie
+      width={width}
+      height={height}
       data={(data as unknown) as PieDatum[]}
       margin={{ top: 50, right: 80, bottom: 30, left: 80 }}
       sliceLabel={(v) => `${v.value}%`}

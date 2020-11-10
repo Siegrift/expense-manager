@@ -2,13 +2,14 @@ import React from 'react'
 
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+import ParentSize from '@visx/responsive/lib/components/ParentSize'
+import classnames from 'classnames'
 
 import Paper from '../components/paper'
 
 const useStyles = makeStyles((theme: Theme) => ({
   chartWrapper: {
     height: '300px',
-    minHeight: '250px',
     width: '100%',
     '&:not(:last-child)': {
       marginBottom: theme.spacing(2),
@@ -16,14 +17,23 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
-const ChartWrapper: React.FunctionComponent<{ label?: string }> = ({
+interface Props {
+  label?: string
+  renderChart: (props: { width: number; height: number }) => React.ReactNode
+  Container?: React.FC | string
+  className?: string
+}
+
+const ChartWrapper: React.FunctionComponent<Props> = ({
   label,
-  children,
+  renderChart,
+  Container = Paper,
+  className,
 }) => {
   const classes = useStyles()
 
   return (
-    <Paper className={classes.chartWrapper}>
+    <Container className={classnames(classes.chartWrapper, className)}>
       <Typography
         variant="overline"
         display="block"
@@ -34,8 +44,8 @@ const ChartWrapper: React.FunctionComponent<{ label?: string }> = ({
       >
         {label}
       </Typography>
-      {children}
-    </Paper>
+      <ParentSize>{renderChart}</ParentSize>
+    </Container>
   )
 }
 

@@ -2,7 +2,7 @@ import { pipe } from '@siegrift/tsfunct'
 import chunk from 'lodash/chunk'
 import Router from 'next/router'
 
-import { ExchangeRates } from '../settings/state'
+import { ExchangeRates } from '../profile/state'
 import { ObjectOf } from '../types'
 
 import { CURRENCIES, Currency } from './currencies'
@@ -25,6 +25,18 @@ export function downloadFile(filename: string, text: string) {
   document.body.appendChild(element)
   element.click()
   document.body.removeChild(element)
+}
+
+// inspired by https://firebase.google.com/docs/storage/web/download-files?authuser=0#download_data_via_url
+export function downloadTextFromUrl(url: string): Promise<string> {
+  return new Promise((res, rej) => {
+    const xhr = new XMLHttpRequest()
+    xhr.responseType = 'text'
+    xhr.onload = () => res(xhr.response)
+    xhr.onerror = rej
+    xhr.open('GET', url)
+    xhr.send()
+  })
 }
 
 export function isValidDate(date: unknown) {
@@ -50,15 +62,18 @@ export const sorted = <T>(
 
 export const formatBoolean = (value: boolean) => (value ? 'yes' : 'no')
 
-export const formatMoney = (amount: string | number, currency: Currency) =>
-  `${formatAmount(amount)} ${CURRENCIES[currency].symbol}`
+export const formatMoney = (amount: number, currency: Currency) =>
+  `${formatAmount(amount, CURRENCIES[currency].scale)} ${
+    CURRENCIES[currency].symbol
+  }`
 
 export const reverse = (str: string) => str.split('').reverse().join('')
 
-export const formatAmount = (amount: string | number): string => {
+export const formatAmount = (amount: number, scale = 0): string => {
+  amount = round(amount, scale)
   const strAmount = '' + amount
 
-  if (strAmount[0] === '-') return `-${formatAmount(strAmount.substr(1))}`
+  if (strAmount[0] === '-') return `-${formatAmount(-1 * amount, scale)}`
 
   const numTokens = strAmount.split('.')
   const insertCommas = pipe(
@@ -81,3 +96,6 @@ export const computeExchangeRate = (
   const targetToEur = 1 / rates[target]
   return sourceToEur / targetToEur
 }
+
+export const round = (amount: number, decimalPlaces: number) =>
+  Math.round(amount * 10 ** decimalPlaces) / 10 ** decimalPlaces

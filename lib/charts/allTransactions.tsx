@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ResponsiveSunburst } from '@nivo/sunburst'
+import { Sunburst } from '@nivo/sunburst'
 import reduce from 'lodash/reduce'
 import { useSelector } from 'react-redux'
 
@@ -89,7 +89,12 @@ const createRecData = (
   return ans
 }
 
-const AllTransactions = () => {
+interface Props {
+  width: number
+  height: number
+}
+
+const AllTransactions = ({ width, height }: Props) => {
   const tagShares = useSelector(tagSharesSel)
   const transactions = useSelector((state: State) =>
     Object.values(state.transactions),
@@ -98,7 +103,9 @@ const AllTransactions = () => {
   const data = createRecData(transactions, tagShares, 0, [])
 
   return (
-    <ResponsiveSunburst
+    <Sunburst
+      width={width}
+      height={height}
       data={{ name: 'root', children: data }}
       margin={{ top: 30, right: 0, bottom: 30, left: 0 }}
       identity="name"

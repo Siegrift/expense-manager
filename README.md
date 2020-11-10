@@ -27,10 +27,18 @@ _We use fixed version of next, because deploying with firebase works only after 
 1. **Lower case filenames** - Nextjs uses predefined routing _(pages directory is automatically
    routed)_ and the url name must match the page filename. I want URL parts _(e.g. /login)_ to be
    lowercased, and for consistency all files should start with lowercase.
-2. **CI tests** - Currently, there are none. TODO: tutorial [how to setup cypress for
+2. **CI tests** - Currently, there are none. Tutorial [how to setup cypress for
    CI](https://docs.cypress.io/guides/guides/continuous-integration.html#Boot-your-server) _(also
    covers, how to set it up locally, which we use right now)._
 
 ## Upgrade deps
 
 Run `yarn upgrade --latest`
+
+## Cloud storage
+
+In order to download files from cloud storage from web you need to configure CORS. See the
+documentation here https://firebase.google.com/docs/storage/web/download-files?authuser=0#cors_configuration.
+
+We are using commited `cors.json` file for this matter.
+Make sure you are logged in. You can use `gcloud auth login` to log in.

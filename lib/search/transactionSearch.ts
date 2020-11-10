@@ -2,12 +2,7 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import parse from 'date-fns/parse'
 
-import {
-  RepeatingOptions,
-  Tag,
-  Transaction,
-  TransactionTypes,
-} from '../addTransaction/state'
+import { RepeatingOptions, Tag, Transaction } from '../addTransaction/state'
 import { CURRENCIES } from '../shared/currencies'
 import { TransactionSearch } from '../state'
 import { ObjectOf } from '../types'
@@ -89,11 +84,6 @@ export const COMMANDS: Command[] = [
     predicate: (tx, query) =>
       isBefore(parse(query, 'd.M.y', new Date()), tx.dateTime),
     queryValidation: (query) => isValidDate(query),
-  },
-  {
-    name: 'tx-type',
-    predicate: (tx, query) => tx.transactionType === query,
-    valueOptions: Object.keys(TransactionTypes),
   },
   {
     name: 'currency',

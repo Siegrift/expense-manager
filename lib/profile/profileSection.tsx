@@ -13,11 +13,13 @@ const useStyles = makeStyles({
   },
 })
 
-export interface SettingsPanelProps {
+export interface ProfileSectionProps {
   name: string
 }
 
-const SettingsPanel: React.FunctionComponent<SettingsPanelProps> = (props) => {
+const ProfileSection: React.FunctionComponent<ProfileSectionProps> = (
+  props,
+) => {
   const classes = useStyles()
   const [expanded, setExpanded] = React.useState(false)
 
@@ -27,6 +29,7 @@ const SettingsPanel: React.FunctionComponent<SettingsPanelProps> = (props) => {
       onChange={() => setExpanded(!expanded)}
       aria-label={props.name}
       style={{ textTransform: 'capitalize' }}
+      TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>{props.name}</Typography>
@@ -38,4 +41,4 @@ const SettingsPanel: React.FunctionComponent<SettingsPanelProps> = (props) => {
   )
 }
 
-export default SettingsPanel
+export default ProfileSection

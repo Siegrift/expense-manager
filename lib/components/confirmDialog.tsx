@@ -8,8 +8,8 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 
 interface Props {
   open: boolean
-  onCancel?: () => void
-  onConfirm?: () => void
+  onCancel?: (e: React.SyntheticEvent) => void
+  onConfirm?: (e: React.SyntheticEvent) => void
   ContentComponent?: React.ReactNode
   title?: string
 }
@@ -34,7 +34,7 @@ const ConfirmDialog = ({
             onClick={onCancel}
             color="primary"
             onKeyDown={(e) => {
-              if (e.key === 'Esc') onCancel()
+              if (e.key === 'Esc') onCancel(e)
             }}
           >
             Cancel
@@ -45,7 +45,7 @@ const ConfirmDialog = ({
             onClick={onConfirm}
             color="secondary"
             onKeyDown={(e) => {
-              if (e.key === 'Enter') onConfirm()
+              if (e.key === 'Enter') onConfirm(e)
             }}
           >
             OK

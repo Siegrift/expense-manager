@@ -9,12 +9,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ObjectOf } from '../../lib/types'
 import { Tag, Transaction } from '../addTransaction/state'
 import AppBar from '../components/appBar'
+import ConfirmDialog from '../components/confirmDialog'
 import TransactionForm from '../components/transactionForm'
-import { tagsSel } from '../settings/selectors'
+import {
+  createErrorNotification,
+  setSnackbarNotification,
+} from '../shared/actions'
+import { INVALID_TRANSACTION_FORM_FIELDS } from '../shared/constants'
 import { isAmountInValidFormat } from '../shared/utils'
 
 import { removeTx, saveTxEdit } from './actions'
-import { transactionByIdSel } from './selectors'
+import { transactionByIdSel, tagsSel } from './selectors'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -61,8 +66,11 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
   const [newTags, setNewTags] = useState<ObjectOf<Tag>>({})
   const [tagInputValue, setTagInputValue] = useState('')
   const [shouldValidate, setShouldValidate] = useState(false)
+  const [showTxRemoveDialog, setShowTxRemoveDialog] = useState(false)
 
-  const onSaveHandler = () => {
+  const onSaveHandler = (e: React.SyntheticEvent) => {
+    e.stopPropagation()
+
     if (isAmountInValidFormat(amount)) {
       dispatch(
         saveTxEdit(tx.id, newTags, {
@@ -75,25 +83,29 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
           repeating,
         }),
       )
-      Router.push('/transactions')
+      Router.push(`/transactions#${tx.id}`)
     } else {
       setShouldValidate(true)
+      dispatch(
+        setSnackbarNotification(
+          createErrorNotification(INVALID_TRANSACTION_FORM_FIELDS),
+        ),
+      )
     }
   }
 
   return (
     <>
       <AppBar
-        returnUrl="/transactions"
+        returnUrl={`/transactions#${tx.id}`}
         onSave={onSaveHandler}
-        onRemove={() => {
-          // TODO: confirm dialog (use different text when removing repeating tx)
-          dispatch(removeTx(tx.id))
-          Router.push('/transactions')
+        onRemove={(e) => {
+          e.stopPropagation()
+
+          setShowTxRemoveDialog(true)
         }}
         appBarTitle="Edit transaction"
       />
-
       <div className={classes.root}>
         <TransactionForm
           variant="edit"
@@ -141,6 +153,20 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
           onSubmit={onSaveHandler}
         />
       </div>
+      {showTxRemoveDialog && (
+        <ConfirmDialog
+          onConfirm={(e) => {
+            e.stopPropagation()
+
+            dispatch(removeTx(tx.id))
+            Router.push(`/transactions#${tx.id}`)
+          }}
+          onCancel={() => setShowTxRemoveDialog(false)}
+          title="Do you really want to remove this transacation?"
+          open={true}
+          ContentComponent="You won't be able to undo this action"
+        />
+      )}
     </>
   )
 }
