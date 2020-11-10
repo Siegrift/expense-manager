@@ -83,7 +83,7 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
           repeating,
         }),
       )
-      Router.push('/transactions')
+      Router.push(`/transactions#${tx.id}`)
     } else {
       setShouldValidate(true)
       dispatch(
@@ -97,7 +97,7 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
   return (
     <>
       <AppBar
-        returnUrl="/transactions"
+        returnUrl={`/transactions#${tx.id}`}
         onSave={onSaveHandler}
         onRemove={(e) => {
           e.stopPropagation()
@@ -159,7 +159,7 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
             e.stopPropagation()
 
             dispatch(removeTx(tx.id))
-            Router.push('/transactions')
+            Router.push(`/transactions#${tx.id}`)
           }}
           onCancel={() => setShowTxRemoveDialog(false)}
           title="Do you really want to remove this transacation?"

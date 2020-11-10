@@ -14,6 +14,7 @@ import RepeatOneIcon from '@material-ui/icons/RepeatOne'
 import classnames from 'classnames'
 import formatDistance from 'date-fns/formatDistance'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
 
@@ -21,8 +22,8 @@ import { Transaction as TransactionState } from '../../addTransaction/state'
 import { useIsBigDevice } from '../../shared/hooks'
 import { formatMoney } from '../../shared/utils'
 import { State } from '../../state'
-import { setCursor, setConfirmTxDeleteDialogOpen } from '../actions'
-import { applySearchOnTransactions, cursorSel } from '../selectors'
+import { setConfirmTxDeleteDialogOpen } from '../actions'
+import { cursorSel } from '../selectors'
 
 const useStyles = makeStyles((theme: Theme) => ({
   listItem: {
@@ -68,10 +69,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 type TransactionContentProps = { tx: TransactionState; bigDevice: boolean }
 
-export const TransactionContent = ({
-  tx,
-  bigDevice,
-}: TransactionContentProps) => {
+const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
   const tags = useSelector((state: State) => state.tags)
   const dispatch = useDispatch()
   const classes = useStyles()
@@ -185,13 +183,18 @@ export const TransactionContent = ({
   }
 }
 
-const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
+export const TransactionContent = React.memo(_TransactionContent)
+
+const Transaction: React.FC<ListChildComponentProps> = ({
+  index,
+  style,
+  data /* passed as itemData from react-window list (https://react-window.now.sh/#/api/FixedSizeList) */,
+}) => {
   const classes = useStyles()
-  const transactions = useSelector(applySearchOnTransactions)
-  const tx = transactions[index]
+  const tx: TransactionState = data[index]
   const bigDevice = useIsBigDevice()
   const cursor = useSelector(cursorSel)
-  const dispatch = useDispatch()
+  const router = useRouter()
 
   if (bigDevice) {
     return (
@@ -201,7 +204,9 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
           classes.listItem,
           index === cursor && classes.cursor,
         )}
-        onClick={() => dispatch(setCursor(index))}
+        onClick={() =>
+          router.replace(`/transactions`, `/transactions#${tx.id}`)
+        }
         ContainerComponent="div"
         data-cy="transaction"
       >
@@ -225,4 +230,4 @@ const Transaction: React.FC<ListChildComponentProps> = ({ index, style }) => {
   }
 }
 
-export default Transaction
+export default React.memo(Transaction)

@@ -78,10 +78,14 @@ export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
 
   switch (key) {
     case 'ARROWUP':
-      if (cursor > 0) dispatch(setCursor(cursor - 1))
+      if (cursor > 0) {
+        Router.replace(`/transactions`, `/transactions#${txs[cursor - 1].id}`)
+      }
       break
     case 'ARROWDOWN':
-      if (cursor + 1 < txs.length) dispatch(setCursor(cursor + 1))
+      if (cursor + 1 < txs.length) {
+        Router.replace(`/transactions`, `/transactions#${txs[cursor + 1].id}`)
+      }
       break
     case 'E':
       Router.push(`/transactions/details?id=${txs[cursor].id}`)

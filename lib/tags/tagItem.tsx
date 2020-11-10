@@ -126,4 +126,4 @@ const TagItem: React.FC<ListChildComponentProps> = ({ index, style }) => {
   )
 }
 
-export default TagItem
+export default React.memo(TagItem)
