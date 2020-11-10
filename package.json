@@ -143,6 +143,6 @@
   },
   "peerDependencies": {
     "//": "Cypress installation breaks on deploy",
-    "cypress": "^4.4.1"
+    "cypress": "4.4.1"
   }
 }
