@@ -69,29 +69,30 @@ export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
   { logger },
 ) => {
   const key = e.key.toUpperCase()
-  // TODO: log this if the keypress is actionable
-  logger.log('Transaction list keyboard press: ' + key)
-
   const cursor = getState().cursor
   const txs = applySearchOnTransactions(getState())
   if (!txs[cursor]) return
 
-  switch (key) {
-    case 'ARROWUP':
+  const actions = {
+    ARROWUP: () => {
       if (cursor > 0) {
         Router.replace(`/transactions`, `/transactions#${txs[cursor - 1].id}`)
       }
-      break
-    case 'ARROWDOWN':
+    },
+    ARROWDOWN: () => {
       if (cursor + 1 < txs.length) {
         Router.replace(`/transactions`, `/transactions#${txs[cursor + 1].id}`)
       }
-      break
-    case 'E':
-      Router.push(`/transactions/details?id=${txs[cursor].id}`)
-      break
-    case 'D':
-      dispatch(setConfirmTxDeleteDialogOpen(true))
-      break
+    },
+    E: () => Router.push(`/transactions/details?id=${txs[cursor].id}`),
+    D: () => dispatch(setConfirmTxDeleteDialogOpen(true)),
   }
+
+  if (!actions.hasOwnProperty(key)) return
+
+  // only log this if the keypress is actionable to reduce spam
+  logger.log('Transaction list action for key: ' + key)
+
+  // trigger the action
+  actions[key]()
 }
