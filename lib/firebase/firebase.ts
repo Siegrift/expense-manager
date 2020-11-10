@@ -40,36 +40,36 @@ export const initializeFirebase = async (store: Store) => {
 
     // enable firebase performance
     firebase.performance()
-  }
 
-  // persistance only works in browsers
-  if (typeof window !== 'undefined') {
-    await firebase
-      .firestore()
-      .enablePersistence({ synchronizeTabs: true })
-      .catch((err) => {
-        if (err.code === 'failed-precondition') {
-          // Multiple tabs open, persistence can only be enabled
-          // in one tab at a a time.
-          store.dispatch(
-            setSnackbarNotification(
-              createErrorNotification(
-                'Expense manager is opened on mutliple tabs. Local persistance is disabled!',
+    // persistance only works in browsers
+    if (typeof window !== 'undefined') {
+      await firebase
+        .firestore()
+        .enablePersistence({ synchronizeTabs: true })
+        .catch((err) => {
+          if (err.code === 'failed-precondition') {
+            // Multiple tabs open, persistence can only be enabled
+            // in one tab at a a time.
+            store.dispatch(
+              setSnackbarNotification(
+                createErrorNotification(
+                  'Expense manager is opened on mutliple tabs. Local persistance is disabled!',
+                ),
               ),
-            ),
-          )
-        } else if (err.code === 'unimplemented') {
-          // The current browser does not support all of the
-          // features required to enable persistence
-          store.dispatch(
-            setSnackbarNotification(
-              createErrorNotification(
-                'Underlying platform (browser) does not support persistance',
+            )
+          } else if (err.code === 'unimplemented') {
+            // The current browser does not support all of the
+            // features required to enable persistence
+            store.dispatch(
+              setSnackbarNotification(
+                createErrorNotification(
+                  'Underlying platform (browser) does not support persistance',
+                ),
               ),
-            ),
-          )
-        }
-      })
+            )
+          }
+        })
+    }
   }
 
   firebase.auth().onAuthStateChanged(async (user) => {

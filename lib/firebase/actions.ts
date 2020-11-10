@@ -1,11 +1,23 @@
 import { fpSet, pipe, set } from '@siegrift/tsfunct'
+import { addDays, isBefore, parse } from 'date-fns'
 import { batch } from 'react-redux'
 
 import { addRepeatingTxs } from '../actions'
 import { getFirebase } from '../firebase/firebase'
+import { uploadBackup } from '../profile/backupActions'
+import {
+  listFirestoreFilesForUser,
+  BACKUP_FILENAME_FORMAT,
+  AUTO_BACKUP_PERIOD_DAYS,
+  createFirestoreFilename,
+} from '../profile/backupCommons'
 import { getInitialState as getInitialProfileState } from '../profile/state'
 import { Action, Thunk } from '../redux/types'
-import { withErrorHandler } from '../shared/actions'
+import {
+  createErrorNotification,
+  setSnackbarNotification,
+  withErrorHandler,
+} from '../shared/actions'
 import { SignInStatus, State } from '../state'
 
 import { FirestoneQuery, getQueries } from './firestoneQueries'
@@ -45,12 +57,16 @@ export const authChangeAction = (
 
   if (status === 'loggedIn') {
     dispatch(applyInitialState(user!))
-    await dispatch(initializeFirestore())
+    await dispatch(initializeFirestore(user!))
   }
   // this must be last, used to indicate when firestore has finished loading
   dispatch(changeSignInStatus(status, user))
 }
 
+/**
+ * Applies initial such that this state exists even when the app is opened
+ * for the first time.
+ */
 const applyInitialState = (user: firebase.User): Action => ({
   type: 'Apply initial state',
   reducer: (state) => {
@@ -59,7 +75,9 @@ const applyInitialState = (user: firebase.User): Action => ({
   },
 })
 
-export const initializeFirestore = (): Thunk => async (dispatch) => {
+export const initializeFirestore = (user: firebase.User): Thunk => async (
+  dispatch,
+) => {
   const queries = getQueries()
   const initialQueries = queries.map((query) => {
     return query.createFirestoneQuery().get({
@@ -95,6 +113,26 @@ export const initializeFirestore = (): Thunk => async (dispatch) => {
       })
     },
   )
+
+  // try to backup data
+  try {
+    const data = await listFirestoreFilesForUser(user.uid)
+
+    // if there is any error, just throw. We want to show the same error.
+    if (!data || typeof data === 'string') {
+      throw new Error('Loading firestore files failed')
+    }
+
+    if (!data[0]) {
+      await dispatch(uploadBackup(createFirestoreFilename(), user.uid))
+    } else {
+      const now = new Date()
+      const latest = parse(data[0], BACKUP_FILENAME_FORMAT, now)
+      if (isBefore(addDays(latest, AUTO_BACKUP_PERIOD_DAYS), now)) {
+        await dispatch(uploadBackup(createFirestoreFilename(), user.uid))
+      }
+    }
+  } catch {}
 
   let actions: Array<Parameters<typeof firestoneChangeAction>> = []
   getFirebase()

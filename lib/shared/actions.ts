@@ -21,19 +21,21 @@ export const setSnackbarNotification = (
   reducer: (state) => set(state, ['notification'], notification),
 })
 
+// TODO: replace with awaited when TS
+type PromiseVal<T> = T extends Promise<infer X> ? X : T
+
 // not really an action, just a small utility
-export const withErrorHandler = (
+export const withErrorHandler = async <T>(
   message: string | null,
   dispatch: ThunkDispatch<any, any, any>,
-  cb: () => void,
-) => {
+  cb: () => T,
+): Promise<PromiseVal<T> | undefined> => {
   try {
-    cb()
-    return true
+    return (await cb()) as any
   } catch (err) {
     dispatch(
       setSnackbarNotification(createErrorNotification(message ?? ''), err),
     )
-    return false
+    return undefined
   }
 }

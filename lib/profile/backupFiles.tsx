@@ -19,31 +19,23 @@ import SelectAllIcon from '@material-ui/icons/DoneAll'
 import DownloadIcon from '@material-ui/icons/GetApp'
 import Alert from '@material-ui/lab/Alert'
 import { update } from '@siegrift/tsfunct'
-import format from 'date-fns/format'
-import isBefore from 'date-fns/isBefore'
-import parse from 'date-fns/parse'
 import Highlight from 'react-highlight.js'
 import { useDispatch, useSelector } from 'react-redux'
 
 import ConfirmDialog from '../components/confirmDialog'
 import Loading from '../components/loading'
-import { getFirebase } from '../firebase/firebase'
-import {
-  createErrorNotification,
-  createSuccessNotification,
-  setSnackbarNotification,
-  withErrorHandler,
-} from '../shared/actions'
-import {
-  REQUEST_TIMEOUT_ERROR,
-  UPLOADING_DATA_ERROR,
-} from '../shared/constants'
+import { createErrorNotification, withErrorHandler } from '../shared/actions'
+import { DOWNLOADING_DATA_ERROR } from '../shared/constants'
 import { currentUserIdSel, firebaseLoadedSel } from '../shared/selectors'
-import { delay, downloadTextFromUrl, downloadFile } from '../shared/utils'
 
-import { jsonFromDataSel } from './importExportSelectors'
-
-const BACKUP_FILENAME_FORMAT = 'dd.MM.yyyy - HH:mm:ss'
+import { uploadBackup, removeFiles } from './backupActions'
+import {
+  AUTO_BACKUP_PERIOD_DAYS,
+  createFirestoreFilename,
+  downloadFiles,
+  firestoreFileContent,
+  listFirestoreFilesForUser,
+} from './backupCommons'
 
 const useStyles = makeStyles((theme: Theme) => ({
   buttonsWrapper: {
@@ -78,7 +70,6 @@ const BackupFilesList = () => {
   >(undefined)
   const firebaseLoaded = useSelector(firebaseLoadedSel)
   const userId = useSelector(currentUserIdSel)
-  const jsonData = useSelector(jsonFromDataSel)
   const dispatch = useDispatch()
   const [showRemoveFileDialog, setShowRemoveFileDialog] = React.useState(false)
   const [showFile, setShowFile] = React.useState<ShowFileContent | null>(null)
@@ -91,48 +82,23 @@ const BackupFilesList = () => {
 
   React.useEffect(() => {
     if (!firebaseLoaded) return
-
     setListItems(null)
-    const storageRef = getFirebase().storage().ref()
-    const listFilesPromise = storageRef
-      .child(userId!)
-      .listAll()
-      .then(function (res) {
-        return res.items.map((itemRef) => {
-          return itemRef.name
-        })
-      })
 
-    Promise.all([
-      Promise.race([listFilesPromise, delay(5 * 1000)]), // max wait time is 5s
-      delay(1000), // min wait time is 1s
-    ])
-      .then((data) => {
-        if (data[0]) {
-          const d = data[0] as string[]
-          d.sort((d1, d2) => {
-            const base = new Date()
-            const dd1 = parse(d1, BACKUP_FILENAME_FORMAT, base)
-            const dd2 = parse(d2, BACKUP_FILENAME_FORMAT, base)
-            return isBefore(dd1, dd2) ? 1 : -1
-          })
-          setListItems(d.map((str) => ({ filename: str, checked: false })))
-        } else {
-          dispatch(
-            setSnackbarNotification(
-              createErrorNotification(REQUEST_TIMEOUT_ERROR),
-            ),
-          )
-        }
-      })
-      .catch((error) => {
-        dispatch(
-          setSnackbarNotification(
-            createErrorNotification(UPLOADING_DATA_ERROR),
-            error,
-          ),
-        )
-      })
+    const performAsyncCall = async () => {
+      const data = await withErrorHandler(
+        DOWNLOADING_DATA_ERROR,
+        dispatch,
+        () => listFirestoreFilesForUser(userId!),
+      )
+
+      if (!data) return
+      else if (typeof data === 'string') dispatch(createErrorNotification(data))
+      else {
+        setListItems(data.map((str) => ({ filename: str, checked: false })))
+      }
+    }
+
+    performAsyncCall()
   }, [firebaseLoaded])
 
   if (!firebaseLoaded || listItems === undefined) return null
@@ -159,16 +125,13 @@ const BackupFilesList = () => {
                     'Unable to download file content',
                     dispatch,
                     async () => {
-                      const storageRef = getFirebase()
-                        .storage()
-                        .ref()
-                        .child(userId!)
-
-                      const content = await downloadTextFromUrl(
-                        await storageRef.child(filename).getDownloadURL(),
+                      const content = await firestoreFileContent(
+                        userId!,
+                        filename,
                       )
 
                       setShowFile({ filename, content })
+                      return true /* success */
                     },
                   )
 
@@ -228,21 +191,10 @@ const BackupFilesList = () => {
                 variant="outlined"
                 startIcon={<BackupIcon />}
                 onClick={() => {
-                  const storageRef = getFirebase()
-                    .storage()
-                    .ref()
-                    .child(userId!)
-                  const filename = format(new Date(), BACKUP_FILENAME_FORMAT)
+                  const filename = createFirestoreFilename()
 
-                  withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
-                    await storageRef.child(filename).putString(jsonData)
-                    setListItems([{ filename, checked: false }, ...listItems])
-                    dispatch(
-                      setSnackbarNotification(
-                        createSuccessNotification('Backup successful'),
-                      ),
-                    )
-                  })
+                  dispatch(uploadBackup(filename))
+                  setListItems([{ filename, checked: false }, ...listItems])
                 }}
               >
                 Backup now
@@ -265,20 +217,12 @@ const BackupFilesList = () => {
                 color="primary"
                 variant="contained"
                 startIcon={<DownloadIcon />}
-                onClick={() => {
-                  const storageRef = getFirebase()
-                    .storage()
-                    .ref()
-                    .child(userId!)
-                  listItems.forEach(async (item) => {
-                    if (item.checked) {
-                      const text = await downloadTextFromUrl(
-                        await storageRef.child(item.filename).getDownloadURL(),
-                      )
-                      downloadFile(item.filename, text)
-                    }
-                  })
-                }}
+                onClick={() =>
+                  downloadFiles(
+                    userId!,
+                    listItems.filter((i) => i.checked).map((i) => i.filename),
+                  )
+                }
                 disabled={somethingSelected}
               >
                 Download
@@ -288,29 +232,18 @@ const BackupFilesList = () => {
         </List>
 
         <ConfirmDialog
-          onConfirm={(e) => {
+          onConfirm={async (e) => {
             e.stopPropagation()
 
-            const storageRef = getFirebase().storage().ref().child(userId!)
-            const promises = listItems
+            const filenames = listItems
               .filter(({ checked }) => checked)
-              .map((item) => storageRef.child(item.filename).delete())
+              .map(({ filename }) => filename)
 
-            // wait for completion, TODO: maybe show loading overlay
-            withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
-              await Promise.all(promises)
-              // delete the removed ones from state
-              const preserved = listItems.filter(({ checked }) => !checked)
-              setListItems(preserved)
+            await dispatch(removeFiles(filenames))
 
-              dispatch(
-                setSnackbarNotification(
-                  createSuccessNotification(
-                    'Selected files were successfully removed',
-                  ),
-                ),
-              )
-            })
+            // delete the removed ones from state
+            const preserved = listItems.filter(({ checked }) => !checked)
+            setListItems(preserved)
 
             setShowRemoveFileDialog(false)
           }}
@@ -355,7 +288,7 @@ const BackupFiles = () => {
         severity="info"
         style={{ marginBottom: 8, textTransform: 'initial' }}
       >
-        Data is automatically saved every <b>7 days</b>{' '}
+        Data is automatically saved every <b>{AUTO_BACKUP_PERIOD_DAYS} days</b>{' '}
         <i>(maybe more if there are no changes in the data)</i>.
       </Alert>
       <BackupFilesList />
