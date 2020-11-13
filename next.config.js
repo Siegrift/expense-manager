@@ -154,8 +154,8 @@ const nextConfig = {
         options: {
           cacheName: 'others',
           expiration: {
-            maxEntries: 32,
-            maxAgeSeconds: 24 * 60 * 60, // 24 hours
+            maxEntries: 256,
+            maxAgeSeconds: 90 * 24 * 60 * 60, // 90 days
           },
           networkTimeoutSeconds: 10,
         },

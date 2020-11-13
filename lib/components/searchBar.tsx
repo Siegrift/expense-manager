@@ -7,14 +7,18 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import Divider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
+import InputAdornment from '@material-ui/core/InputAdornment'
 import InputBase from '@material-ui/core/InputBase'
 import Paper from '@material-ui/core/Paper'
 import { Theme, createStyles, makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+import CancelIcon from '@material-ui/icons/Cancel'
 import CodeIcon from '@material-ui/icons/Code'
 import InfoIcon from '@material-ui/icons/InfoOutlined'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import classnames from 'classnames'
+
+import { useIsBigDevice } from '../shared/hooks'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -69,6 +73,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   const classes = useStyles()
   const [showDialog, setShowDialog] = useState(false)
+  const isBigDevice = useIsBigDevice()
 
   return (
     <Paper className={classnames(classes.root, className)}>
@@ -144,6 +149,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   </Typography>
                 )
               }
+              endAdornment={
+                <InputAdornment position="end">
+                  <CancelIcon
+                    color="primary"
+                    onClick={() => onQueryChange({ value: '' })}
+                    style={{
+                      marginRight: 2,
+                      cursor: 'pointer',
+                      visibility:
+                        query.command || query.value ? 'visible' : 'hidden',
+                    }}
+                  />
+                </InputAdornment>
+              }
             />
           )
         }}
@@ -170,10 +189,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
         value={query.value}
         inputValue={query.value}
       />
-      <Divider className={classes.divider} orientation="vertical" />
-      <IconButton color="primary" className={classes.iconButton}>
-        <CodeIcon />
-      </IconButton>
+      {isBigDevice && (
+        <>
+          <Divider className={classes.divider} orientation="vertical" />
+          <IconButton color="primary" className={classes.iconButton}>
+            <CodeIcon />
+          </IconButton>
+        </>
+      )}
     </Paper>
   )
 }
