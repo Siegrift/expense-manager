@@ -118,7 +118,7 @@ const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
   const Icons = (
     <div className={classes.iconPanel}>
       {tx.repeating !== 'none' && (
-        <Tooltip title="Repeating transaction">
+        <Tooltip title={`Repeating transaction - ${tx.repeating}`}>
           <RepeatOneIcon
             className={classes.icon}
             color={tx.repeating === 'inactive' ? 'disabled' : 'primary'}
@@ -126,7 +126,7 @@ const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
         </Tooltip>
       )}
       {tx.note !== '' && (
-        <Tooltip title="Contains note">
+        <Tooltip title={`Note: ${tx.note}`}>
           <NoteIcon className={classes.icon} color="primary" />
         </Tooltip>
       )}
