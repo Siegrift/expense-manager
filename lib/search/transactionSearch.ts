@@ -159,3 +159,5 @@ export const isValidQuery = (query: TransactionSearch): boolean => {
     )
   else return validateCommandWithOptions(command, query.value)
 }
+
+export const OPERATORS = ['AND', 'OR', 'QUERY', 'COMPUTE']
