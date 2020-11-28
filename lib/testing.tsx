@@ -50,11 +50,13 @@ export const initializeMockFirebase = () => {
   mockauth.autoFlush()
   const mockfirestore = new firebasemock.MockFirestore()
   mockfirestore.autoFlush()
+  const mockStorage = new firebasemock.MockStorage()
+  mockStorage.autoFlush()
   const mockSdk = new firebasemock.MockFirebaseSdk(
     null, // realtime database
     () => mockauth,
     () => mockfirestore,
-    null, // storage
+    () => mockStorage,
     null, // messaging
   )
   const firebase = mockSdk.initializeApp()

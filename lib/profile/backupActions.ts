@@ -18,7 +18,11 @@ export const uploadBackup = (
   const userId = withUserId ?? currentUserIdSel(getState())
   const jsonData = jsonFromDataSel(getState())
 
-  const storageRef = getFirebase().storage().ref().child(userId!)
+  const storageRef = getFirebase()
+    .storage()
+    .ref()
+    .child(userId!)
+    .child('backup')
 
   withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
     await storageRef.child(filename).putString(jsonData)
@@ -34,7 +38,11 @@ export const removeFiles = (filenames: string[]): Thunk => async (
 ) => {
   const userId = currentUserIdSel(getState())
 
-  const storageRef = getFirebase().storage().ref().child(userId!)
+  const storageRef = getFirebase()
+    .storage()
+    .ref()
+    .child(userId!)
+    .child('backup')
   const promises = filenames.map((filename) =>
     storageRef.child(filename).delete(),
   )

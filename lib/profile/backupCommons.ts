@@ -11,6 +11,7 @@ export const listFirestoreFilesForUser = (userId: string) => {
   const storageRef = getFirebase().storage().ref()
   const listFilesPromise = storageRef
     .child(userId!)
+    .child('backup')
     .listAll()
     .then(function (res) {
       return res.items.map((itemRef) => {
