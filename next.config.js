@@ -5,6 +5,8 @@ const withOffline = require('next-offline')
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
+const withCSS = require('@zeit/next-css')
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 const compose = (...fns) =>
   fns.reduce(
@@ -154,8 +156,8 @@ const nextConfig = {
         options: {
           cacheName: 'others',
           expiration: {
-            maxEntries: 32,
-            maxAgeSeconds: 24 * 60 * 60, // 24 hours
+            maxEntries: 256,
+            maxAgeSeconds: 90 * 24 * 60 * 60, // 90 days
           },
           networkTimeoutSeconds: 10,
         },
@@ -171,8 +173,26 @@ const nextConfig = {
         emitWarning: dev,
       },
     })
+
+    // needed for monaco editor
+    config.module.rules.push({
+      test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
+      use: {
+        loader: 'url-loader',
+        options: {
+          limit: 100000,
+        },
+      },
+    })
+    config.plugins.push(
+      new MonacoWebpackPlugin({
+        // Add languages as needed...
+        languages: ['javascript', 'typescript'],
+        filename: 'static/[name].worker.js',
+      }),
+    )
     return config
   },
 }
 
-module.exports = compose(withBundleAnalyzer, withOffline)(nextConfig)
+module.exports = compose(withBundleAnalyzer, withOffline, withCSS)(nextConfig)

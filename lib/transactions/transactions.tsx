@@ -41,7 +41,10 @@ const Transactions = () => {
   const confirmDeleteDialogForTx = useSelector(confirmDeleteDialogForTxSel)
 
   useKeyDownAction((e: KeyboardEvent) => {
-    if (document.activeElement?.tagName !== 'INPUT') {
+    const tagName = document.activeElement?.tagName
+    // only dispatch if the active element is not a search bar or code editor
+    if (tagName !== 'INPUT' && tagName !== 'TEXTAREA') {
+      console.log(tagName)
       dispatch(keyPressAction(e))
     }
   })

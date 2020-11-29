@@ -3,30 +3,53 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Collapse from '@material-ui/core/Collapse'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogTitle from '@material-ui/core/DialogTitle'
 import FormControl from '@material-ui/core/FormControl'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Grid from '@material-ui/core/Grid'
+import IconButton from '@material-ui/core/IconButton'
 import InputLabel from '@material-ui/core/InputLabel'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemText from '@material-ui/core/ListItemText'
+import ListSubheader from '@material-ui/core/ListSubheader'
 import MenuItem from '@material-ui/core/MenuItem'
 import Select from '@material-ui/core/Select'
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
+import CloseIcon from '@material-ui/icons/Cancel'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import { DateTimePicker } from '@material-ui/pickers'
-import { useSelector } from 'react-redux'
+import { DropzoneAreaBase, FileObject } from 'material-ui-dropzone'
+import Highlight from 'react-highlight.js'
+import { useSelector, useDispatch } from 'react-redux'
 
 import { RepeatingOption, RepeatingOptions, Tag } from '../addTransaction/state'
 import AmountField from '../components/amountField'
 import { Loading } from '../components/loading'
 import Paper from '../components/paper'
 import TagField from '../components/tagField'
+import { getStorageRef } from '../firebase/firebase'
+import { setSnackbarNotification, withErrorHandler } from '../shared/actions'
 import { Currency, CURRENCIES } from '../shared/currencies'
 import { useFirebaseLoaded } from '../shared/hooks'
-import { mainCurrencySel, exchangeRatesSel } from '../shared/selectors'
+import {
+  mainCurrencySel,
+  exchangeRatesSel,
+  currentUserIdSel,
+} from '../shared/selectors'
 import { useRefreshExchangeRates } from '../shared/transaction/useRefreshExchangeRates'
-import { computeExchangeRate } from '../shared/utils'
+import {
+  areDistinct,
+  computeExchangeRate,
+  downloadTextFromUrl,
+} from '../shared/utils'
 import { ObjectOf } from '../types'
 
 import CurrencySelect from './currencySelect'
@@ -48,6 +71,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignSelf: 'stretch',
   },
   currency: { width: 105, marginLeft: theme.spacing(2) },
+  dropzoneText: {
+    fontSize: 18,
+    marginTop: 10,
+    marginBottom: 10,
+    display: 'inline-block',
+    verticalAlign: 'top',
+    marginRight: 8,
+  },
+  dropzone: { minHeight: 0 },
+  dropzoneIcon: { width: 25, height: 25, marginTop: 8 },
+  dropzonePreviewRemoveButton: { margin: 0 },
+  dropzonePreviewImageContainer: {
+    padding: 0,
+    flexBasis: 'unset',
+    '& > svg': { padding: 16 },
+  },
+  showFileDialogPaper: { width: '100%', maxWidth: 'unset' },
 }))
 
 type FieldProps<T> = {
@@ -75,6 +115,7 @@ interface BaseProps {
   dateTime: FieldProps<Date | undefined | null>
   repeating: FieldProps<RepeatingOption>
   note: FieldProps<string>
+  attachedFileObjects: FieldProps<FileObject[]>
   onSubmit: (e: React.SyntheticEvent) => void
 }
 
@@ -82,11 +123,50 @@ type AddTxFormVariantProps = {
   variant: 'add'
   useCurrentTime: FieldProps<boolean>
 }
-type EditTxFormVariantProps = { variant: 'edit' }
+
+type EditTxFormVariantProps = {
+  variant: 'edit'
+  uploadedFiles: FieldProps<string[]>
+  id: string
+}
 
 type VariantProps = AddTxFormVariantProps | EditTxFormVariantProps
 
 type TransactionFormProps = BaseProps & VariantProps
+
+interface ShowFileContent {
+  filename: string
+  rawContent?: string
+  imageUrl?: string
+}
+
+const FileContent = ({ rawContent, imageUrl, filename }: ShowFileContent) => {
+  if (!rawContent && !imageUrl) return <>Loading...</>
+
+  if (imageUrl) {
+    return (
+      <img
+        src={imageUrl}
+        alt={filename}
+        width="100%"
+        style={{ width: '100%' }}
+      />
+    )
+  }
+
+  const suffix = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase()
+
+  if (suffix === 'html' || suffix === 'htm') {
+    return (
+      <iframe
+        srcDoc={rawContent}
+        style={{ width: '100%', height: '60vh' }}
+      ></iframe>
+    )
+  } else {
+    return <Highlight language={suffix}>{rawContent}</Highlight>
+  }
+}
 
 const TransactionForm = (props: TransactionFormProps) => {
   const {
@@ -99,15 +179,25 @@ const TransactionForm = (props: TransactionFormProps) => {
     onSubmit,
     repeating,
     note,
+    attachedFileObjects,
   } = props
   const useCurrentTime =
     variant === 'add' && (props as AddTxFormVariantProps).useCurrentTime
+  const uploadedFiles =
+    variant === 'edit' && (props as EditTxFormVariantProps).uploadedFiles
+  const txId = variant === 'edit' && (props as EditTxFormVariantProps).id
 
   const classes = useStyles()
 
   const mainCurrency = useSelector(mainCurrencySel)
   const exchangeRates = useSelector(exchangeRatesSel)
+  const userId = useSelector(currentUserIdSel)
   const settingsLoaded = useFirebaseLoaded()
+  const dispatch = useDispatch()
+  const [
+    showUploadedFile,
+    setShowUploadedFile,
+  ] = React.useState<null | ShowFileContent>(null)
 
   const { loading, error } = useRefreshExchangeRates()
 
@@ -295,6 +385,138 @@ const TransactionForm = (props: TransactionFormProps) => {
           </Select>
         </FormControl>
       </Grid>
+
+      {uploadedFiles && (
+        <List
+          dense
+          subheader={
+            <ListSubheader style={{ padding: 0, fontSize: 'small' }}>
+              Already uploaded files
+            </ListSubheader>
+          }
+        >
+          {uploadedFiles.value.map((filename) => (
+            <ListItem
+              key={filename}
+              button
+              onClick={() => {
+                setShowUploadedFile({ filename })
+                const success = withErrorHandler(
+                  'Unable to download file content',
+                  dispatch,
+                  async () => {
+                    const ref = getStorageRef(
+                      userId!,
+                      'files',
+                      txId as string,
+                      filename,
+                    )
+                    const url = await ref.getDownloadURL()
+
+                    const type = (await ref.getMetadata())?.contentType
+                    if (typeof type === 'string' && type.startsWith('image')) {
+                      setShowUploadedFile({ filename, imageUrl: url })
+                      return true
+                    }
+
+                    const rawContent = await downloadTextFromUrl(url)
+                    setShowUploadedFile({ filename, rawContent })
+                    return true /* success */
+                  },
+                )
+
+                if (!success)
+                  setShowUploadedFile({
+                    filename,
+                    rawContent: 'Unexpected error while downloading file!',
+                  })
+              }}
+            >
+              <ListItemText primary={filename} />
+              <ListItemSecondaryAction style={{ right: 0 }}>
+                <IconButton
+                  color="primary"
+                  onChange={() =>
+                    uploadedFiles.handler(
+                      uploadedFiles.value.filter((f) => f !== filename),
+                    )
+                  }
+                >
+                  <CloseIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
+      )}
+
+      {showUploadedFile && (
+        <Dialog
+          onClose={() => setShowUploadedFile(null)}
+          open={true}
+          classes={{ paper: classes.showFileDialogPaper }}
+        >
+          <DialogTitle>{`Attached file - ${showUploadedFile.filename}`}</DialogTitle>
+          <DialogContent dividers>
+            <FileContent {...showUploadedFile} />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              autoFocus
+              onClick={() => setShowUploadedFile(null)}
+              color="primary"
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+
+      <DropzoneAreaBase
+        showFileNames={true}
+        filesLimit={5}
+        fileObjects={attachedFileObjects.value}
+        onAdd={(newFileObjects) => {
+          let filenames = newFileObjects.map((f) => f.file.name)
+          if (uploadedFiles) {
+            filenames = filenames.concat(uploadedFiles.value)
+          }
+
+          if (!areDistinct(filenames)) {
+            dispatch(
+              setSnackbarNotification({
+                message: 'Detected multiple files with same filenames!',
+                severity: 'warning',
+              }),
+            )
+          } else {
+            attachedFileObjects.handler([
+              ...attachedFileObjects.value,
+              ...newFileObjects,
+            ])
+          }
+        }}
+        onDelete={(_fileObj, index) =>
+          attachedFileObjects.handler(
+            attachedFileObjects.value.filter((_, i) => i !== index),
+          )
+        }
+        showAlerts={false} // turning this to true breaks application
+        classes={{
+          text: classes.dropzoneText,
+          icon: classes.dropzoneIcon,
+          root: classes.dropzone,
+        }}
+        previewGridClasses={{
+          container: classes.dropzonePreviewRemoveButton,
+          item: classes.dropzonePreviewImageContainer,
+        }}
+        dropzoneText="Drag and drop file(s) or click to choose"
+        onAlert={(message, severity) => {
+          if (severity === 'error')
+            dispatch(setSnackbarNotification({ message, severity }))
+        }}
+      />
 
       {variant === 'add' && (
         <Grid className={classes.row}>

@@ -26,46 +26,38 @@ import {
 const importData = (
   file: File,
   dataSourceSel: (importData: string) => (state: State) => ImportedData,
-): Thunk => (dispatch, getState) => {
+): Thunk => async (dispatch, getState) => {
   const userId = currentUserIdSel(getState())
-  const reader = new FileReader()
 
   if (!userId) {
     dispatch(setSnackbarNotification(createErrorNotification(NO_USER_ID_ERROR)))
     return Promise.resolve()
   }
 
-  return new Promise((res) => {
-    reader.onload = async () => {
-      const { errorReason, tags, transactions, profile } = dataSourceSel(
-        reader.result as string,
-      )(getState())
+  const fileContent = await file.text()
+  const { errorReason, tags, transactions, profile } = dataSourceSel(
+    fileContent,
+  )(getState())
 
-      if (errorReason) {
-        dispatch(setSnackbarNotification(createErrorNotification(errorReason)))
-      } else {
-        withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
-          await dispatch(
-            uploadToFirebase({
-              txs: Object.values(transactions),
-              tags: Object.values(tags),
-              profile: Object.values(profile),
-            }),
-          )
+  if (errorReason) {
+    dispatch(setSnackbarNotification(createErrorNotification(errorReason)))
+  } else {
+    withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+      await dispatch(
+        uploadToFirebase({
+          txs: Object.values(transactions),
+          tags: Object.values(tags),
+          profile: Object.values(profile),
+        }),
+      )
 
-          dispatch(
-            setSnackbarNotification(
-              createSuccessNotification('Data imported successfully'),
-            ),
-          )
-        })
-      }
-
-      res()
-    }
-
-    reader.readAsText(file)
-  })
+      dispatch(
+        setSnackbarNotification(
+          createSuccessNotification('Data imported successfully'),
+        ),
+      )
+    })
+  }
 }
 
 export const importFromCSV = (

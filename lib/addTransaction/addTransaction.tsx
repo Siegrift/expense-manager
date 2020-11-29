@@ -54,6 +54,7 @@ const AddTransaction = () => {
     useCurrentTime,
     repeating,
     shouldValidateAmount,
+    attachedFileObjects,
   } = addTx
 
   const tags = useSelector(tagsSel)
@@ -191,6 +192,14 @@ const AddTransaction = () => {
           value: repeating,
           handler: (value) =>
             setAddTx((currAddTx) => set(currAddTx, ['repeating'], value)),
+        }}
+        attachedFileObjects={{
+          value: attachedFileObjects,
+          handler: (files) =>
+            setAddTx((currAddTx) => ({
+              ...currAddTx,
+              attachedFileObjects: files,
+            })),
         }}
         onSubmit={onAddTransaction}
       />

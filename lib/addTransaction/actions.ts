@@ -2,6 +2,7 @@ import { pick } from '@siegrift/tsfunct'
 import { v4 as uuid } from 'uuid'
 
 import { uploadToFirebase } from '../actions'
+import { getStorageRef } from '../firebase/firebase'
 import { Thunk } from '../redux/types'
 import {
   createErrorNotification,
@@ -21,7 +22,7 @@ import {
 } from '../shared/selectors'
 import { computeExchangeRate } from '../shared/utils'
 
-import { AddTransaction } from './state'
+import { AddTransaction, Transaction } from './state'
 
 export const addTransaction = (addTx: AddTransaction): Thunk => async (
   dispatch,
@@ -47,7 +48,13 @@ export const addTransaction = (addTx: AddTransaction): Thunk => async (
   } else {
     const id = uuid()
 
-    const tx = {
+    const storageRef = getStorageRef(userId, 'files', id)
+    const fileUploads = addTx.attachedFileObjects.map(async ({ file }) =>
+      // TODO: handle duplicate filenames
+      storageRef.child(file.name).put(file),
+    )
+
+    const tx: Transaction = {
       id,
       ...pick(addTx, ['tagIds', 'currency', 'isExpense', 'note', 'repeating']),
       amount: Number.parseFloat(addTx.amount),
@@ -58,9 +65,11 @@ export const addTransaction = (addTx: AddTransaction): Thunk => async (
         addTx.currency,
         mainCurrency,
       ),
+      attachedFiles: addTx.attachedFileObjects.map(({ file }) => file.name),
     }
 
     withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+      await Promise.all(fileUploads)
       await dispatch(
         uploadToFirebase({ txs: [tx], tags: Object.values(addTx.newTags) }),
       )

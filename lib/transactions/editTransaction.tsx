@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import { pick } from '@siegrift/tsfunct'
 import difference from 'lodash/difference'
+import { FileObject } from 'material-ui-dropzone'
 import Router, { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -67,21 +68,33 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
   const [tagInputValue, setTagInputValue] = useState('')
   const [shouldValidate, setShouldValidate] = useState(false)
   const [showTxRemoveDialog, setShowTxRemoveDialog] = useState(false)
+  const [attachedFileObjects, setAttachedFileObjects] = useState<FileObject[]>(
+    [],
+  )
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>(
+    tx.attachedFiles ?? [],
+  )
 
   const onSaveHandler = (e: React.SyntheticEvent) => {
     e.stopPropagation()
 
     if (isAmountInValidFormat(amount)) {
       dispatch(
-        saveTxEdit(tx.id, newTags, {
-          amount: Number.parseFloat(amount),
-          isExpense,
-          note,
-          currency,
-          dateTime,
-          tagIds,
-          repeating,
-        }),
+        saveTxEdit(
+          newTags,
+          attachedFileObjects.map((f) => f.file),
+          {
+            id: tx.id,
+            amount: Number.parseFloat(amount),
+            isExpense,
+            note,
+            currency,
+            dateTime,
+            tagIds,
+            repeating,
+            attachedFiles: uploadedFiles,
+          },
+        ),
       )
       Router.push(`/transactions#${tx.id}`)
     } else {
@@ -150,6 +163,15 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
           dateTime={{ value: dateTime, handler: (dt) => setDateTime(dt!) }}
           repeating={{ value: repeating, handler: setRepeating }}
           note={{ value: note, handler: setNote }}
+          attachedFileObjects={{
+            value: attachedFileObjects,
+            handler: setAttachedFileObjects,
+          }}
+          uploadedFiles={{
+            value: uploadedFiles,
+            handler: setUploadedFiles,
+          }}
+          id={tx.id}
           onSubmit={onSaveHandler}
         />
       </div>

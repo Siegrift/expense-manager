@@ -1,4 +1,4 @@
-import { getFirebase } from '../firebase/firebase'
+import { getStorageRef } from '../firebase/firebase'
 import { Thunk } from '../redux/types'
 import {
   createSuccessNotification,
@@ -18,10 +18,8 @@ export const uploadBackup = (
   const userId = withUserId ?? currentUserIdSel(getState())
   const jsonData = jsonFromDataSel(getState())
 
-  const storageRef = getFirebase().storage().ref().child(userId!)
-
   withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
-    await storageRef.child(filename).putString(jsonData)
+    await getStorageRef(userId!, 'backup', filename).putString(jsonData)
     dispatch(
       setSnackbarNotification(createSuccessNotification('Backup successful')),
     )
@@ -34,7 +32,7 @@ export const removeFiles = (filenames: string[]): Thunk => async (
 ) => {
   const userId = currentUserIdSel(getState())
 
-  const storageRef = getFirebase().storage().ref().child(userId!)
+  const storageRef = getStorageRef(userId!, 'backup')
   const promises = filenames.map((filename) =>
     storageRef.child(filename).delete(),
   )
