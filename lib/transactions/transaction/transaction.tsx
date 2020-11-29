@@ -7,6 +7,7 @@ import ListItem from '@material-ui/core/ListItem'
 import { Theme, makeStyles } from '@material-ui/core/styles'
 import Tooltip from '@material-ui/core/Tooltip'
 import Typography from '@material-ui/core/Typography'
+import AttachFileIcon from '@material-ui/icons/AttachFile'
 import NoteIcon from '@material-ui/icons/Comment'
 import DeleteIcon from '@material-ui/icons/Delete'
 import EditIcon from '@material-ui/icons/Edit'
@@ -118,7 +119,7 @@ const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
   const Icons = (
     <div className={classes.iconPanel}>
       {tx.repeating !== 'none' && (
-        <Tooltip title={`Repeating transaction - ${tx.repeating}`}>
+        <Tooltip title={`Repeating - ${tx.repeating}`}>
           <RepeatOneIcon
             className={classes.icon}
             color={tx.repeating === 'inactive' ? 'disabled' : 'primary'}
@@ -126,8 +127,13 @@ const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
         </Tooltip>
       )}
       {tx.note !== '' && (
-        <Tooltip title={`Note: ${tx.note}`}>
+        <Tooltip title={tx.note}>
           <NoteIcon className={classes.icon} color="primary" />
+        </Tooltip>
+      )}
+      {(tx.attachedFiles?.length ?? 0) > 0 && (
+        <Tooltip title="Attached files">
+          <AttachFileIcon className={classes.icon} color="primary" />
         </Tooltip>
       )}
       {bigDevice && (

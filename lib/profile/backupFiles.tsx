@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   showFileDialogPaper: {
     width: '100%',
+    maxWidth: 'unset',
   },
 }))
 
@@ -284,6 +285,7 @@ const BackupFilesList = () => {
 const BackupFiles = () => {
   return (
     <>
+      {/* TODO: create section for attached files download */}
       <Alert
         severity="info"
         style={{ marginBottom: 8, textTransform: 'initial' }}

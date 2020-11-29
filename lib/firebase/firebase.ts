@@ -85,3 +85,12 @@ export const getFirebase = () => {
   }
   return firebaseInstance
 }
+
+export const getStorageRef = (...path: string[]) => {
+  let ref = getFirebase().storage().ref()
+  path.forEach((p) => {
+    ref = ref.child(p)
+  })
+
+  return ref
+}

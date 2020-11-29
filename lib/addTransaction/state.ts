@@ -1,3 +1,5 @@
+import { FileObject } from 'material-ui-dropzone'
+
 import { Currency, DEFAULT_CURRENCY } from '../shared/currencies'
 import { ObjectOf, FirebaseField } from '../types'
 
@@ -31,6 +33,7 @@ export interface BaseTransaction {
 export interface Transaction extends BaseTransaction, FirebaseField {
   dateTime: Date
   amount: number
+  attachedFiles?: string[]
 }
 
 export interface AddTransaction extends BaseTransaction {
@@ -40,6 +43,7 @@ export interface AddTransaction extends BaseTransaction {
   tagInputValue: string
   amount: string
   shouldValidateAmount: boolean
+  attachedFileObjects: FileObject[]
 }
 
 type CreateStateProps = {
@@ -61,4 +65,5 @@ export const createDefaultAddTransactionState = (
   useCurrentTime: true,
   shouldValidateAmount: false,
   repeating: RepeatingOptions.none,
+  attachedFileObjects: [],
 })

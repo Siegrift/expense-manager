@@ -99,3 +99,8 @@ export const computeExchangeRate = (
 
 export const round = (amount: number, decimalPlaces: number) =>
   Math.round(amount * 10 ** decimalPlaces) / 10 ** decimalPlaces
+
+export const areDistinct = <T>(arr: T[]) => {
+  const set = new Set<T>(arr)
+  return set.size === arr.length
+}

@@ -1,32 +1,90 @@
 import { set } from '@siegrift/tsfunct'
+import { difference } from 'lodash'
 import Router from 'next/router'
 
 import { removeFromFirebase, uploadToFirebase } from '../actions'
 import { Tag, Transaction } from '../addTransaction/state'
+import { getStorageRef } from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
 import {
   createSuccessNotification,
   setSnackbarNotification,
+  withErrorHandler,
 } from '../shared/actions'
+import { currentUserIdSel } from '../shared/selectors'
 import { TransactionSearch } from '../state'
 import { ObjectOf } from '../types'
 
 import { applySearchOnTransactions } from './selectors'
 
 export const saveTxEdit = (
-  id: string,
   newTags: ObjectOf<Tag>,
-  editedFields: Partial<Transaction>,
+  newFiles: File[],
+  editedFields: Omit<Transaction, 'uid'>,
 ): Thunk => async (dispatch, getState, { logger }) => {
   logger.log('Save edited transaction')
+
+  const userId = currentUserIdSel(getState())!
+  const originalTx = getState().transactions[editedFields.id]
   // TODO: what to do with tags that are not in any expense (deleted by edit)
-  const tx = { ...getState().transactions[id], ...editedFields }
-  await dispatch(uploadToFirebase({ txs: [tx], tags: Object.values(newTags) }))
-  dispatch(
-    setSnackbarNotification(
-      createSuccessNotification('Transaction edit successful'),
-    ),
+  const tx = { ...originalTx, ...editedFields }
+  const storageRef = getStorageRef(userId, 'files', originalTx.id)
+  let success: boolean | undefined
+
+  // remove user selected uploaded files from storage
+  success = await withErrorHandler(
+    'Failed to remove attached files',
+    dispatch,
+    async () => {
+      const toRemove = difference(
+        originalTx.attachedFiles!,
+        editedFields.attachedFiles!,
+      )
+
+      const promises = toRemove.map((filename) =>
+        storageRef.child(filename).delete(),
+      )
+      await Promise.all(promises)
+      return true
+    },
   )
+
+  // upload files chosen by the user
+  if (success) {
+    success = await withErrorHandler(
+      'Failed to upload new attached files',
+      dispatch,
+      async () => {
+        const fileUploads = newFiles.map(async (file) =>
+          // TODO: handle duplicate filenames
+          storageRef.child(file.name).put(file),
+        )
+        await Promise.all(fileUploads)
+        return true
+      },
+    )
+  }
+
+  if (success) {
+    success = await withErrorHandler(
+      'Failed to upload edited transaction',
+      dispatch,
+      async () => {
+        await dispatch(
+          uploadToFirebase({ txs: [tx], tags: Object.values(newTags) }),
+        )
+        return true
+      },
+    )
+  }
+
+  if (success) {
+    dispatch(
+      setSnackbarNotification(
+        createSuccessNotification('Transaction edit successful'),
+      ),
+    )
+  }
 }
 
 export const removeTx = (txId: string): Thunk => async (
@@ -35,13 +93,43 @@ export const removeTx = (txId: string): Thunk => async (
   { logger },
 ) => {
   logger.log('Remove transaction')
-  // TODO: what to do with tags that are not in any expense (deleted by edit)
-  await dispatch(removeFromFirebase([txId], []))
-  dispatch(
-    setSnackbarNotification(
-      createSuccessNotification('Transaction successfully removed'),
-    ),
+
+  const userId = currentUserIdSel(getState())!
+  const tx = getState().transactions[txId]
+  const storageRef = getStorageRef(userId, 'files', txId)
+
+  let success = await withErrorHandler(
+    'Failed to remove attached files',
+    dispatch,
+    async () => {
+      const promises = tx.attachedFiles?.map((filename) =>
+        storageRef.child(filename).delete(),
+      )
+
+      await Promise.all(promises ?? [])
+      return true
+    },
   )
+
+  if (success) {
+    success = await withErrorHandler(
+      'Failed to remove transaction data',
+      dispatch,
+      async () => {
+        // TODO: what to do with tags that are not in any expense (deleted by edit)
+        await dispatch(removeFromFirebase([txId], []))
+        return true
+      },
+    )
+  }
+
+  if (success) {
+    dispatch(
+      setSnackbarNotification(
+        createSuccessNotification('Transaction successfully removed'),
+      ),
+    )
+  }
 }
 
 export const changeTxSearchQuery = (
