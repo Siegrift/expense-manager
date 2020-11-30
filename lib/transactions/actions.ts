@@ -146,9 +146,9 @@ export const setCursor = (newCursor: number): Action<number> => ({
   reducer: (state) => set(state, ['cursor'], newCursor),
 })
 
-export const setConfirmTxDeleteDialogOpen = (open: boolean): Action => ({
-  type: `${open ? 'Open' : 'Close'} confirm delete tx dialog`,
-  reducer: (state) => set(state, ['confirmTxDeleteDialogOpen'], open),
+export const setConfirmTxDeleteDialogOpen = (txId: string | null): Action => ({
+  type: `${txId ? 'Open' : 'Close'} confirm delete tx dialog`,
+  reducer: (state) => set(state, ['confirmDeleteTxForTxId'], txId),
 })
 
 export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
@@ -173,7 +173,7 @@ export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
       }
     },
     E: () => Router.push(`/transactions/details?id=${txs[cursor].id}`),
-    D: () => dispatch(setConfirmTxDeleteDialogOpen(true)),
+    D: () => dispatch(setConfirmTxDeleteDialogOpen(txs[cursor].id)),
   }
 
   if (!actions.hasOwnProperty(key)) return

@@ -46,14 +46,22 @@ export const txSearchQuerySel = (state: State) => state.transactionSearch
 export const cursorSel = (state: State) => state.cursor
 
 export const confirmTxDeleteDialogOpenSel = (state: State) =>
-  state.confirmTxDeleteDialogOpen
+  state.confirmDeleteTxForTxId
 
 export const confirmDeleteDialogForTxSel = createSelector(
   confirmTxDeleteDialogOpenSel,
   applySearchOnTransactions,
-  cursorSel,
-  (isOpen, txs, cursor) => {
-    if (!isOpen || txs[cursor] === undefined) return null
-    return txs[cursor]
+  (txToRemove, txs) => {
+    if (!txToRemove) return null
+    return txs.find((tx) => tx.id === txToRemove) ?? null
   },
 )
+
+export const previousTxSel = (txId: string) =>
+  createSelector(applySearchOnTransactions, (txs) => {
+    const index = txs.findIndex((tx) => tx.id === txId)
+
+    if (index === 0 && index + 1 >= txs.length) return null
+    else if (index > 0) return txs[index - 1]
+    else return txs[index + 1]
+  })

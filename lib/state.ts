@@ -45,8 +45,7 @@ export interface State extends SerializableState {
   cursor: number
   user: firebase.User | null
   notification: NotificationState | null
-  // TODO: this doesn't work when trying to delete transaction other then cursor one
-  confirmTxDeleteDialogOpen: boolean
+  confirmDeleteTxForTxId: string | null
   overviewPeriod: OverviewPeriod
 }
 
@@ -61,7 +60,7 @@ const state: State = {
   cursor: 0,
   user: null,
   notification: null,
-  confirmTxDeleteDialogOpen: false,
+  confirmDeleteTxForTxId: null,
   profile: {},
   overviewPeriod: 'week',
 }

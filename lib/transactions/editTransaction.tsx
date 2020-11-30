@@ -20,7 +20,7 @@ import { INVALID_TRANSACTION_FORM_FIELDS } from '../shared/constants'
 import { isAmountInValidFormat } from '../shared/utils'
 
 import { removeTx, saveTxEdit } from './actions'
-import { transactionByIdSel, tagsSel } from './selectors'
+import { transactionByIdSel, tagsSel, previousTxSel } from './selectors'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -57,6 +57,8 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const availableTags = useSelector(tagsSel)
+  const previousTx = useSelector(previousTxSel(tx.id))
+
   const [amount, setAmount] = useState('' + tx.amount)
   const [isExpense, setIsExpense] = useState(tx.isExpense)
   const [note, setNote] = useState(tx.note)
@@ -181,7 +183,11 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
             e.stopPropagation()
 
             dispatch(removeTx(tx.id))
-            Router.push(`/transactions#${tx.id}`)
+            console.log(previousTx, previousTx?.id)
+            const returnUrl = previousTx
+              ? `/transactions#${previousTx.id}`
+              : '/transactions'
+            Router.push(returnUrl)
           }}
           onCancel={() => setShowTxRemoveDialog(false)}
           title="Do you really want to remove this transacation?"

@@ -8,7 +8,7 @@
   "scripts": {
     "build": "next build",
     "deploy": "yarn build && now --prod",
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS=--max_old_space_size=8192 next dev",
     "check-eslint": "eslint --print-config pages/index.js | eslint-config-prettier-check",
     "run-eslint": "eslint \"lib/**\" \"pages/**\" \"cypress/integration/**\"",
     "lint": "yarn check-eslint && prettier --check \"@(lib|pages)/**/*.tsx\" && yarn run-eslint",

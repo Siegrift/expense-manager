@@ -95,11 +95,11 @@ const Transactions = () => {
             </>
           }
           open={confirmDeleteDialogForTx !== null}
-          onCancel={() => dispatch(setConfirmTxDeleteDialogOpen(false))}
+          onCancel={() => dispatch(setConfirmTxDeleteDialogOpen(null))}
           onConfirm={(e) => {
             e.stopPropagation()
 
-            dispatch(setConfirmTxDeleteDialogOpen(false))
+            dispatch(setConfirmTxDeleteDialogOpen(null))
             dispatch(removeTx(confirmDeleteDialogForTx!.id))
           }}
         />

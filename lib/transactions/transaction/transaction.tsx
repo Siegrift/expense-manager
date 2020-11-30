@@ -153,7 +153,7 @@ const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
               onClick={(e) => {
                 e.stopPropagation()
 
-                dispatch(setConfirmTxDeleteDialogOpen(true))
+                dispatch(setConfirmTxDeleteDialogOpen(tx.id))
               }}
             >
               <DeleteIcon color="secondary" />
