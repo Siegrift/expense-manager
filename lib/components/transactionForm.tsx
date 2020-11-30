@@ -201,6 +201,13 @@ const TransactionForm = (props: TransactionFormProps) => {
 
   const { loading, error } = useRefreshExchangeRates()
 
+  let filteredRepeatingOptions = Object.keys(RepeatingOptions)
+  if (variant === 'add') {
+    filteredRepeatingOptions = filteredRepeatingOptions.filter(
+      (op) => op !== RepeatingOptions.inactive,
+    )
+  }
+
   return (
     <Paper className={classes.paper}>
       <Grid container className={classes.row}>
@@ -375,13 +382,11 @@ const TransactionForm = (props: TransactionFormProps) => {
               id: 'tx-repeating',
             }}
           >
-            {Object.keys(RepeatingOptions)
-              .filter((op) => op !== RepeatingOptions.inactive)
-              .map((op) => (
-                <MenuItem key={op} value={op}>
-                  {op}
-                </MenuItem>
-              ))}
+            {filteredRepeatingOptions.map((op) => (
+              <MenuItem key={op} value={op}>
+                {op}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </Grid>
