@@ -11,6 +11,13 @@ import { Tag, Transaction } from './addTransaction/state'
 import { getFirebase } from './firebase/firebase'
 import { Profile } from './profile/state'
 import { Action, Thunk } from './redux/types'
+import {
+  createErrorNotification,
+  setSnackbarNotification,
+} from './shared/actions'
+import { USER_DATA_NOT_LOADED_ERROR } from './shared/constants'
+import { exchangeRatesSel, mainCurrencySel } from './shared/selectors'
+import { computeExchangeRate } from './shared/utils'
 import { ScreenTitle } from './state'
 import { FirebaseField, ObjectOf } from './types'
 
@@ -165,12 +172,24 @@ const setRepeatingTxsAsInactive = (inactive: Transaction[]) => {
   })
 }
 
-export const addRepeatingTxs = (): Thunk => (
+export const addRepeatingTxs = (): Thunk => async (
   dispatch,
   getState,
   { logger },
 ) => {
   logger.log('Add repeating transactions')
+
+  const exchangeRates = exchangeRatesSel(getState())
+  const mainCurrency = mainCurrencySel(getState())
+
+  if (exchangeRates === undefined || mainCurrency === undefined) {
+    dispatch(
+      setSnackbarNotification(
+        createErrorNotification(USER_DATA_NOT_LOADED_ERROR),
+      ),
+    )
+    return
+  }
 
   const added: Transaction[] = []
   const inactive: Transaction[] = []
@@ -188,6 +207,13 @@ export const addRepeatingTxs = (): Thunk => (
             ...tx,
             id: uuid(),
             dateTime: newDate,
+            // some fields should be updated
+            attachedFiles: [],
+            rate: computeExchangeRate(
+              exchangeRates.rates,
+              tx.currency,
+              mainCurrency,
+            ),
           }
 
           added.push(newTx)
@@ -226,5 +252,4 @@ export const addRepeatingTxs = (): Thunk => (
 
   dispatch(uploadToFirebase({ txs: added }))
   setRepeatingTxsAsInactive(inactive)
-  return Promise.resolve()
 }
