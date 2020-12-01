@@ -69,12 +69,6 @@ export const txsInfoSel = createSelector(
         currency,
       ),
       totalTransactions: transactions.length,
-      averagePerTransaction: formatMoney(
-        transactions.length === 0
-          ? 0
-          : (income - expense) / transactions.length,
-        currency,
-      ),
     }
   },
 )

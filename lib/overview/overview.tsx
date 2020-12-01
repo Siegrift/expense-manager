@@ -194,18 +194,6 @@ const Overview = () => {
         <Divider />
 
         <div className={classes.infoRow}>
-          <Typography>Average per transaction</Typography>
-          <Typography
-            className={
-              txsInfo?.averagePerTransaction.startsWith('-')
-                ? classes.relativeBalanceNeg
-                : classes.relativeBalancePos
-            }
-          >
-            {txsInfo?.averagePerTransaction}
-          </Typography>
-        </div>
-        <div className={classes.infoRow}>
           <Typography>Relative balance</Typography>
           <Typography
             className={
