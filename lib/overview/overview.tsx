@@ -19,6 +19,7 @@ import ChartWrapper from '../charts/chartWrapper'
 import RecentBalance from '../charts/recentBalance'
 import PageWrapper from '../components/pageWrapper'
 import Paper from '../components/paper'
+import { DEFAULT_DATE_FORMAT } from '../shared/constants'
 import { OverviewPeriod } from '../state'
 import TransactionList from '../transactions/transactionList'
 
@@ -106,6 +107,7 @@ const Overview = () => {
 
           <DateTimePicker
             ampm={false}
+            inputFormat={DEFAULT_DATE_FORMAT}
             disableFuture
             disabled
             value={dateRange.start}
@@ -117,6 +119,7 @@ const Overview = () => {
           />
           <DateTimePicker
             ampm={false}
+            inputFormat={DEFAULT_DATE_FORMAT}
             disableFuture
             disabled
             value={dateRange.end}

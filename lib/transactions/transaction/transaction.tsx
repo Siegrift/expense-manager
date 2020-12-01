@@ -13,6 +13,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import EditIcon from '@material-ui/icons/Edit'
 import RepeatOneIcon from '@material-ui/icons/RepeatOne'
 import classnames from 'classnames'
+import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -20,6 +21,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
 
 import { Transaction as TransactionState } from '../../addTransaction/state'
+import { DEFAULT_DATE_FORMAT } from '../../shared/constants'
 import { useIsBigDevice } from '../../shared/hooks'
 import { formatMoney } from '../../shared/utils'
 import { State } from '../../state'
@@ -89,7 +91,7 @@ const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
     </div>
   )
   const DateComponent = (
-    <Tooltip title={tx.dateTime.toLocaleString()}>
+    <Tooltip title={format(tx.dateTime, DEFAULT_DATE_FORMAT)}>
       <Typography
         variant="body1"
         style={{ alignSelf: 'flex-end', margin: 'auto 8px' }}
