@@ -441,7 +441,7 @@ const TransactionForm = (props: TransactionFormProps) => {
               <ListItemSecondaryAction style={{ right: 0 }}>
                 <IconButton
                   color="primary"
-                  onChange={() =>
+                  onClick={() =>
                     uploadedFiles.handler(
                       uploadedFiles.value.filter((f) => f !== filename),
                     )
