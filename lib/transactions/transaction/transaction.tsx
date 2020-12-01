@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
 
 import { Transaction as TransactionState } from '../../addTransaction/state'
-import { DEFAULT_DATE_FORMAT } from '../../shared/constants'
+import { DEFAULT_DATE_TIME_FORMAT } from '../../shared/constants'
 import { useIsBigDevice } from '../../shared/hooks'
 import { formatMoney } from '../../shared/utils'
 import { State } from '../../state'
@@ -91,7 +91,7 @@ const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
     </div>
   )
   const DateComponent = (
-    <Tooltip title={format(tx.dateTime, DEFAULT_DATE_FORMAT)}>
+    <Tooltip title={format(tx.dateTime, DEFAULT_DATE_TIME_FORMAT)}>
       <Typography
         variant="body1"
         style={{ alignSelf: 'flex-end', margin: 'auto 8px' }}

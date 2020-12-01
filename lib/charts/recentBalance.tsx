@@ -3,9 +3,8 @@ import React, { useCallback, useState } from 'react'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import { Line } from '@nivo/line'
-import endOfDay from 'date-fns/endOfDay'
+import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
-import subDays from 'date-fns/subDays'
 import { useSelector } from 'react-redux'
 
 import { CURRENCIES } from '../shared/currencies'
@@ -38,7 +37,8 @@ const RecentBalance = ({ width, height, dateRange }: Props) => {
   const { data } = useSelector(
     recentBalanceDataSel(daysToDisplay, computedDateRange),
   )
-  const endOfToday = endOfDay(new Date())
+
+  if (data.length > 500) return null
 
   const showSlice = useCallback(
     ({ slice }: any) => {
@@ -50,19 +50,11 @@ const RecentBalance = ({ width, height, dateRange }: Props) => {
             background: 'white',
             padding: '9px 12px',
             border: '1px solid #ccc',
-            transform:
-              // move the left tooltips a bit to the right
-              daysToDisplay - slice.points[0].index < daysToDisplay / 4
-                ? 'translateX(-60px)'
-                : 'none',
           }}
         >
           {overridenDisplayMode === 'all' &&
             `Date: ${format(
-              subDays(
-                endOfToday,
-                daysToDisplay - (slice.points[0].data.index + 1),
-              ),
+              addDays(computedDateRange.start, slice.points[0].data.index),
               SLICE_DATE_FORMAT,
             )}`}
           {slice.points.map((point: any) => (
@@ -113,7 +105,7 @@ const RecentBalance = ({ width, height, dateRange }: Props) => {
           format: (v) => {
             return (v as number) % xAxisMergeSize === 0
               ? format(
-                  subDays(endOfToday, daysToDisplay - ((v as number) + 1)),
+                  addDays(computedDateRange.start, v as number),
                   AXIS_DATE_FORMAT,
                 )
               : ''

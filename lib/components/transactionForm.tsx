@@ -37,7 +37,7 @@ import Paper from '../components/paper'
 import TagField from '../components/tagField'
 import { getStorageRef } from '../firebase/firebase'
 import { setSnackbarNotification, withErrorHandler } from '../shared/actions'
-import { DEFAULT_DATE_FORMAT } from '../shared/constants'
+import { DEFAULT_DATE_TIME_FORMAT } from '../shared/constants'
 import { Currency, CURRENCIES } from '../shared/currencies'
 import { useFirebaseLoaded } from '../shared/hooks'
 import {
@@ -343,7 +343,7 @@ const TransactionForm = (props: TransactionFormProps) => {
           <Collapse in={!useCurrentTime.value} style={{ margin: 0 }}>
             <Grid className={classes.row}>
               <DateTimePicker
-                inputFormat={DEFAULT_DATE_FORMAT}
+                inputFormat={DEFAULT_DATE_TIME_FORMAT}
                 ampm={false}
                 disableFuture
                 value={dateTime.value}
@@ -361,7 +361,7 @@ const TransactionForm = (props: TransactionFormProps) => {
       {variant === 'edit' && (
         <Grid className={classes.row}>
           <DateTimePicker
-            inputFormat={DEFAULT_DATE_FORMAT}
+            inputFormat={DEFAULT_DATE_TIME_FORMAT}
             ampm={false}
             disableFuture
             value={dateTime.value}

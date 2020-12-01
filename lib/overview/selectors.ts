@@ -2,47 +2,84 @@ import {
   startOfDay,
   isWithinInterval,
   subDays,
-  startOfWeek,
   differenceInCalendarDays,
   startOfMonth,
+  endOfMonth,
+  parse,
   endOfDay,
+  format,
 } from 'date-fns'
+import { sortedUniq } from 'lodash'
 import { createSelector } from 'reselect'
 
+import { Transaction } from '../addTransaction/state'
 import { mainCurrencySel } from '../shared/selectors'
-import { formatMoney } from '../shared/utils'
+import { formatMoney, isValidDate } from '../shared/utils'
 import { OverviewPeriod, State } from '../state'
 import { sortedTransactionsSel } from '../transactions/selectors'
 import { DateRange } from '../types'
 
-export const overviewPeriodSel = (state: State) => state.overviewPeriod
+const OVERVIEW_MONTH_FORMAT = 'MMMM yyyy'
 
-export const dateRangeSel = createSelector(overviewPeriodSel, (period) => {
-  const now = new Date()
-  const endOfToday = endOfDay(now)
+export const overviewPeriodSel = (state: State) => state.overview.period
+export const customDateRangeSel = (state: State) =>
+  state.overview.customDateRange
+export const monthSel = (state: State) => state.overview.month
 
-  const totalDays: {
-    [k in OverviewPeriod]: DateRange
-  } = {
-    week: { end: endOfToday, start: subDays(startOfDay(now), 7 - 1) },
-    month: { end: endOfToday, start: subDays(startOfDay(now), 30 - 1) },
-    wtd: {
-      end: endOfToday,
-      start: startOfWeek(now, { weekStartsOn: 1 /* Monday */ }),
-    },
-    mtd: { end: endOfToday, start: startOfMonth(now) },
-  }
+export const overviewMonthsSel = createSelector(
+  sortedTransactionsSel,
+  (txs) => {
+    const mapped = txs.map(({ dateTime }: Transaction) =>
+      format(dateTime, OVERVIEW_MONTH_FORMAT),
+    )
 
-  return totalDays[period]
-})
+    return sortedUniq(mapped)
+  },
+)
+
+const monthDateRangeSel = createSelector(
+  overviewMonthsSel,
+  monthSel,
+  (options, month): DateRange | null => {
+    // if there are no transactions there won't be any option
+    if (!options[month]) return null
+
+    const date = parse(options[month], OVERVIEW_MONTH_FORMAT, new Date())
+    return { start: startOfMonth(date), end: endOfMonth(date) }
+  },
+)
+
+export const dateRangeSel = createSelector(
+  overviewPeriodSel,
+  monthDateRangeSel,
+  customDateRangeSel,
+  (period, monthRange, dateRange) => {
+    const now = new Date()
+    const endOfToday = endOfDay(now)
+    const invalidCustomRange =
+      !isValidDate(dateRange[0]) || !isValidDate(dateRange[1])
+
+    const totalDays: {
+      [k in OverviewPeriod]: DateRange
+    } = {
+      '7days': { end: endOfToday, start: subDays(startOfDay(now), 7 - 1) },
+      '30days': { end: endOfToday, start: subDays(startOfDay(now), 30 - 1) },
+      month: monthRange ?? { start: now, end: now },
+      custom: {
+        start: invalidCustomRange ? now : dateRange[0]!,
+        end: invalidCustomRange ? now : dateRange[1]!,
+      },
+    }
+
+    return totalDays[period]
+  },
+)
 
 export const overviewTransactionsSel = createSelector(
   dateRangeSel,
   sortedTransactionsSel,
-  ({ start, end }, txs) => {
-    return txs.filter((tx) =>
-      isWithinInterval(tx.dateTime, { start: start, end: end }),
-    )
+  (range, txs) => {
+    return txs.filter((tx) => isWithinInterval(tx.dateTime, range))
   },
 )
 

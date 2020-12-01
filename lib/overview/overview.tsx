@@ -10,7 +10,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import LaunchIcon from '@material-ui/icons/Launch'
-import { DateTimePicker } from '@material-ui/pickers'
+import { DateRangePicker, DateRangeDelimiter } from '@material-ui/pickers'
 import classnames from 'classnames'
 import Link from 'next/link'
 import { useSelector, useDispatch } from 'react-redux'
@@ -23,20 +23,23 @@ import { DEFAULT_DATE_FORMAT } from '../shared/constants'
 import { OverviewPeriod } from '../state'
 import TransactionList from '../transactions/transactionList'
 
-import { setOverviewPeriod } from './actions'
+import { setOverviewPeriod, setCustomDateRange, setMonth } from './actions'
 import {
   overviewPeriodSel,
   overviewTransactionsSel,
   dateRangeSel,
   txsInfoSel,
+  customDateRangeSel,
+  overviewMonthsSel,
+  monthSel,
 } from './selectors'
 
 type OverviewLabels = { [k in OverviewPeriod]: string }
 const overviewLabels: OverviewLabels = {
-  week: 'Week (last 7 days)',
-  wtd: 'Week to date',
-  month: 'Month (last 30 days)',
-  mtd: 'Month to date',
+  '7days': 'Last 7 days',
+  '30days': 'Last 30 days',
+  month: 'Month',
+  custom: 'Custom',
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -83,6 +86,9 @@ const Overview = () => {
   const txsInfo = useSelector(txsInfoSel)
   const dispatch = useDispatch()
   const dateRange = useSelector(dateRangeSel)
+  const customDateRange = useSelector(customDateRangeSel)
+  const overviewMonths = useSelector(overviewMonthsSel)
+  const month = useSelector(monthSel)
 
   return (
     <PageWrapper>
@@ -105,30 +111,57 @@ const Overview = () => {
             </Select>
           </FormControl>
 
-          <DateTimePicker
-            ampm={false}
-            inputFormat={DEFAULT_DATE_FORMAT}
-            disableFuture
-            disabled
-            value={dateRange.start}
-            onChange={() => console.log('change start date')}
-            label="Start date"
-            renderInput={(props) => (
-              <TextField {...props} style={{ flex: 1, minWidth: 180 }} />
-            )}
-          />
-          <DateTimePicker
-            ampm={false}
-            inputFormat={DEFAULT_DATE_FORMAT}
-            disableFuture
-            disabled
-            value={dateRange.end}
-            onChange={() => console.log('change end date')}
-            label="End date"
-            renderInput={(props) => (
-              <TextField {...props} style={{ flex: 1, minWidth: 180 }} />
-            )}
-          />
+          {period === 'month' && (
+            <Select
+              value={overviewMonths[month]}
+              onChange={(e) =>
+                dispatch(
+                  setMonth(
+                    overviewMonths.findIndex((m) => m === e.target.value),
+                  ),
+                )
+              }
+              style={{ flex: 1 }}
+            >
+              {overviewMonths.map((label) => (
+                <MenuItem key={label} value={label}>
+                  {label}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
+
+          {period === 'custom' && (
+            <>
+              <DateRangePicker
+                inputFormat={DEFAULT_DATE_FORMAT}
+                disableFuture
+                // TODO: fix latency of custom range and enable this
+                disabled
+                value={customDateRange}
+                onChange={(range) => {
+                  dispatch(setCustomDateRange(range))
+                }}
+                startText="Start date"
+                endText="End date"
+                renderInput={(startProps, endProps) => (
+                  <React.Fragment>
+                    <TextField
+                      {...startProps}
+                      variant="standard"
+                      style={{ flex: 1, minWidth: 180 }}
+                    />
+                    <DateRangeDelimiter> to </DateRangeDelimiter>
+                    <TextField
+                      {...endProps}
+                      variant="standard"
+                      style={{ flex: 1, minWidth: 180 }}
+                    />
+                  </React.Fragment>
+                )}
+              />
+            </>
+          )}
         </div>
       </Paper>
 

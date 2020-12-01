@@ -183,7 +183,6 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
             e.stopPropagation()
 
             dispatch(removeTx(tx.id))
-            console.log(previousTx, previousTx?.id)
             const returnUrl = previousTx
               ? `/transactions#${previousTx.id}`
               : '/transactions'

@@ -34,8 +34,13 @@ export interface NotificationState {
   message: string
 }
 
-// TODO: add custom date range
-export type OverviewPeriod = 'week' | 'wtd' | 'month' | 'mtd'
+export type OverviewPeriod = '7days' | '30days' | 'month' | 'custom'
+
+interface OverviewState {
+  period: OverviewPeriod
+  customDateRange: [Date | null, Date | null]
+  month: number
+}
 
 export interface State extends SerializableState {
   // use firebase.auth().currentUser to get the current user
@@ -46,7 +51,7 @@ export interface State extends SerializableState {
   user: firebase.User | null
   notification: NotificationState | null
   confirmDeleteTxForTxId: string | null
-  overviewPeriod: OverviewPeriod
+  overview: OverviewState
 }
 
 const state: State = {
@@ -62,7 +67,7 @@ const state: State = {
   notification: null,
   confirmDeleteTxForTxId: null,
   profile: {},
-  overviewPeriod: 'week',
+  overview: { period: '7days', month: 0, customDateRange: [null, null] },
 }
 
 export const getInitialState = () => state
