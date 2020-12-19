@@ -22,12 +22,15 @@ export const saveTxEdit = (
   newFiles: File[],
   editedFields: Omit<Transaction, 'uid'>,
 ): Thunk => async (dispatch, getState, { logger }) => {
-  logger.log('Save edited transaction')
+  logger.log('Save edited transaction', { newFiles, newTags, editedFields })
 
   const userId = currentUserIdSel(getState())!
   const originalTx = getState().transactions[editedFields.id]
   // TODO: what to do with tags that are not in any expense (deleted by edit)
-  const tx = { ...originalTx, ...editedFields }
+  const tx: Transaction = { ...originalTx, ...editedFields }
+  tx.attachedFiles = (tx.attachedFiles ?? []).concat(
+    newFiles.map((f) => f.name),
+  )
   const storageRef = getStorageRef(userId, 'files', originalTx.id)
   let success: boolean | undefined
 

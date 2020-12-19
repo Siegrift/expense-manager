@@ -39,10 +39,13 @@ const CalculatorDialog = ({
       onClose={() => setShowCalc(false)}
       aria-labelledby="simple-dialog-title"
       disableEnforceFocus
+      onEscapeKeyDown={() => setShowCalc(false)}
+      onEntered={() => document.getElementById('calculator-textfield')?.focus()}
       open={showCalc}
     >
       <DialogContent>
         <TextField
+          id="calculator-textfield"
           autoFocus
           inputProps={{ inputMode: 'numeric' }}
           fullWidth

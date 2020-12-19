@@ -94,19 +94,21 @@ export const initializeFirestore = (user: firebase.User): Thunk => async (
     'Unexpected error. Failed to add repeating transactions.',
     dispatch,
     async () => {
-      const freshQueriesData = await Promise.all(
-        queries.map((query) => {
-          return query.createFirestoneQuery().get({
-            source: 'server',
-          })
-        }),
-      )
-      batch(() => {
-        freshQueriesData.forEach((data, i) =>
-          dispatch(firestoneChangeAction(queries[i], data)),
+      if (navigator.onLine) {
+        const freshQueriesData = await Promise.all(
+          queries.map((query) => {
+            return query.createFirestoneQuery().get({
+              source: 'server',
+            })
+          }),
         )
-        dispatch(addRepeatingTxs())
-      })
+        batch(() => {
+          freshQueriesData.forEach((data, i) =>
+            dispatch(firestoneChangeAction(queries[i], data)),
+          )
+          dispatch(addRepeatingTxs())
+        })
+      }
     },
   )
 
