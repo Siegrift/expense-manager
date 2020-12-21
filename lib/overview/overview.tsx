@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 
+import Button from '@material-ui/core/Button'
 import Divider from '@material-ui/core/Divider'
 import FormControl from '@material-ui/core/FormControl'
 import InputLabel from '@material-ui/core/InputLabel'
@@ -23,13 +24,16 @@ import { DEFAULT_DATE_FORMAT } from '../shared/constants'
 import { OverviewPeriod } from '../state'
 import TransactionList from '../transactions/transactionList'
 
-import { setOverviewPeriod, setCustomDateRange, setMonth } from './actions'
+import {
+  setOverviewPeriod,
+  setCustomDateRange as setCustomDateRangeAction,
+  setMonth,
+} from './actions'
 import {
   overviewPeriodSel,
   overviewTransactionsSel,
   dateRangeSel,
   txsInfoSel,
-  customDateRangeSel,
   overviewMonthsSel,
   monthSel,
 } from './selectors'
@@ -86,9 +90,14 @@ const Overview = () => {
   const txsInfo = useSelector(txsInfoSel)
   const dispatch = useDispatch()
   const dateRange = useSelector(dateRangeSel)
-  const customDateRange = useSelector(customDateRangeSel)
   const overviewMonths = useSelector(overviewMonthsSel)
   const month = useSelector(monthSel)
+  const [customDateRange, setCustomDateRange] = useState<
+    [Date | null, Date | null]
+  >([null, null])
+  const [customDateRangeError, setCustomDateRangeError] = useState<
+    [string | null, string | null]
+  >([null, null])
 
   return (
     <PageWrapper>
@@ -136,12 +145,15 @@ const Overview = () => {
               <DateRangePicker
                 inputFormat={DEFAULT_DATE_FORMAT}
                 disableFuture
-                // TODO: fix latency of custom range and enable this
-                disabled
                 value={customDateRange}
                 onChange={(range) => {
-                  dispatch(setCustomDateRange(range))
+                  if (
+                    customDateRangeError[0] === null &&
+                    customDateRangeError[1] === null
+                  )
+                    setCustomDateRange(range)
                 }}
+                onError={(reason) => setCustomDateRangeError(reason)}
                 startText="Start date"
                 endText="End date"
                 renderInput={(startProps, endProps) => (
@@ -160,6 +172,17 @@ const Overview = () => {
                   </React.Fragment>
                 )}
               />
+              <Button
+                onClick={() =>
+                  dispatch(setCustomDateRangeAction(customDateRange))
+                }
+                color="primary"
+                fullWidth
+                variant="contained"
+                style={{ flex: 1, margin: '24px 8px' }}
+              >
+                Show
+              </Button>
             </>
           )}
         </div>
