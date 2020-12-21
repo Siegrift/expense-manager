@@ -29,7 +29,6 @@ export const initializeFirebase = async (store: Store) => {
   // NOTE: Import all Firebase products that the project uses
   await import('firebase/auth')
   await import('firebase/firestore')
-  await import('firebase/performance')
   await import('firebase/storage')
 
   firebaseInstance = firebase
@@ -37,9 +36,6 @@ export const initializeFirebase = async (store: Store) => {
   // firebase can be initialized only once, but crashes on hot update
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig)
-
-    // enable firebase performance
-    firebase.performance()
 
     // persistance only works in browsers
     if (typeof window !== 'undefined') {
