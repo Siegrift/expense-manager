@@ -13,6 +13,7 @@ export type QueryReducer = (
 export interface FirestoneQuery {
   type: string
   createFirestoneQuery: () => firebase.firestore.Query
+  essential: boolean
   reducer: QueryReducer
 }
 
@@ -43,6 +44,7 @@ const createQueryReducer = (
 
 const allTransactionsQuery: FirestoneQuery = {
   type: 'All transactions query',
+  essential: false,
   createFirestoneQuery: () => {
     const q = getFirebase()
       .firestore()
@@ -55,6 +57,7 @@ const allTransactionsQuery: FirestoneQuery = {
 
 const allTags: FirestoneQuery = {
   type: 'All tags query',
+  essential: true,
   createFirestoneQuery: () =>
     getFirebase()
       .firestore()
@@ -65,6 +68,7 @@ const allTags: FirestoneQuery = {
 
 const profile: FirestoneQuery = {
   type: 'Profile query',
+  essential: true,
   createFirestoneQuery: () =>
     getFirebase()
       .firestore()

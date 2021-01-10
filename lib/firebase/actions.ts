@@ -53,7 +53,8 @@ export const authChangeAction = (
 
   if (status === 'loggedIn') {
     dispatch(applyInitialState(user!))
-    await dispatch(initializeFirestore(user!))
+    await dispatch(initializeFirestoreEssentials())
+    dispatch(initializeFirestoreLazy(user!))
   }
   // this must be last, used to indicate when firestore has finished loading
   dispatch(changeSignInStatus(status, user))
@@ -71,7 +72,24 @@ const applyInitialState = (user: firebase.User): Action => ({
   },
 })
 
-export const initializeFirestore = (user: firebase.User): Thunk => async (
+export const initializeFirestoreEssentials = (): Thunk => async (dispatch) => {
+  const queries = getQueries().filter((q) => q.essential)
+  const initialQueries = queries.map((query) => {
+    return query.createFirestoneQuery().get({
+      source: 'cache',
+    })
+  })
+
+  // load data from cache
+  const initialQueriesData = await Promise.all(initialQueries)
+  batch(() => {
+    initialQueriesData.forEach((data, i) =>
+      dispatch(firestoneChangeAction(queries[i], data, true)),
+    )
+  })
+}
+
+export const initializeFirestoreLazy = (user: firebase.User): Thunk => async (
   dispatch,
 ) => {
   const queries = getQueries()
