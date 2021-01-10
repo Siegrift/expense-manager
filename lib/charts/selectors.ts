@@ -47,11 +47,8 @@ export const tagSharesSel = createSelector(
   },
 )
 
-export type DisplayMode = 'best-fit' | 'all'
-
 export const displayDataSel = (
   width: number,
-  displayMode: DisplayMode,
   dateRange: DateRange | undefined,
 ) =>
   createSelector(sortedTransactionsSel, (txs) => {
@@ -68,15 +65,10 @@ export const displayDataSel = (
       daysToDisplay =
         differenceInCalendarDays(dateRange.end, dateRange.start) + 1
       xAxisMergeSize = Math.round(daysToDisplay / (width / LABEL_WIDTH_PX))
-    } else if (displayMode === 'best-fit' || !txs.length) {
+    } else {
       daysToDisplay = Math.round(width / LABEL_WIDTH_PX)
       range = { start: subDays(endOfToday, daysToDisplay), end: endOfToday }
       xAxisMergeSize = 1 // show every label
-    } else {
-      daysToDisplay =
-        differenceInCalendarDays(new Date(), txs[txs.length - 1].dateTime) + 1
-      range = { start: subDays(endOfToday, daysToDisplay), end: endOfToday }
-      xAxisMergeSize = Math.round(daysToDisplay / (width / LABEL_WIDTH_PX))
     }
 
     return {

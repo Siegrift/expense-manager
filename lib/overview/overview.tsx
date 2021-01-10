@@ -121,23 +121,27 @@ const Overview = () => {
           </FormControl>
 
           {period === 'month' && (
-            <Select
-              value={overviewMonths[month]}
-              onChange={(e) =>
-                dispatch(
-                  setMonth(
-                    overviewMonths.findIndex((m) => m === e.target.value),
-                  ),
-                )
-              }
-              style={{ flex: 1 }}
-            >
-              {overviewMonths.map((label) => (
-                <MenuItem key={label} value={label}>
-                  {label}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl style={{ flex: 1 }}>
+              <InputLabel>Month</InputLabel>
+              <Select
+                label="Month"
+                value={overviewMonths[month]}
+                onChange={(e) =>
+                  dispatch(
+                    setMonth(
+                      overviewMonths.findIndex((m) => m === e.target.value),
+                    ),
+                  )
+                }
+                style={{ flex: 1 }}
+              >
+                {overviewMonths.map((label) => (
+                  <MenuItem key={label} value={label}>
+                    {label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           )}
 
           {period === 'custom' && (

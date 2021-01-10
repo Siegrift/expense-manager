@@ -1,19 +1,16 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 
-import ToggleButton from '@material-ui/lab/ToggleButton'
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import { Line } from '@nivo/line'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 import { useSelector } from 'react-redux'
 
 import { CURRENCIES } from '../shared/currencies'
-import { useIsBigDevice } from '../shared/hooks'
 import { mainCurrencySel } from '../shared/selectors'
 import { formatMoney } from '../shared/utils'
 import { DateRange } from '../types'
 
-import { recentBalanceDataSel, displayDataSel, DisplayMode } from './selectors'
+import { recentBalanceDataSel, displayDataSel } from './selectors'
 
 const AXIS_DATE_FORMAT = 'd.MM'
 const SLICE_DATE_FORMAT = 'd.MM.yyyy'
@@ -26,12 +23,9 @@ interface Props {
 
 const RecentBalance = ({ width, height, dateRange }: Props) => {
   const mainCurrency = useSelector(mainCurrencySel)
-  const [displayMode, setDisplayMode] = useState<DisplayMode>('best-fit')
-  const isBigDevice = useIsBigDevice()
-  const overridenDisplayMode = !isBigDevice ? 'best-fit' : displayMode
 
   const { daysToDisplay, xAxisMergeSize, ...computedDateRange } = useSelector(
-    displayDataSel(width, overridenDisplayMode, dateRange),
+    displayDataSel(width, dateRange),
   )
 
   const { data } = useSelector(
@@ -52,11 +46,10 @@ const RecentBalance = ({ width, height, dateRange }: Props) => {
             border: '1px solid #ccc',
           }}
         >
-          {overridenDisplayMode === 'all' &&
-            `Date: ${format(
-              addDays(computedDateRange.start, slice.points[0].data.index),
-              SLICE_DATE_FORMAT,
-            )}`}
+          {`Date: ${format(
+            addDays(computedDateRange.start, slice.points[0].data.index),
+            SLICE_DATE_FORMAT,
+          )}`}
           {slice.points.map((point: any) => (
             <div
               key={point.id}
@@ -74,7 +67,7 @@ const RecentBalance = ({ width, height, dateRange }: Props) => {
         </div>
       )
     },
-    [overridenDisplayMode, daysToDisplay, mainCurrency],
+    [daysToDisplay, mainCurrency],
   )
 
   return (
@@ -128,28 +121,6 @@ const RecentBalance = ({ width, height, dateRange }: Props) => {
         sliceTooltip={showSlice}
         animate={false}
       />
-      {!dateRange && isBigDevice && (
-        <ToggleButtonGroup
-          value={displayMode}
-          exclusive
-          onChange={(_, newDisplayMode) => {
-            if (newDisplayMode !== null) setDisplayMode(newDisplayMode)
-          }}
-          style={{
-            position: 'absolute',
-            top: -5,
-            padding: '0 10px',
-            right: 5,
-          }}
-        >
-          <ToggleButton style={{ padding: '0 10px' }} value="best-fit">
-            Best fit
-          </ToggleButton>
-          <ToggleButton style={{ padding: '0 10px' }} value="all">
-            All
-          </ToggleButton>
-        </ToggleButtonGroup>
-      )}
     </div>
   )
 }
