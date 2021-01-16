@@ -11,31 +11,26 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
+import Paper from '@material-ui/core/Paper'
 import { makeStyles, Theme } from '@material-ui/core/styles'
-import BackupIcon from '@material-ui/icons/Backup'
+import CreateNewIcon from '@material-ui/icons/AddCircleOutline'
 import UnselectAllIcon from '@material-ui/icons/ClearAll'
 import DeleteIcon from '@material-ui/icons/Delete'
-import SelectAllIcon from '@material-ui/icons/DoneAll'
-import DownloadIcon from '@material-ui/icons/GetApp'
-import Alert from '@material-ui/lab/Alert'
+import EditIcon from '@material-ui/icons/Edit'
 import { update } from '@siegrift/tsfunct'
+import Link from 'next/link'
 import Highlight from 'react-highlight.js'
 import { useDispatch, useSelector } from 'react-redux'
 
 import ConfirmDialog from '../components/confirmDialog'
 import Loading from '../components/loading'
+import PageWrapper from '../components/pageWrapper'
 import { createErrorNotification, withErrorHandler } from '../shared/actions'
 import { DOWNLOADING_DATA_ERROR } from '../shared/constants'
 import { currentUserIdSel, firebaseLoadedSel } from '../shared/selectors'
 
-import { uploadBackup, removeBackupFiles } from './backupActions'
-import {
-  AUTO_BACKUP_PERIOD_DAYS,
-  createBackupFilename,
-  downloadBackupFiles,
-  backupFileContent,
-  listBackupFilesForUser,
-} from './backupCommons'
+import { removeFilters } from './actions'
+import { filterFileContent, listFiltersForUser } from './filterCommons'
 
 const useStyles = makeStyles((theme: Theme) => ({
   buttonsWrapper: {
@@ -64,7 +59,7 @@ interface ShowFileContent {
   content: string | null | undefined
 }
 
-const BackupFilesList = () => {
+const FilterFiles = () => {
   const classes = useStyles()
   const [listItems, setListItems] = React.useState<
     ListItemData[] | null | undefined
@@ -89,7 +84,7 @@ const BackupFilesList = () => {
       const data = await withErrorHandler(
         DOWNLOADING_DATA_ERROR,
         dispatch,
-        () => listBackupFilesForUser(userId!),
+        () => listFiltersForUser(userId!),
       )
 
       if (!data) return
@@ -107,7 +102,7 @@ const BackupFilesList = () => {
     return (
       <Loading
         size={100}
-        text="Loading backup files..."
+        text="Loading filter files..."
         textStyle={{ fontSize: '2.0em' }}
       />
     )
@@ -115,6 +110,13 @@ const BackupFilesList = () => {
     return (
       <>
         <List dense>
+          {!listItems.length && (
+            <Paper style={{ minHeight: 200, display: 'flex' }}>
+              <span style={{ margin: 'auto' }}>
+                You have no filters created
+              </span>
+            </Paper>
+          )}
           {listItems.map(({ filename, checked }, index) => {
             return (
               <ListItem
@@ -126,7 +128,7 @@ const BackupFilesList = () => {
                     'Unable to download file content',
                     dispatch,
                     async () => {
-                      const content = await backupFileContent(userId!, filename)
+                      const content = await filterFileContent(userId!, filename)
 
                       setShowFile({ filename, content })
                       return true /* success */
@@ -155,23 +157,6 @@ const BackupFilesList = () => {
                 size="small"
                 color="primary"
                 variant="outlined"
-                startIcon={<SelectAllIcon />}
-                onClick={() => {
-                  const firstInd = listItems.findIndex((item) => item.checked)
-                  setListItems(
-                    listItems.map((item, i) =>
-                      i < firstInd ? item : { ...item, checked: true },
-                    ),
-                  )
-                }}
-                disabled={somethingSelected}
-              >
-                Select older
-              </Button>
-              <Button
-                size="small"
-                color="primary"
-                variant="outlined"
                 startIcon={<UnselectAllIcon />}
                 onClick={() => {
                   setListItems(
@@ -185,23 +170,6 @@ const BackupFilesList = () => {
 
               <Button
                 size="small"
-                color="primary"
-                variant="outlined"
-                startIcon={<BackupIcon />}
-                onClick={() => {
-                  const filename = createBackupFilename()
-
-                  dispatch(uploadBackup(filename))
-                  setListItems([{ filename, checked: false }, ...listItems])
-                }}
-              >
-                Backup now
-              </Button>
-            </div>
-
-            <div className={classes.buttons}>
-              <Button
-                size="small"
                 color="secondary"
                 variant="contained"
                 startIcon={<DeleteIcon />}
@@ -210,21 +178,19 @@ const BackupFilesList = () => {
               >
                 Remove
               </Button>
-              <Button
-                size="small"
-                color="primary"
-                variant="contained"
-                startIcon={<DownloadIcon />}
-                onClick={() =>
-                  downloadBackupFiles(
-                    userId!,
-                    listItems.filter((i) => i.checked).map((i) => i.filename),
-                  )
-                }
-                disabled={somethingSelected}
-              >
-                Download
-              </Button>
+            </div>
+
+            <div className={classes.buttons}>
+              <Link href="/filters/create">
+                <Button
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  startIcon={<CreateNewIcon />}
+                >
+                  Create new
+                </Button>
+              </Link>
             </div>
           </div>
         </List>
@@ -237,7 +203,7 @@ const BackupFilesList = () => {
               .filter(({ checked }) => checked)
               .map(({ filename }) => filename)
 
-            await dispatch(removeBackupFiles(filenames))
+            await dispatch(removeFilters(filenames))
 
             // delete the removed ones from state
             const preserved = listItems.filter(({ checked }) => !checked)
@@ -257,17 +223,25 @@ const BackupFilesList = () => {
             open={true}
             classes={{ paper: classes.showFileDialogPaper }}
           >
-            <DialogTitle>{`Backup - ${showFile.filename}`}</DialogTitle>
+            <DialogTitle>{`Filter - ${showFile.filename}`}</DialogTitle>
             <DialogContent dividers>
-              <Highlight language="json">
+              <Highlight language="javascript">
                 {showFile.content ?? 'Loading...'}
               </Highlight>
             </DialogContent>
             <DialogActions>
+              <Link href={`/filters/edit?name=${showFile.filename}`}>
+                <Button
+                  color="primary"
+                  startIcon={<EditIcon color="primary" />}
+                >
+                  Edit
+                </Button>
+              </Link>
               <Button
                 autoFocus
                 onClick={() => setShowFile(null)}
-                color="primary"
+                color="secondary"
               >
                 Close
               </Button>
@@ -279,20 +253,12 @@ const BackupFilesList = () => {
   }
 }
 
-const BackupFiles = () => {
+const FilterScreen = () => {
   return (
-    <>
-      {/* TODO: create section for attached files download */}
-      <Alert
-        severity="info"
-        style={{ marginBottom: 8, textTransform: 'initial' }}
-      >
-        Data is automatically saved every <b>{AUTO_BACKUP_PERIOD_DAYS} days</b>{' '}
-        <i>(maybe more if there are no changes in the data)</i>.
-      </Alert>
-      <BackupFilesList />
-    </>
+    <PageWrapper>
+      <FilterFiles />
+    </PageWrapper>
   )
 }
 
-export default BackupFiles
+export default FilterScreen

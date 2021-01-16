@@ -2,7 +2,7 @@ import { set } from '@siegrift/tsfunct'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { Action } from '../redux/types'
-import { NotificationState } from '../state'
+import { ItemsExpanded, NotificationState } from '../state'
 
 // these two methods are the most common usage of notifications
 export const createErrorNotification = (
@@ -16,7 +16,7 @@ export const setSnackbarNotification = (
   notification: NotificationState | null,
   err?: Error | string,
 ): Action<any> => ({
-  type: 'Set app error',
+  type: 'Set snackbar notification',
   payload: { notification, err },
   reducer: (state) => set(state, ['notification'], notification),
 })
@@ -39,3 +39,11 @@ export const withErrorHandler = async <T>(
     return undefined
   }
 }
+
+export const changeNavigationExpanded = (
+  expanded: ItemsExpanded,
+): Action<ItemsExpanded> => ({
+  type: 'Change navigation expansion',
+  reducer: (state) => set(state, ['navigation', 'expanded'], expanded),
+  payload: expanded,
+})

@@ -11,6 +11,8 @@ export type ScreenTitle =
   | 'tags'
   | 'profile'
   | 'overview'
+  | 'filters'
+  | 'filters/create'
 
 export type SignInStatus = 'loggedIn' | 'loggingIn' | 'loggedOut' | 'unknown'
 
@@ -42,6 +44,25 @@ interface OverviewState {
   month: number
 }
 
+export interface ItemsExpanded {
+  [screen: string]: boolean
+}
+
+interface NavigationState {
+  expanded: ItemsExpanded
+}
+
+export interface Filter {
+  code: string
+  name: string
+}
+
+export interface FiltersState {
+  error?: string
+  available: Filter[]
+  current: Filter | undefined
+}
+
 export interface State extends SerializableState {
   // use firebase.auth().currentUser to get the current user
   signInStatus: SignInStatus
@@ -52,6 +73,8 @@ export interface State extends SerializableState {
   notification: NotificationState | null
   confirmDeleteTxForTxId: string | null
   overview: OverviewState
+  navigation: NavigationState
+  filters?: FiltersState
 }
 
 const state: State = {
@@ -68,6 +91,8 @@ const state: State = {
   confirmDeleteTxForTxId: null,
   profile: {},
   overview: { period: '7days', month: 0, customDateRange: [null, null] },
+  navigation: { expanded: {} },
+  filters: undefined,
 }
 
 export const getInitialState = () => state

@@ -1,6 +1,10 @@
 import { createSelector } from 'reselect'
 
 import {
+  filterFunctionFromCodeSel,
+  frozenFilterDataSel,
+} from '../filters/selectors'
+import {
   COMMANDS,
   isCommandWithValidation,
   isValidQuery,
@@ -37,8 +41,15 @@ export const applySearchOnTransactions = createSelector(
   querySel,
   isValidQuerySel,
   tagsSel,
-  (txs, query, validQuery, tags) =>
-    validQuery ? search(txs, query, { tags }) : txs,
+  filterFunctionFromCodeSel,
+  frozenFilterDataSel,
+  (txs, query, validQuery, tags, filter, frozenData) => {
+    if (filter) {
+      return filter(frozenData).transactions
+    }
+
+    return validQuery ? search(txs, query, { tags }) : txs
+  },
 )
 
 export const txSearchQuerySel = (state: State) => state.transactionSearch

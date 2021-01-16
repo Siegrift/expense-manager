@@ -1,4 +1,5 @@
 import { getStorageRef } from '../firebase/firebase'
+import { removeFiles } from '../firebase/firestore'
 import { Thunk } from '../redux/types'
 import {
   createSuccessNotification,
@@ -26,20 +27,20 @@ export const uploadBackup = (
   })
 }
 
-export const removeFiles = (filenames: string[]): Thunk => async (
+export const removeBackupFiles = (filenames: string[]): Thunk => async (
   dispatch,
   getState,
 ) => {
   const userId = currentUserIdSel(getState())
 
-  const storageRef = getStorageRef(userId!, 'backup')
-  const promises = filenames.map((filename) =>
-    storageRef.child(filename).delete(),
-  )
-
   // wait for completion, TODO: maybe show loading overlay
   withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
-    await Promise.all(promises)
+    await Promise.all(
+      removeFiles(
+        userId!,
+        filenames.map((f) => ['backup', f]),
+      ),
+    )
     dispatch(
       setSnackbarNotification(
         createSuccessNotification('Selected file(s) were successfully removed'),
