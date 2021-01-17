@@ -20,6 +20,8 @@ import ChartWrapper from '../charts/chartWrapper'
 import RecentBalance from '../charts/recentBalance'
 import PageWrapper from '../components/pageWrapper'
 import Paper from '../components/paper'
+import { setCurrentFilter } from '../filters/actions'
+import { availableFiltersSel, currentFilterSel } from '../filters/selectors'
 import { DEFAULT_DATE_FORMAT } from '../shared/constants'
 import { OverviewPeriod } from '../state'
 import TransactionList from '../transactions/transactionList'
@@ -70,8 +72,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(2),
   },
   periodSelectWrapper: {
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(2),
     display: 'flex',
     flex: 1,
     justifyContent: 'space-between',
@@ -81,6 +81,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexWrap: 'wrap',
   },
 }))
+
+const NO_FILTER = 'no filter'
 
 const Overview = () => {
   const classes = useStyles()
@@ -92,6 +94,9 @@ const Overview = () => {
   const dateRange = useSelector(dateRangeSel)
   const overviewMonths = useSelector(overviewMonthsSel)
   const month = useSelector(monthSel)
+  const currentFilter = useSelector(currentFilterSel)
+  const availableFilters = useSelector(availableFiltersSel)
+
   const [customDateRange, setCustomDateRange] = useState<
     [Date | null, Date | null]
   >([null, null])
@@ -101,9 +106,37 @@ const Overview = () => {
 
   return (
     <PageWrapper>
-      <Paper style={{ marginBottom: 16, display: 'flex' }}>
-        <div className={classes.periodSelectWrapper}>
-          <FormControl style={{ flex: 1, minWidth: 200 }}>
+      <Paper
+        style={{ marginBottom: 16, display: 'flex', flexDirection: 'column' }}
+      >
+        <FormControl style={{ flex: 1, minWidth: 200 }}>
+          <InputLabel>Active filter</InputLabel>
+          <Select
+            value={currentFilter?.name ?? NO_FILTER}
+            onChange={(e) => {
+              const filterName = e.target.value as string
+              dispatch(
+                setCurrentFilter(
+                  filterName === NO_FILTER
+                    ? undefined
+                    : availableFilters!.find((f) => f.name === filterName)!,
+                ),
+              )
+            }}
+          >
+            {availableFilters?.map((filter) => (
+              <MenuItem key={filter.name} value={filter.name}>
+                {filter.name}
+              </MenuItem>
+            ))}
+            <MenuItem key={NO_FILTER} value={NO_FILTER}>
+              No active filter
+            </MenuItem>
+          </Select>
+        </FormControl>
+
+        <div style={{ display: 'flex', marginTop: 16, flexWrap: 'wrap' }}>
+          <FormControl style={{ flex: 1, minWidth: 200, marginRight: 8 }}>
             <InputLabel>Overview period</InputLabel>
             <Select
               value={period}
@@ -121,23 +154,27 @@ const Overview = () => {
           </FormControl>
 
           {period === 'month' && (
-            <Select
-              value={overviewMonths[month]}
-              onChange={(e) =>
-                dispatch(
-                  setMonth(
-                    overviewMonths.findIndex((m) => m === e.target.value),
-                  ),
-                )
-              }
-              style={{ flex: 1 }}
-            >
-              {overviewMonths.map((label) => (
-                <MenuItem key={label} value={label}>
-                  {label}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl style={{ flex: 1 }}>
+              <InputLabel>Month</InputLabel>
+              <Select
+                label="Month"
+                value={overviewMonths[month]}
+                onChange={(e) =>
+                  dispatch(
+                    setMonth(
+                      overviewMonths.findIndex((m) => m === e.target.value),
+                    ),
+                  )
+                }
+                style={{ flex: 1 }}
+              >
+                {overviewMonths.map((label) => (
+                  <MenuItem key={label} value={label}>
+                    {label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           )}
 
           {period === 'custom' && (

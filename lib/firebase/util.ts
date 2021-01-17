@@ -4,7 +4,7 @@ export async function signIn() {
   // Sign into Firebase using popup auth & Google as the identity provider.
   const firebase = getFirebase()
   const provider = new firebase.auth.GoogleAuthProvider()
-  await firebase.auth().signInWithPopup(provider)
+  await firebase.auth().signInWithRedirect(provider)
 }
 
 export const convertTimestampsToDates = (value: any): any => {

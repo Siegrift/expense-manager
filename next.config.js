@@ -186,8 +186,7 @@ const nextConfig = {
     })
     config.plugins.push(
       new MonacoWebpackPlugin({
-        // Add languages as needed...
-        languages: ['javascript', 'typescript'],
+        languages: ['javascript'],
         filename: 'static/[name].worker.js',
       }),
     )

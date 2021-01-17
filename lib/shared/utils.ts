@@ -104,3 +104,18 @@ export const areDistinct = <T>(arr: T[]) => {
   const set = new Set<T>(arr)
   return set.size === arr.length
 }
+
+// taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze
+export const deepFreeze = <T>(object: T): T => {
+  const propNames = Object.getOwnPropertyNames(object)
+
+  for (const name of propNames) {
+    const value = object[name]
+
+    if (value && typeof value === 'object') {
+      deepFreeze(value)
+    }
+  }
+
+  return Object.freeze(object)
+}

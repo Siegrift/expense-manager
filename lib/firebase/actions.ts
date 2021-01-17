@@ -1,15 +1,18 @@
 import { fpSet, pipe, set } from '@siegrift/tsfunct'
 import { addDays, isBefore, parse } from 'date-fns'
+import zip from 'lodash/zip'
 import { batch } from 'react-redux'
 
 import { addRepeatingTxs } from '../actions'
+import { setFiltersState, setFiltersError } from '../filters/actions'
+import { filterFileContent, listFiltersForUser } from '../filters/filterCommons'
 import { getFirebase } from '../firebase/firebase'
 import { uploadBackup } from '../profile/backupActions'
 import {
-  listFirestoreFilesForUser,
+  listBackupFilesForUser,
   BACKUP_FILENAME_FORMAT,
   AUTO_BACKUP_PERIOD_DAYS,
-  createFirestoreFilename,
+  createBackupFilename,
 } from '../profile/backupCommons'
 import { getInitialState as getInitialProfileState } from '../profile/state'
 import { Action, Thunk } from '../redux/types'
@@ -53,7 +56,8 @@ export const authChangeAction = (
 
   if (status === 'loggedIn') {
     dispatch(applyInitialState(user!))
-    await dispatch(initializeFirestore(user!))
+    await dispatch(initializeFirebaseEssentials())
+    dispatch(initializeFirebaseLazy(user!))
   }
   // this must be last, used to indicate when firestore has finished loading
   dispatch(changeSignInStatus(status, user))
@@ -71,7 +75,24 @@ const applyInitialState = (user: firebase.User): Action => ({
   },
 })
 
-export const initializeFirestore = (user: firebase.User): Thunk => async (
+const initializeFirebaseEssentials = (): Thunk => async (dispatch) => {
+  const queries = getQueries().filter((q) => q.essential)
+  const initialQueries = queries.map((query) => {
+    return query.createFirestoneQuery().get({
+      source: 'cache',
+    })
+  })
+
+  // load data from cache
+  const initialQueriesData = await Promise.all(initialQueries)
+  batch(() => {
+    initialQueriesData.forEach((data, i) =>
+      dispatch(firestoneChangeAction(queries[i], data, true)),
+    )
+  })
+}
+
+const initializeFirebaseLazy = (user: firebase.User): Thunk => async (
   dispatch,
 ) => {
   const queries = getQueries()
@@ -88,6 +109,29 @@ export const initializeFirestore = (user: firebase.User): Thunk => async (
       dispatch(firestoneChangeAction(queries[i], data, true)),
     )
   })
+
+  // load advanced filters
+  try {
+    const filterNamesOrError = await listFiltersForUser(user.uid)
+    if (typeof filterNamesOrError === 'string')
+      throw new Error(filterNamesOrError)
+    else {
+      const filters = await Promise.all(
+        filterNamesOrError.map((f) => filterFileContent(user.uid, f)),
+      )
+
+      const filterState = zip(filterNamesOrError, filters).map(
+        ([name, code]) => ({
+          code: code!,
+          name: name!,
+        }),
+      )
+
+      dispatch(setFiltersState({ available: filterState, current: undefined }))
+    }
+  } catch (e) {
+    dispatch(setFiltersError(e.message))
+  }
 
   // try to add repeating transactions
   withErrorHandler(
@@ -114,7 +158,7 @@ export const initializeFirestore = (user: firebase.User): Thunk => async (
 
   // try to backup data
   try {
-    const data = await listFirestoreFilesForUser(user.uid)
+    const data = await listBackupFilesForUser(user.uid)
 
     // if there is any error, just throw. We want to show the same error.
     if (!data || typeof data === 'string') {
@@ -122,12 +166,12 @@ export const initializeFirestore = (user: firebase.User): Thunk => async (
     }
 
     if (!data[0]) {
-      await dispatch(uploadBackup(createFirestoreFilename(), user.uid))
+      await dispatch(uploadBackup(createBackupFilename(), user.uid))
     } else {
       const now = new Date()
       const latest = parse(data[0], BACKUP_FILENAME_FORMAT, now)
       if (isBefore(addDays(latest, AUTO_BACKUP_PERIOD_DAYS), now)) {
-        await dispatch(uploadBackup(createFirestoreFilename(), user.uid))
+        await dispatch(uploadBackup(createBackupFilename(), user.uid))
       }
     }
   } catch {}

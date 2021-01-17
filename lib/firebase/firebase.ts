@@ -1,4 +1,10 @@
+// Firebase App (the core Firebase SDK) is always required and must be listed before other firebase imports
+import firebase from 'firebase/app'
 import { Store } from 'redux'
+// NOTE: Import all Firebase products that the project uses
+import 'firebase/auth'
+import 'firebase/firestore'
+import 'firebase/storage'
 
 import {
   createErrorNotification,
@@ -17,69 +23,63 @@ const firebaseConfig = {
   appId: process.env.FIREBASE_APP_ID,
 }
 
-let firebaseInstance: typeof import('firebase/app') | null = null
-
 export const initializeFirebase = async (store: Store) => {
-  if (firebaseInstance) {
-    throw new Error('Firebase instance already initialized!')
-  }
+  // firebase can be initialized only once, so this crashes on hot-reload update
+  const shouldInitialize = !firebase.apps.length
+  if (shouldInitialize) firebase.initializeApp(firebaseConfig)
 
-  // Firebase App (the core Firebase SDK) is always required and must be listed first
-  const firebase = await import('firebase/app')
-  // NOTE: Import all Firebase products that the project uses
-  await import('firebase/auth')
-  await import('firebase/firestore')
-  await import('firebase/storage')
-
-  firebaseInstance = firebase
-
-  // firebase can be initialized only once, but crashes on hot update
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig)
-
-    // persistance only works in browsers
-    if (typeof window !== 'undefined') {
-      await firebase
-        .firestore()
-        .enablePersistence({ synchronizeTabs: true })
-        .catch((err) => {
-          if (err.code === 'failed-precondition') {
-            // Multiple tabs open, persistence can only be enabled
-            // in one tab at a a time.
-            store.dispatch(
-              setSnackbarNotification(
-                createErrorNotification(
-                  'Expense manager is opened on mutliple tabs. Local persistance is disabled!',
-                ),
-              ),
-            )
-          } else if (err.code === 'unimplemented') {
-            // The current browser does not support all of the
-            // features required to enable persistence
-            store.dispatch(
-              setSnackbarNotification(
-                createErrorNotification(
-                  'Underlying platform (browser) does not support persistance',
-                ),
-              ),
-            )
-          }
-        })
-    }
+  let persistedUser = firebase.auth().currentUser
+  if (persistedUser) {
+    store.dispatch(
+      authChangeAction(
+        persistedUser ? 'loggedIn' : 'loggedOut',
+        persistedUser,
+      ) as any,
+    )
   }
 
   firebase.auth().onAuthStateChanged(async (user) => {
-    store.dispatch(
-      authChangeAction(user ? 'loggedIn' : 'loggedOut', user) as any,
-    )
+    if (persistedUser) persistedUser = null
+    else {
+      store.dispatch(
+        authChangeAction(user ? 'loggedIn' : 'loggedOut', user) as any,
+      )
+    }
   })
+
+  // persistance only works in browsers
+  if (shouldInitialize && typeof window !== 'undefined') {
+    await firebase
+      .firestore()
+      .enablePersistence({ synchronizeTabs: true })
+      .catch((err) => {
+        if (err.code === 'failed-precondition') {
+          // Multiple tabs open, persistence can only be enabled
+          // in one tab at a a time.
+          store.dispatch(
+            setSnackbarNotification(
+              createErrorNotification(
+                'Expense manager is opened on mutliple tabs. Local persistance is disabled!',
+              ),
+            ),
+          )
+        } else if (err.code === 'unimplemented') {
+          // The current browser does not support all of the
+          // features required to enable persistence
+          store.dispatch(
+            setSnackbarNotification(
+              createErrorNotification(
+                'Underlying platform (browser) does not support persistance',
+              ),
+            ),
+          )
+        }
+      })
+  }
 }
 
 export const getFirebase = () => {
-  if (firebaseInstance == null) {
-    throw new Error('Firebase has not been initialized yet')
-  }
-  return firebaseInstance
+  return firebase
 }
 
 export const getStorageRef = (...path: string[]) => {

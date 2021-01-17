@@ -1,13 +1,14 @@
 import { isBefore, parse, format } from 'date-fns'
 
 import { getStorageRef } from '../firebase/firebase'
+import { downloadFiles, firestoreFileContent } from '../firebase/firestore'
 import { REQUEST_TIMEOUT_ERROR } from '../shared/constants'
-import { delay, downloadFile, downloadTextFromUrl } from '../shared/utils'
+import { delay } from '../shared/utils'
 
 export const AUTO_BACKUP_PERIOD_DAYS = 7
 export const BACKUP_FILENAME_FORMAT = 'dd.MM.yyyy - HH:mm:ss'
 
-export const listFirestoreFilesForUser = (userId: string) => {
+export const listBackupFilesForUser = (userId: string) => {
   const listFilesPromise = getStorageRef(userId, 'backup')
     .listAll()
     .then(function (res) {
@@ -34,23 +35,14 @@ export const listFirestoreFilesForUser = (userId: string) => {
   })
 }
 
-export const firestoreFileContent = async (
-  userId: string,
-  filename: string,
-) => {
-  return await downloadTextFromUrl(
-    await getStorageRef(userId, 'backup', filename).getDownloadURL(),
-  )
-}
+export const backupFileContent = async (userId: string, filename: string) =>
+  firestoreFileContent(userId, ['backup', filename])
 
-export const createFirestoreFilename = () =>
+export const createBackupFilename = () =>
   format(new Date(), BACKUP_FILENAME_FORMAT)
 
-export const downloadFiles = (userId: string, filenames: string[]) => {
-  filenames.forEach(async (filename) => {
-    const text = await downloadTextFromUrl(
-      await getStorageRef(userId, 'backup', filename).getDownloadURL(),
-    )
-    downloadFile(filename, text)
-  })
-}
+export const downloadBackupFiles = (userId: string, filenames: string[]) =>
+  downloadFiles(
+    userId,
+    filenames.map((f) => ['backup', f]),
+  )
