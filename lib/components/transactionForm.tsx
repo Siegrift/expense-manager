@@ -138,34 +138,53 @@ type TransactionFormProps = BaseProps & VariantProps
 interface ShowFileContent {
   filename: string
   rawContent?: string
-  imageUrl?: string
+  url?: string
+  isImage?: boolean
 }
 
-const FileContent = ({ rawContent, imageUrl, filename }: ShowFileContent) => {
-  if (!rawContent && !imageUrl) return <>Loading...</>
+const FileContent = ({
+  rawContent,
+  url,
+  filename,
+  isImage,
+}: ShowFileContent) => {
+  if (!url) return <>Loading...</>
 
-  if (imageUrl) {
+  if (isImage) {
     return (
-      <img
-        src={imageUrl}
-        alt={filename}
-        width="100%"
-        style={{ width: '100%' }}
-      />
+      <img src={url} alt={filename} width="100%" style={{ width: '100%' }} />
     )
   }
 
-  const suffix = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase()
+  const suffix = filename.includes('.')
+    ? filename.substr(filename.lastIndexOf('.') + 1).toLowerCase()
+    : null
 
-  if (suffix === 'html' || suffix === 'htm') {
-    return (
-      <iframe
-        srcDoc={rawContent}
-        style={{ width: '100%', height: '60vh' }}
-      ></iframe>
-    )
-  } else {
-    return <Highlight language={suffix}>{rawContent}</Highlight>
+  switch (suffix) {
+    case 'html':
+    case 'htm':
+      return (
+        <iframe
+          srcDoc={rawContent}
+          style={{ width: '100%', height: '60vh' }}
+        ></iframe>
+      )
+    case 'json':
+    case 'txt':
+      return <Highlight language={suffix}>{rawContent}</Highlight>
+    default:
+      return (
+        <Button
+          variant="contained"
+          fullWidth
+          color="primary"
+          href={url}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Download
+        </Button>
+      )
   }
 }
 
@@ -423,12 +442,12 @@ const TransactionForm = (props: TransactionFormProps) => {
 
                     const type = (await ref.getMetadata())?.contentType
                     if (typeof type === 'string' && type.startsWith('image')) {
-                      setShowUploadedFile({ filename, imageUrl: url })
+                      setShowUploadedFile({ filename, url, isImage: true })
                       return true
                     }
 
                     const rawContent = await downloadTextFromUrl(url)
-                    setShowUploadedFile({ filename, rawContent })
+                    setShowUploadedFile({ filename, rawContent, url })
                     return true /* success */
                   },
                 )
