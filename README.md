@@ -1,22 +1,21 @@
 # Expense manager
 
-Original document with listed plans
-[here](https://docs.google.com/document/d/1tanCg35KLWazBiI08KAuBaAnJoiRlndMLvfvbD0KvGU/edit#).
-Trello tracking progress [here](https://trello.com/b/0WCaG9Go/expense-manager).
+Trello tracking progress [here](https://trello.com/b/0WCaG9Go/expense-manager). You need to have access to this page to open it.
 
 ## Firebase integration
 
 Using firebase for user authentification and firestone database. These links cover all the
-information: [Firebase web codelab](https://codelabs.developers.google.com/codelabs/firebase-web/#8)
+information: [Firebase web codelab](https://codelabs.developers.google.com/codelabs/firebase-web/#2)
 [Firebase setup](https://firebase.google.com/docs/web/setup)
 
 ## Deploying
 
-Be sure to have node version `>= 8.11`, because of [this
-issue](https://github.com/zeit/now/issues/2711).
+Be sure to have node version `10.x || 12.x`
 
 1. Download [now](https://zeit.co/download) and create an account
-2. Run `yarn deploy`
+2. Create new Firebase project according to Firebase integration section
+3. Create `.env-dev` file with the same constants names as in `.env-template` and set Firebase constants to specific values from your Firebase project
+4. Run `yarn deploy`
 
 _We use fixed version of next, because deploying with firebase works only after version 9.0.4, but breaks after 9.0.6.
 [issue1](https://github.com/zeit/next.js/issues/6073#issuecomment-467589586)
