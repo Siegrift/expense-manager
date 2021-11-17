@@ -8,7 +8,6 @@ import { attachCustomCommands } from 'cypress-firebase'
 const fbConfig = {
   apiKey: 'AIzaSyAFgtVKyy1iSHdE_44ijLyCQYW_KLEjbS0',
   authDomain: 'expense-manager-dev-59ddb.firebaseapp.com',
-  databaseURL: 'https://expense-manager-dev-59ddb.firebaseio.com',
   projectId: 'expense-manager-dev-59ddb',
   storageBucket: 'expense-manager-dev-59ddb.appspot.com',
   messagingSenderId: '1006392817344',
