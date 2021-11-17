@@ -2,7 +2,6 @@ require('./load-env')
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const withOffline = require('next-offline')
 
 const compose = (...fns) =>
@@ -161,25 +160,6 @@ const nextConfig = {
         },
       },
     ],
-  },
-  webpack: (config) => {
-    // needed for monaco editor
-    config.module.rules.push({
-      test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
-      use: {
-        loader: 'url-loader',
-        options: {
-          limit: 100000,
-        },
-      },
-    })
-    config.plugins.push(
-      new MonacoWebpackPlugin({
-        languages: ['javascript'],
-        filename: 'static/[name].worker.js',
-      })
-    )
-    return config
   },
 }
 
