@@ -1,12 +1,9 @@
 require('./load-env')
-// eslint-disable-next-line
-const withOffline = require('next-offline')
-// eslint-disable-next-line
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
-const withCSS = require('@zeit/next-css')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
+const withOffline = require('next-offline')
 
 const compose = (...fns) =>
   fns.reduce(
@@ -186,4 +183,4 @@ const nextConfig = {
   },
 }
 
-module.exports = compose(withBundleAnalyzer, withOffline, withCSS)(nextConfig)
+module.exports = compose(withBundleAnalyzer, withOffline)(nextConfig)
