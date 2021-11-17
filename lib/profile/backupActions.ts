@@ -1,50 +1,40 @@
 import { getStorageRef } from '../firebase/firebase'
 import { removeFiles } from '../firebase/firestore'
 import { Thunk } from '../redux/types'
-import {
-  createSuccessNotification,
-  setSnackbarNotification,
-  withErrorHandler,
-} from '../shared/actions'
+import { createSuccessNotification, setSnackbarNotification, withErrorHandler } from '../shared/actions'
 import { UPLOADING_DATA_ERROR } from '../shared/constants'
 import { currentUserIdSel } from '../shared/selectors'
 
 import { jsonFromDataSel } from './importExportSelectors'
 
-export const uploadBackup = (
-  filename: string,
-  // because we can't use the selector when doing automatic backup
-  withUserId?: string,
-): Thunk => async (dispatch, getState) => {
-  const userId = withUserId ?? currentUserIdSel(getState())
-  const jsonData = jsonFromDataSel(getState())
+export const uploadBackup =
+  (
+    filename: string,
+    // because we can't use the selector when doing automatic backup
+    withUserId?: string
+  ): Thunk =>
+  async (dispatch, getState) => {
+    const userId = withUserId ?? currentUserIdSel(getState())
+    const jsonData = jsonFromDataSel(getState())
 
-  withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
-    await getStorageRef(userId!, 'backup', filename).putString(jsonData)
-    dispatch(
-      setSnackbarNotification(createSuccessNotification('Backup successful')),
-    )
-  })
-}
+    withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+      await getStorageRef(userId!, 'backup', filename).putString(jsonData)
+      dispatch(setSnackbarNotification(createSuccessNotification('Backup successful')))
+    })
+  }
 
-export const removeBackupFiles = (filenames: string[]): Thunk => async (
-  dispatch,
-  getState,
-) => {
-  const userId = currentUserIdSel(getState())
+export const removeBackupFiles =
+  (filenames: string[]): Thunk =>
+  async (dispatch, getState) => {
+    const userId = currentUserIdSel(getState())
 
-  // wait for completion, TODO: maybe show loading overlay
-  withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
-    await Promise.all(
-      removeFiles(
-        userId!,
-        filenames.map((f) => ['backup', f]),
-      ),
-    )
-    dispatch(
-      setSnackbarNotification(
-        createSuccessNotification('Selected file(s) were successfully removed'),
-      ),
-    )
-  })
-}
+    withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+      await Promise.all(
+        removeFiles(
+          userId!,
+          filenames.map((f) => ['backup', f])
+        )
+      )
+      dispatch(setSnackbarNotification(createSuccessNotification('Selected file(s) were successfully removed')))
+    })
+  }
