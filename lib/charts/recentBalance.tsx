@@ -84,7 +84,7 @@ const RecentBalance = ({ width, height, dateRange }: Props) => {
         axisTop={null}
         axisRight={null}
         axisBottom={{
-          orient: 'bottom',
+          ticksPosition: 'before',
           tickSize: 5,
           tickPadding: 5,
           format: (v) => {
@@ -94,7 +94,7 @@ const RecentBalance = ({ width, height, dateRange }: Props) => {
           },
         }}
         axisLeft={{
-          orient: 'left',
+          ticksPosition: 'before',
           tickSize: 5,
           tickPadding: 5,
           format: (v) => `${v} ${mainCurrency ? CURRENCIES[mainCurrency].symbol : ''}`,

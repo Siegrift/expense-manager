@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { PieDatum, Pie } from '@nivo/pie'
+import { Pie } from '@nivo/pie'
 import { useSelector } from 'react-redux'
 
 import { tagSharesSel } from './selectors'
@@ -27,32 +27,34 @@ const TagPercentages = ({ width, height }: Props) => {
       { id: 'others-id', label: 'other tags', value: 0 }
     ),
   ]
+
+  // TODO: This chart is completely broken
   return (
     <Pie
       width={width}
       height={height}
-      data={data as unknown as PieDatum[]}
+      data={data as any}
       margin={{ top: 50, right: 80, bottom: 30, left: 80 }}
-      sliceLabel={(v) => `${v.value}%`}
+      // sliceLabel={(v) => `${v.value}%`}
       innerRadius={0.6}
       padAngle={0.7}
       cornerRadius={3}
       colors={{ scheme: 'nivo' }}
       borderWidth={1}
       borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-      radialLabelsSkipAngle={10}
-      radialLabelsTextXOffset={6}
-      radialLabelsTextColor="#333333"
-      radialLabelsLinkOffset={0}
-      radialLabelsLinkDiagonalLength={16}
-      radialLabelsLinkHorizontalLength={24}
-      radialLabelsLinkStrokeWidth={1}
-      radialLabelsLinkColor={{ from: 'color' }}
-      slicesLabelsSkipAngle={10}
-      slicesLabelsTextColor="#333333"
+      arcLabelsSkipAngle={10}
+      // arcLabelsTextXOffset={6}
+      arcLabelsTextColor="#333333"
+      arcLinkLabelsOffset={0}
+      arcLinkLabelsDiagonalLength={16}
+      // arcLinkLabelsHorizontalLength={24}
+      // arcLinkLabelsStrokeWidth={1}
+      arcLinkLabelsColor={{ from: 'color' }}
+      // slicesLabelsSkipAngle={10}
+      // slicesLabelsTextColor="#333333"
       animate
-      motionStiffness={90}
-      motionDamping={15}
+      // motionStiffness={90}
+      // motionDamping={15}
     />
   )
 }
