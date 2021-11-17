@@ -7,13 +7,14 @@
     "build": "next build",
     "deploy": "yarn build && vercel --prod",
     "dev": "NODE_OPTIONS=--max_old_space_size=8192 next dev",
-    "format": "prettier --check \"@(lib|pages)/**/*.tsx\" && yarn run-eslint",
     "lint:fix": "yarn lint --fix",
     "lint": "yarn eslint --ext js,ts,tsx . --max-warnings 0",
+    "prettier:fix": "prettier --write \"./**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "prettier": "prettier --check \"./**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "test:e2e:open": "cypress open",
     "test:e2e:run": "cypress run",
     "test:e2e:start-server": "next dev -p 3000",
-    "test:e2e": "start-server-and-test 'yarn test:e2e:start-server' http://localhost:3000 'yarn test:e2e:run'",
+    "test:e2e": "start-server-and-test \"yarn test:e2e:start-server\" http://localhost:3000 \"yarn test:e2e:run\"",
     "test:unit:watch": "jest --watch",
     "test:unit": "jest",
     "test": "yarn typescript && yarn test:unit && yarn test:e2e",
@@ -24,14 +25,6 @@
       "pre-commit": "yarn lint-staged && yarn typescript",
       "pre-push": "yarn test"
     }
-  },
-  "prettier": {
-    "arrowParens": "always",
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "all",
-    "tabWidth": 2,
-    "endOfLine": "lf"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
