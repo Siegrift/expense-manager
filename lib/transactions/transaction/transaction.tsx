@@ -92,10 +92,7 @@ const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
   )
   const DateComponent = (
     <Tooltip title={format(tx.dateTime, DEFAULT_DATE_TIME_FORMAT)}>
-      <Typography
-        variant="body1"
-        style={{ alignSelf: 'flex-end', margin: 'auto 8px' }}
-      >
+      <Typography variant="body1" style={{ alignSelf: 'flex-end', margin: 'auto 8px' }}>
         {`${formatDistance(tx.dateTime, new Date(), {
           includeSeconds: false,
         })} ago`}
@@ -106,14 +103,7 @@ const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
   const Tags = (
     <div className={classes.chipField}>
       {tx.tagIds.map((id) => {
-        return (
-          <Chip
-            key={id}
-            label={tags[id].name}
-            onDelete={null as any}
-            style={{ margin: 2 }}
-          />
-        )
+        return <Chip key={id} label={tags[id].name} onDelete={null as any} style={{ margin: 2 }} />
       })}
     </div>
   )
@@ -122,10 +112,7 @@ const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
     <div className={classes.iconPanel}>
       {tx.repeating !== 'none' && (
         <Tooltip title={`Repeating - ${tx.repeating}`}>
-          <RepeatOneIcon
-            className={classes.icon}
-            color={tx.repeating === 'inactive' ? 'disabled' : 'primary'}
-          />
+          <RepeatOneIcon className={classes.icon} color={tx.repeating === 'inactive' ? 'disabled' : 'primary'} />
         </Tooltip>
       )}
       {tx.note !== '' && (
@@ -212,13 +199,8 @@ const Transaction: React.FC<ListChildComponentProps> = ({
     return (
       <ListItem
         style={style as any}
-        className={classnames(
-          classes.listItem,
-          index === cursor && classes.cursor,
-        )}
-        onClick={() =>
-          router.replace(`/transactions`, `/transactions#${tx.id}`)
-        }
+        className={classnames(classes.listItem, index === cursor && classes.cursor)}
+        onClick={() => router.replace(`/transactions`, `/transactions#${tx.id}`)}
         ContainerComponent="div"
         data-cy="transaction"
       >

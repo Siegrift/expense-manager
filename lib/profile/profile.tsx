@@ -12,11 +12,7 @@ import CurrencySelect from '../components/currencySelect'
 import Loading from '../components/loading'
 import PageWrapper from '../components/pageWrapper'
 import { getFirebase } from '../firebase/firebase'
-import {
-  settingsSel,
-  signInStatusSel,
-  transactionsSel,
-} from '../shared/selectors'
+import { settingsSel, signInStatusSel, transactionsSel } from '../shared/selectors'
 
 import {
   clearAllData,
@@ -72,11 +68,7 @@ const Profile = () => {
       </SettingsPanel>
 
       <SettingsPanel name="import and export">
-        <Typography
-          variant="subtitle2"
-          gutterBottom
-          style={{ textTransform: 'initial' }}
-        >
+        <Typography variant="subtitle2" gutterBottom style={{ textTransform: 'initial' }}>
           JSON
         </Typography>
         <input
@@ -109,20 +101,12 @@ const Profile = () => {
           Export to json
         </Button>
 
-        <Typography
-          variant="subtitle2"
-          gutterBottom
-          style={{ textTransform: 'initial' }}
-        >
+        <Typography variant="subtitle2" gutterBottom style={{ textTransform: 'initial' }}>
           CSV
         </Typography>
-        <Alert
-          severity="warning"
-          style={{ marginBottom: 8, textTransform: 'initial' }}
-        >
-          Exporting to CSV discards some internal information. Use this format
-          only when you want to view the data in another tool (e.g. excel). For
-          backups, prefer using the <b>JSON format</b>.
+        <Alert severity="warning" style={{ marginBottom: 8, textTransform: 'initial' }}>
+          Exporting to CSV discards some internal information. Use this format only when you want to view the data in
+          another tool (e.g. excel). For backups, prefer using the <b>JSON format</b>.
         </Alert>
         <input
           id="choose-csv-file"

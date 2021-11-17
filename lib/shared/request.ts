@@ -5,10 +5,7 @@ export interface RequestOptions {
   fetchOptions?: RequestInit
 }
 
-export const request = <Response>(
-  url: string,
-  reqOptions: RequestOptions = {},
-): Promise<Response> => {
+export const request = <Response>(url: string, reqOptions: RequestOptions = {}): Promise<Response> => {
   const { timeout = DEFAULT_REQUEST_TIMEOUT, fetchOptions } = reqOptions
 
   return Promise.race([

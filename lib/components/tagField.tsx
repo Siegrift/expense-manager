@@ -2,9 +2,7 @@ import React from 'react'
 
 import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
-import Autocomplete, {
-  createFilterOptions,
-} from '@material-ui/lab/Autocomplete'
+import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete'
 import { omit } from '@siegrift/tsfunct'
 import classnames from 'classnames'
 import difference from 'lodash/difference'
@@ -53,10 +51,7 @@ const TagField = ({
   const userId = useSelector(currentUserIdSel)
 
   return (
-    <div
-      className={classnames(classes.root, className)}
-      data-cy="tag-field-wrapper"
-    >
+    <div className={classnames(classes.root, className)} data-cy="tag-field-wrapper">
       <Autocomplete<TagFieldTag, true, true, true>
         multiple
         size="small"
@@ -69,23 +64,11 @@ const TagField = ({
           return option?.name
         }}
         renderInput={(params) => {
-          return (
-            <TextField
-              {...params}
-              variant="outlined"
-              label="Transaction tags"
-              fullWidth
-            />
-          )
+          return <TextField {...params} variant="outlined" label="Transaction tags" fullWidth />
         }}
         filterOptions={(options, params) => {
           const filtered = filterOptions(options, params)
-          if (
-            !filtered.find(
-              (option) => params.getOptionLabel(option) === params.inputValue,
-            ) &&
-            userId
-          ) {
+          if (!filtered.find((option) => params.getOptionLabel(option) === params.inputValue) && userId) {
             const id = uuid()
             filtered.push({
               name: `${ADD_NEW_OPTION_LABEL}${params.inputValue}`,
@@ -102,8 +85,7 @@ const TagField = ({
         onChange={(_, values) => {
           if (currentTagIds.length < values.length) {
             const added = values[values.length - 1]
-            if (typeof added === 'string')
-              throw new Error('This should not happen!')
+            if (typeof added === 'string') throw new Error('This should not happen!')
             if (added.createdByTagField) {
               onCreateTag({
                 ...omit(added, ['createdByTagField']),
@@ -115,7 +97,7 @@ const TagField = ({
           } else {
             const removed = difference(
               currentTagIds,
-              values.map((v) => (v as Tag).id),
+              values.map((v) => (v as Tag).id)
             )
             if (removed.length) onRemoveTags(removed)
           }

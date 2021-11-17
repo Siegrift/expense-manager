@@ -40,17 +40,9 @@ import { setSnackbarNotification, withErrorHandler } from '../shared/actions'
 import { DEFAULT_DATE_TIME_FORMAT } from '../shared/constants'
 import { Currency, CURRENCIES } from '../shared/currencies'
 import { useFirebaseLoaded } from '../shared/hooks'
-import {
-  mainCurrencySel,
-  exchangeRatesSel,
-  currentUserIdSel,
-} from '../shared/selectors'
+import { mainCurrencySel, exchangeRatesSel, currentUserIdSel } from '../shared/selectors'
 import { useRefreshExchangeRates } from '../shared/transaction/useRefreshExchangeRates'
-import {
-  areDistinct,
-  computeExchangeRate,
-  downloadTextFromUrl,
-} from '../shared/utils'
+import { areDistinct, computeExchangeRate, downloadTextFromUrl } from '../shared/utils'
 import { ObjectOf } from '../types'
 
 import CurrencySelect from './currencySelect'
@@ -142,46 +134,25 @@ interface ShowFileContent {
   isImage?: boolean
 }
 
-const FileContent = ({
-  rawContent,
-  url,
-  filename,
-  isImage,
-}: ShowFileContent) => {
+const FileContent = ({ rawContent, url, filename, isImage }: ShowFileContent) => {
   if (!url) return <>Loading...</>
 
   if (isImage) {
-    return (
-      <img src={url} alt={filename} width="100%" style={{ width: '100%' }} />
-    )
+    return <img src={url} alt={filename} width="100%" style={{ width: '100%' }} />
   }
 
-  const suffix = filename.includes('.')
-    ? filename.substr(filename.lastIndexOf('.') + 1).toLowerCase()
-    : null
+  const suffix = filename.includes('.') ? filename.substr(filename.lastIndexOf('.') + 1).toLowerCase() : null
 
   switch (suffix) {
     case 'html':
     case 'htm':
-      return (
-        <iframe
-          srcDoc={rawContent}
-          style={{ width: '100%', height: '60vh' }}
-        ></iframe>
-      )
+      return <iframe srcDoc={rawContent} style={{ width: '100%', height: '60vh' }}></iframe>
     case 'json':
     case 'txt':
       return <Highlight language={suffix}>{rawContent}</Highlight>
     default:
       return (
-        <Button
-          variant="contained"
-          fullWidth
-          color="primary"
-          href={url}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
+        <Button variant="contained" fullWidth color="primary" href={url} rel="noopener noreferrer" target="_blank">
           Download
         </Button>
       )
@@ -189,22 +160,10 @@ const FileContent = ({
 }
 
 const TransactionForm = (props: TransactionFormProps) => {
-  const {
-    variant,
-    tagProps,
-    isExpense,
-    amount,
-    currency,
-    dateTime,
-    onSubmit,
-    repeating,
-    note,
-    attachedFileObjects,
-  } = props
-  const useCurrentTime =
-    variant === 'add' && (props as AddTxFormVariantProps).useCurrentTime
-  const uploadedFiles =
-    variant === 'edit' && (props as EditTxFormVariantProps).uploadedFiles
+  const { variant, tagProps, isExpense, amount, currency, dateTime, onSubmit, repeating, note, attachedFileObjects } =
+    props
+  const useCurrentTime = variant === 'add' && (props as AddTxFormVariantProps).useCurrentTime
+  const uploadedFiles = variant === 'edit' && (props as EditTxFormVariantProps).uploadedFiles
   const txId = variant === 'edit' && (props as EditTxFormVariantProps).id
 
   const classes = useStyles()
@@ -214,18 +173,13 @@ const TransactionForm = (props: TransactionFormProps) => {
   const userId = useSelector(currentUserIdSel)
   const settingsLoaded = useFirebaseLoaded()
   const dispatch = useDispatch()
-  const [
-    showUploadedFile,
-    setShowUploadedFile,
-  ] = React.useState<null | ShowFileContent>(null)
+  const [showUploadedFile, setShowUploadedFile] = React.useState<null | ShowFileContent>(null)
 
   const { loading, error } = useRefreshExchangeRates()
 
   let filteredRepeatingOptions = Object.keys(RepeatingOptions)
   if (variant === 'add') {
-    filteredRepeatingOptions = filteredRepeatingOptions.filter(
-      (op) => op !== RepeatingOptions.inactive,
-    )
+    filteredRepeatingOptions = filteredRepeatingOptions.filter((op) => op !== RepeatingOptions.inactive)
   }
 
   return (
@@ -273,11 +227,7 @@ const TransactionForm = (props: TransactionFormProps) => {
           onPressEnter={onSubmit}
         />
 
-        <CurrencySelect
-          value={currency.value}
-          className={classes.currency}
-          onChange={currency.handler}
-        />
+        <CurrencySelect value={currency.value} className={classes.currency} onChange={currency.handler} />
       </Grid>
 
       <Collapse in={currency.value !== mainCurrency} style={{ margin: 0 }}>
@@ -285,19 +235,12 @@ const TransactionForm = (props: TransactionFormProps) => {
           {settingsLoaded && (
             <>
               <Typography variant="caption">
-                {(parseFloat(amount.value) || 0).toFixed(
-                  CURRENCIES[currency.value].scale,
-                )}{' '}
-                {currency.value}
+                {(parseFloat(amount.value) || 0).toFixed(CURRENCIES[currency.value].scale)} {currency.value}
                 {' = '}
                 <b>
                   {(
                     (parseFloat(amount.value) || 0) *
-                    computeExchangeRate(
-                      exchangeRates!.rates,
-                      currency.value,
-                      mainCurrency!,
-                    )
+                    computeExchangeRate(exchangeRates!.rates, currency.value, mainCurrency!)
                   ).toFixed(CURRENCIES[mainCurrency!].scale)}{' '}
                   {mainCurrency}
                 </b>
@@ -309,21 +252,14 @@ const TransactionForm = (props: TransactionFormProps) => {
           )}
           {loading && (
             <Typography variant="caption">
-              <Loading
-                size={15}
-                imageStyle={{ display: 'inline', marginTop: '2px' }}
-              />
-              <span style={{ marginLeft: 4, verticalAlign: 'super' }}>
-                Loading fresh exchange rates
-              </span>
+              <Loading size={15} imageStyle={{ display: 'inline', marginTop: '2px' }} />
+              <span style={{ marginLeft: 4, verticalAlign: 'super' }}>Loading fresh exchange rates</span>
             </Typography>
           )}
           {error && (
             <Typography variant="caption" style={{ color: 'red' }}>
               <ErrorOutlineIcon fontSize="small" />
-              <span style={{ marginLeft: 4, verticalAlign: 'super' }}>
-                Couldn't refresh exchange rates
-              </span>
+              <span style={{ marginLeft: 4, verticalAlign: 'super' }}>Couldn't refresh exchange rates</span>
             </Typography>
           )}
         </Grid>
@@ -368,9 +304,7 @@ const TransactionForm = (props: TransactionFormProps) => {
                 value={dateTime.value}
                 onChange={dateTime.handler}
                 label="Transaction date"
-                renderInput={(props) => (
-                  <TextField {...props} style={{ flex: 1 }} />
-                )}
+                renderInput={(props) => <TextField {...props} style={{ flex: 1 }} />}
               />
             </Grid>
           </Collapse>
@@ -386,9 +320,7 @@ const TransactionForm = (props: TransactionFormProps) => {
             value={dateTime.value}
             onChange={dateTime.handler}
             label="Transaction date"
-            renderInput={(props) => (
-              <TextField {...props} style={{ flex: 1 }} />
-            )}
+            renderInput={(props) => <TextField {...props} style={{ flex: 1 }} />}
           />
         </Grid>
       )}
@@ -416,11 +348,7 @@ const TransactionForm = (props: TransactionFormProps) => {
       {uploadedFiles && (
         <List
           dense
-          subheader={
-            <ListSubheader style={{ padding: 0, fontSize: 'small' }}>
-              Already uploaded files
-            </ListSubheader>
-          }
+          subheader={<ListSubheader style={{ padding: 0, fontSize: 'small' }}>Already uploaded files</ListSubheader>}
         >
           {uploadedFiles.value.map((filename) => (
             <ListItem
@@ -428,29 +356,20 @@ const TransactionForm = (props: TransactionFormProps) => {
               button
               onClick={async () => {
                 setShowUploadedFile({ filename })
-                const success = await withErrorHandler(
-                  'Unable to download file content',
-                  dispatch,
-                  async () => {
-                    const ref = getStorageRef(
-                      userId!,
-                      'files',
-                      txId as string,
-                      filename,
-                    )
-                    const url = await ref.getDownloadURL()
+                const success = await withErrorHandler('Unable to download file content', dispatch, async () => {
+                  const ref = getStorageRef(userId!, 'files', txId as string, filename)
+                  const url = await ref.getDownloadURL()
 
-                    const type = (await ref.getMetadata())?.contentType
-                    if (typeof type === 'string' && type.startsWith('image')) {
-                      setShowUploadedFile({ filename, url, isImage: true })
-                      return true
-                    }
+                  const type = (await ref.getMetadata())?.contentType
+                  if (typeof type === 'string' && type.startsWith('image')) {
+                    setShowUploadedFile({ filename, url, isImage: true })
+                    return true
+                  }
 
-                    const rawContent = await downloadTextFromUrl(url)
-                    setShowUploadedFile({ filename, rawContent, url })
-                    return true /* success */
-                  },
-                )
+                  const rawContent = await downloadTextFromUrl(url)
+                  setShowUploadedFile({ filename, rawContent, url })
+                  return true /* success */
+                })
 
                 if (!success)
                   setShowUploadedFile({
@@ -463,11 +382,7 @@ const TransactionForm = (props: TransactionFormProps) => {
               <ListItemSecondaryAction style={{ right: 0 }}>
                 <IconButton
                   color="primary"
-                  onClick={() =>
-                    uploadedFiles.handler(
-                      uploadedFiles.value.filter((f) => f !== filename),
-                    )
-                  }
+                  onClick={() => uploadedFiles.handler(uploadedFiles.value.filter((f) => f !== filename))}
                 >
                   <CloseIcon />
                 </IconButton>
@@ -478,21 +393,13 @@ const TransactionForm = (props: TransactionFormProps) => {
       )}
 
       {showUploadedFile && (
-        <Dialog
-          onClose={() => setShowUploadedFile(null)}
-          open={true}
-          classes={{ paper: classes.showFileDialogPaper }}
-        >
+        <Dialog onClose={() => setShowUploadedFile(null)} open={true} classes={{ paper: classes.showFileDialogPaper }}>
           <DialogTitle>{`Attached file - ${showUploadedFile.filename}`}</DialogTitle>
           <DialogContent dividers>
             <FileContent {...showUploadedFile} />
           </DialogContent>
           <DialogActions>
-            <Button
-              autoFocus
-              onClick={() => setShowUploadedFile(null)}
-              color="primary"
-            >
+            <Button autoFocus onClick={() => setShowUploadedFile(null)} color="primary">
               Close
             </Button>
           </DialogActions>
@@ -514,19 +421,14 @@ const TransactionForm = (props: TransactionFormProps) => {
               setSnackbarNotification({
                 message: 'Detected multiple files with same filenames!',
                 severity: 'warning',
-              }),
+              })
             )
           } else {
-            attachedFileObjects.handler([
-              ...attachedFileObjects.value,
-              ...newFileObjects,
-            ])
+            attachedFileObjects.handler([...attachedFileObjects.value, ...newFileObjects])
           }
         }}
         onDelete={(_fileObj, index) =>
-          attachedFileObjects.handler(
-            attachedFileObjects.value.filter((_, i) => i !== index),
-          )
+          attachedFileObjects.handler(attachedFileObjects.value.filter((_, i) => i !== index))
         }
         showAlerts={false} // turning this to true breaks application
         classes={{
@@ -540,20 +442,13 @@ const TransactionForm = (props: TransactionFormProps) => {
         }}
         dropzoneText="Drag and drop file(s) or click to choose"
         onAlert={(message, severity) => {
-          if (severity === 'error')
-            dispatch(setSnackbarNotification({ message, severity }))
+          if (severity === 'error') dispatch(setSnackbarNotification({ message, severity }))
         }}
       />
 
       {variant === 'add' && (
         <Grid className={classes.row}>
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={onSubmit}
-            aria-label="add transaction"
-          >
+          <Button variant="contained" color="primary" fullWidth onClick={onSubmit} aria-label="add transaction">
             Add transaction
           </Button>
         </Grid>

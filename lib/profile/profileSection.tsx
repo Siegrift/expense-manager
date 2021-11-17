@@ -17,9 +17,7 @@ export interface ProfileSectionProps {
   name: string
 }
 
-const ProfileSection: React.FunctionComponent<ProfileSectionProps> = (
-  props,
-) => {
+const ProfileSection: React.FunctionComponent<ProfileSectionProps> = (props) => {
   const classes = useStyles()
   const [expanded, setExpanded] = React.useState(false)
 
@@ -34,9 +32,7 @@ const ProfileSection: React.FunctionComponent<ProfileSectionProps> = (
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>{props.name}</Typography>
       </AccordionSummary>
-      <AccordionDetails className={classes.importExportContent}>
-        {props.children}
-      </AccordionDetails>
+      <AccordionDetails className={classes.importExportContent}>{props.children}</AccordionDetails>
     </Accordion>
   )
 }

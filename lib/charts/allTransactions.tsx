@@ -22,14 +22,8 @@ type ChartDataNode = {
   children: Array<ChartDataNode | ChartDataLeaf>
 }
 
-const createDataLeaf = (
-  txs: Transaction[],
-  tags: TagShare[],
-  usedTagIds: string[],
-) => {
-  const txTags = tags
-    .filter((t) => !usedTagIds.includes(t.id) && txs[0].tagIds.includes(t.id))
-    .map((t) => t.label)
+const createDataLeaf = (txs: Transaction[], tags: TagShare[], usedTagIds: string[]) => {
+  const txTags = tags.filter((t) => !usedTagIds.includes(t.id) && txs[0].tagIds.includes(t.id)).map((t) => t.label)
   return { name: txTags.join(','), amount: txs[0].amount }
 }
 
@@ -37,7 +31,7 @@ const createRecData = (
   txs: Transaction[],
   tags: TagShare[],
   level: number,
-  usedTagIds: string[],
+  usedTagIds: string[]
 ): Array<ChartDataNode | ChartDataLeaf> => {
   if (txs.length === 1) {
     return [createDataLeaf(txs, tags, usedTagIds)]
@@ -55,10 +49,7 @@ const createRecData = (
   const ans: Array<ChartDataNode | ChartDataLeaf> = []
   let branch = 0
   tags.forEach((tag) => {
-    if (
-      usedTagIds.includes(tag.id) ||
-      branch >= MAX_BRANCHING_PER_LEVEL[level]
-    ) {
+    if (usedTagIds.includes(tag.id) || branch >= MAX_BRANCHING_PER_LEVEL[level]) {
       return
     }
 
@@ -75,10 +66,7 @@ const createRecData = (
       if (newTxs.length > 1) {
         ans.push({
           name: tag.label,
-          children: createRecData(newTxs, tags, level + 1, [
-            ...usedTagIds,
-            tag.id,
-          ]),
+          children: createRecData(newTxs, tags, level + 1, [...usedTagIds, tag.id]),
         })
       } else {
         ans.push(createDataLeaf(newTxs, tags, usedTagIds))
@@ -96,9 +84,7 @@ interface Props {
 
 const AllTransactions = ({ width, height }: Props) => {
   const tagShares = useSelector(tagSharesSel)
-  const transactions = useSelector((state: State) =>
-    Object.values(state.transactions),
-  )
+  const transactions = useSelector((state: State) => Object.values(state.transactions))
 
   const data = createRecData(transactions, tagShares, 0, [])
 

@@ -11,10 +11,7 @@ import { Tag, Transaction } from './addTransaction/state'
 import { getFirebase } from './firebase/firebase'
 import { Profile } from './profile/state'
 import { Action, Thunk } from './redux/types'
-import {
-  createErrorNotification,
-  setSnackbarNotification,
-} from './shared/actions'
+import { createErrorNotification, setSnackbarNotification } from './shared/actions'
 import { USER_DATA_NOT_LOADED_ERROR } from './shared/constants'
 import { exchangeRatesSel, mainCurrencySel } from './shared/selectors'
 import { computeExchangeRate } from './shared/utils'
@@ -41,11 +38,7 @@ export const setCurrentScreen = (screen: ScreenTitle): Action<ScreenTitle> => ({
 const MAX_WRITES_IN_BATCH = 500
 
 const privateUpload = (
-  entries: Array<
-    | UploadEntry<'tags', Tag>
-    | UploadEntry<'transactions', Transaction>
-    | UploadEntry<'profile', Profile>
-  >,
+  entries: Array<UploadEntry<'tags', Tag> | UploadEntry<'transactions', Transaction> | UploadEntry<'profile', Profile>>
 ) => {
   const colls: FirebaseCollections = {
     tags: getFirebase().firestore().collection('tags'),
@@ -64,9 +57,7 @@ const privateUpload = (
   })
 }
 
-const privateRemove = (
-  entries: Array<RemoveEntry<'tags'> | RemoveEntry<'transactions'>>,
-) => {
+const privateRemove = (entries: Array<RemoveEntry<'tags'> | RemoveEntry<'transactions'>>) => {
   const colls: FirebaseCollections = {
     tags: getFirebase().firestore().collection('tags'),
     transactions: getFirebase().firestore().collection('transactions'),
@@ -90,74 +81,69 @@ interface UploadToFirebaseParams extends Partial<ObjectOf<FirebaseField[]>> {
   profile?: Profile[]
 }
 
-export const uploadToFirebase = (data: UploadToFirebaseParams): Thunk => (
-  dispatch,
-  getState,
-  { logger },
-) => {
-  logger.log('Upload data to firestore', data)
+export const uploadToFirebase =
+  (data: UploadToFirebaseParams): Thunk =>
+  (dispatch, getState, { logger }) => {
+    logger.log('Upload data to firestore', data)
 
-  const { txs, tags, profile } = data
-  const uploadEntries: Parameters<typeof privateUpload>[0] = []
-  if (tags) {
-    uploadEntries.push(
-      ...tags.map((t) => ({ coll: 'tags', data: t, docId: t.id } as const)),
-    )
+    const { txs, tags, profile } = data
+    const uploadEntries: Parameters<typeof privateUpload>[0] = []
+    if (tags) {
+      uploadEntries.push(...tags.map((t) => ({ coll: 'tags', data: t, docId: t.id } as const)))
+    }
+    if (txs) {
+      uploadEntries.push(
+        ...txs.map(
+          (t) =>
+            ({
+              coll: 'transactions',
+              data: t,
+              docId: t.id,
+            } as const)
+        )
+      )
+    }
+    if (profile) {
+      uploadEntries.push(
+        ...Object.keys(profile).map(
+          (key) =>
+            ({
+              coll: 'profile',
+              data: profile[key],
+              docId: key,
+            } as const)
+        )
+      )
+    }
+
+    // NOTE: do not wait for this promise because it will never resolve when offline
+    // see: https://www.youtube.com/watch?v=XrltP8bOHT0&feature=youtu.be&t=673
+    privateUpload(uploadEntries)
+    return Promise.resolve()
   }
-  if (txs) {
-    uploadEntries.push(
-      ...txs.map(
-        (t) =>
-          ({
-            coll: 'transactions',
-            data: t,
-            docId: t.id,
-          } as const),
+
+export const removeFromFirebase =
+  (txIds: string[], tagIds: string[]): Thunk =>
+  (dispatch, getState, { logger }) => {
+    logger.log('Remove transactions and tags from firestone')
+    // NOTE: do not wait for this promise because it will never resolve when offline
+    // see: https://www.youtube.com/watch?v=XrltP8bOHT0&feature=youtu.be&t=673
+    privateRemove([
+      ...tagIds.map(
+        (id): RemoveEntry<'tags'> => ({
+          coll: 'tags',
+          docId: id,
+        })
       ),
-    )
-  }
-  if (profile) {
-    uploadEntries.push(
-      ...Object.keys(profile).map(
-        (key) =>
-          ({
-            coll: 'profile',
-            data: profile[key],
-            docId: key,
-          } as const),
+      ...txIds.map(
+        (id): RemoveEntry<'transactions'> => ({
+          coll: 'transactions',
+          docId: id,
+        })
       ),
-    )
+    ])
+    return Promise.resolve()
   }
-
-  // NOTE: do not wait for this promise because it will never resolve when offline
-  // see: https://www.youtube.com/watch?v=XrltP8bOHT0&feature=youtu.be&t=673
-  privateUpload(uploadEntries)
-  return Promise.resolve()
-}
-
-export const removeFromFirebase = (
-  txIds: string[],
-  tagIds: string[],
-): Thunk => (dispatch, getState, { logger }) => {
-  logger.log('Remove transactions and tags from firestone')
-  // NOTE: do not wait for this promise because it will never resolve when offline
-  // see: https://www.youtube.com/watch?v=XrltP8bOHT0&feature=youtu.be&t=673
-  privateRemove([
-    ...tagIds.map(
-      (id): RemoveEntry<'tags'> => ({
-        coll: 'tags',
-        docId: id,
-      }),
-    ),
-    ...txIds.map(
-      (id): RemoveEntry<'transactions'> => ({
-        coll: 'transactions',
-        docId: id,
-      }),
-    ),
-  ])
-  return Promise.resolve()
-}
 
 const setRepeatingTxsAsInactive = (inactive: Transaction[]) => {
   const txs = getFirebase().firestore().collection('transactions')
@@ -172,84 +158,74 @@ const setRepeatingTxsAsInactive = (inactive: Transaction[]) => {
   })
 }
 
-export const addRepeatingTxs = (): Thunk => async (
-  dispatch,
-  getState,
-  { logger },
-) => {
-  logger.log('Add repeating transactions')
+export const addRepeatingTxs =
+  (): Thunk =>
+  async (dispatch, getState, { logger }) => {
+    logger.log('Add repeating transactions')
 
-  const exchangeRates = exchangeRatesSel(getState())
-  const mainCurrency = mainCurrencySel(getState())
+    const exchangeRates = exchangeRatesSel(getState())
+    const mainCurrency = mainCurrencySel(getState())
 
-  if (exchangeRates === undefined || mainCurrency === undefined) {
-    dispatch(
-      setSnackbarNotification(
-        createErrorNotification(USER_DATA_NOT_LOADED_ERROR),
-      ),
-    )
-    return
-  }
+    if (exchangeRates === undefined || mainCurrency === undefined) {
+      dispatch(setSnackbarNotification(createErrorNotification(USER_DATA_NOT_LOADED_ERROR)))
+      return
+    }
 
-  const added: Transaction[] = []
-  const inactive: Transaction[] = []
-  const now = new Date()
+    const added: Transaction[] = []
+    const inactive: Transaction[] = []
+    const now = new Date()
 
-  Object.values(getState().transactions).forEach((tx) => {
-    const repeatTx = (stepFn: typeof addYears) => {
-      let i = 1
-      let lastActiveCreatedTx: Transaction | null = null
+    Object.values(getState().transactions).forEach((tx) => {
+      const repeatTx = (stepFn: typeof addYears) => {
+        let i = 1
+        let lastActiveCreatedTx: Transaction | null = null
 
-      while (true) {
-        const newDate = stepFn(tx.dateTime, i)
-        if (isBefore(newDate, now)) {
-          const newTx: Transaction = {
-            ...tx,
-            id: uuid(),
-            dateTime: newDate,
-            // some fields should be updated
-            attachedFiles: [],
-            rate: computeExchangeRate(
-              exchangeRates.rates,
-              tx.currency,
-              mainCurrency,
-            ),
-          }
+        while (true) {
+          const newDate = stepFn(tx.dateTime, i)
+          if (isBefore(newDate, now)) {
+            const newTx: Transaction = {
+              ...tx,
+              id: uuid(),
+              dateTime: newDate,
+              // some fields should be updated
+              attachedFiles: [],
+              rate: computeExchangeRate(exchangeRates.rates, tx.currency, mainCurrency),
+            }
 
-          added.push(newTx)
-          if (lastActiveCreatedTx === null) {
-            inactive.push(tx)
+            added.push(newTx)
+            if (lastActiveCreatedTx === null) {
+              inactive.push(tx)
+            } else {
+              lastActiveCreatedTx.repeating = 'inactive'
+            }
+            lastActiveCreatedTx = newTx
+            i++
           } else {
-            lastActiveCreatedTx.repeating = 'inactive'
+            break
           }
-          lastActiveCreatedTx = newTx
-          i++
-        } else {
-          break
         }
       }
-    }
 
-    switch (tx.repeating) {
-      case 'inactive':
-      case 'none':
-        return
-      case 'annually':
-        repeatTx(addYears)
-        return
-      case 'monthly':
-        repeatTx(addMonths)
-        return
-      case 'weekly':
-        repeatTx(addWeeks)
-      case 'daily':
-        repeatTx(addDays)
-        return
-      default:
-        throw new Error(`Unknown repeating mode ${tx.repeating}`)
-    }
-  })
+      switch (tx.repeating) {
+        case 'inactive':
+        case 'none':
+          return
+        case 'annually':
+          repeatTx(addYears)
+          return
+        case 'monthly':
+          repeatTx(addMonths)
+          return
+        case 'weekly':
+          repeatTx(addWeeks)
+        case 'daily':
+          repeatTx(addDays)
+          return
+        default:
+          throw new Error(`Unknown repeating mode ${tx.repeating}`)
+      }
+    })
 
-  await dispatch(uploadToFirebase({ txs: added }))
-  setRepeatingTxsAsInactive(inactive)
-}
+    await dispatch(uploadToFirebase({ txs: added }))
+    setRepeatingTxsAsInactive(inactive)
+  }

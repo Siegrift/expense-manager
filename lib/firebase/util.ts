@@ -13,10 +13,7 @@ export const convertTimestampsToDates = (value: any): any => {
   } else if (Array.isArray(value)) {
     return value.map((v) => convertTimestampsToDates(v))
   } else if (typeof value === 'object') {
-    return Object.keys(value).reduce(
-      (acc, key) => ({ ...acc, [key]: convertTimestampsToDates(value[key]) }),
-      {},
-    )
+    return Object.keys(value).reduce((acc, key) => ({ ...acc, [key]: convertTimestampsToDates(value[key]) }), {})
   } else {
     return value
   }

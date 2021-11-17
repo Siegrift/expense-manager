@@ -38,11 +38,7 @@ const Login = () => {
             }}
           />
 
-          <Typography
-            variant="h4"
-            gutterBottom
-            style={{ textAlign: 'center', marginTop: '5vh' }}
-          >
+          <Typography variant="h4" gutterBottom style={{ textAlign: 'center', marginTop: '5vh' }}>
             {PROJECT_TITLE}
           </Typography>
 

@@ -24,14 +24,14 @@ const TagPercentages = ({ width, height }: Props) => {
         ...acc,
         value: acc.value + tagPerc.value,
       }),
-      { id: 'others-id', label: 'other tags', value: 0 },
+      { id: 'others-id', label: 'other tags', value: 0 }
     ),
   ]
   return (
     <Pie
       width={width}
       height={height}
-      data={(data as unknown) as PieDatum[]}
+      data={data as unknown as PieDatum[]}
       margin={{ top: 50, right: 80, bottom: 30, left: 80 }}
       sliceLabel={(v) => `${v.value}%`}
       innerRadius={0.6}

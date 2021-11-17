@@ -23,50 +23,43 @@ import {
   ImportedData,
 } from './importExportSelectors'
 
-const importData = (
-  file: File,
-  dataSourceSel: (importData: string) => (state: State) => ImportedData,
-): Thunk => async (dispatch, getState) => {
-  const userId = currentUserIdSel(getState())
+const importData =
+  (file: File, dataSourceSel: (importData: string) => (state: State) => ImportedData): Thunk =>
+  async (dispatch, getState) => {
+    const userId = currentUserIdSel(getState())
 
-  if (!userId) {
-    dispatch(setSnackbarNotification(createErrorNotification(NO_USER_ID_ERROR)))
-    return Promise.resolve()
+    if (!userId) {
+      dispatch(setSnackbarNotification(createErrorNotification(NO_USER_ID_ERROR)))
+      return Promise.resolve()
+    }
+
+    const fileContent = await file.text()
+    const { errorReason, tags, transactions, profile } = dataSourceSel(fileContent)(getState())
+
+    if (errorReason) {
+      dispatch(setSnackbarNotification(createErrorNotification(errorReason)))
+    } else {
+      withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+        await dispatch(
+          uploadToFirebase({
+            txs: Object.values(transactions),
+            tags: Object.values(tags),
+            profile: Object.values(profile),
+          })
+        )
+
+        dispatch(setSnackbarNotification(createSuccessNotification('Data imported successfully')))
+      })
+    }
   }
 
-  const fileContent = await file.text()
-  const { errorReason, tags, transactions, profile } = dataSourceSel(
-    fileContent,
-  )(getState())
+export const importFromCSV =
+  (e: React.ChangeEvent<HTMLInputElement>): Thunk =>
+  (dispatch, _getState, { logger }) => {
+    logger.log('Import from csv')
 
-  if (errorReason) {
-    dispatch(setSnackbarNotification(createErrorNotification(errorReason)))
-  } else {
-    withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
-      await dispatch(
-        uploadToFirebase({
-          txs: Object.values(transactions),
-          tags: Object.values(tags),
-          profile: Object.values(profile),
-        }),
-      )
-
-      dispatch(
-        setSnackbarNotification(
-          createSuccessNotification('Data imported successfully'),
-        ),
-      )
-    })
+    return dispatch(importData(e.target.files!.item(0)!, dataFromImportedCsvSel))
   }
-}
-
-export const importFromCSV = (
-  e: React.ChangeEvent<HTMLInputElement>,
-): Thunk => (dispatch, _getState, { logger }) => {
-  logger.log('Import from csv')
-
-  return dispatch(importData(e.target.files!.item(0)!, dataFromImportedCsvSel))
-}
 
 export const exportToCSV = (): Action => ({
   type: 'Export to csv',
@@ -76,89 +69,74 @@ export const exportToCSV = (): Action => ({
   },
 })
 
-export const clearAllData = (): Thunk => async (
-  dispatch,
-  getState,
-  { logger },
-) => {
-  logger.log('Clear all data')
+export const clearAllData =
+  (): Thunk =>
+  async (dispatch, getState, { logger }) => {
+    logger.log('Clear all data')
 
-  const userId = currentUserIdSel(getState())
-  if (!userId) {
-    dispatch(setSnackbarNotification(createErrorNotification(NO_USER_ID_ERROR)))
-    return Promise.resolve()
-  }
+    const userId = currentUserIdSel(getState())
+    if (!userId) {
+      dispatch(setSnackbarNotification(createErrorNotification(NO_USER_ID_ERROR)))
+      return Promise.resolve()
+    }
 
-  const removeColl = async (name: string) => {
-    let stopRemove = false
-    while (!stopRemove) {
-      const batch = getFirebase().firestore().batch()
+    const removeColl = async (name: string) => {
+      let stopRemove = false
+      while (!stopRemove) {
+        const batch = getFirebase().firestore().batch()
 
-      // this is the only way to remove all of the data
-      // eslint-disable-next-line
-      const q = await getFirebase()
-        .firestore()
-        .collection(name)
-        .where('uid', '==', userId)
-        .limit(500)
-        .get()
+        // this is the only way to remove all of the data
+        // eslint-disable-next-line
+        const q = await getFirebase().firestore().collection(name).where('uid', '==', userId).limit(500).get()
 
-      if (q.size > 0) {
-        q.docs.forEach((d) => batch.delete(d.ref))
-        batch.commit()
-      } else {
-        stopRemove = true
+        if (q.size > 0) {
+          q.docs.forEach((d) => batch.delete(d.ref))
+          batch.commit()
+        } else {
+          stopRemove = true
+        }
       }
     }
+    return Promise.all([removeColl('transactions'), removeColl('tags'), removeColl('profile')])
   }
-  return Promise.all([
-    removeColl('transactions'),
-    removeColl('tags'),
-    removeColl('profile'),
-  ])
-}
 
-export const changeDefaultCurrency = (currency: Currency): Thunk => async (
-  dispatch,
-  getState,
-  { logger },
-) => {
-  logger.log('Change default currency')
+export const changeDefaultCurrency =
+  (currency: Currency): Thunk =>
+  async (dispatch, getState, { logger }) => {
+    logger.log('Change default currency')
 
-  withErrorHandler("Couldn't change the default currency", dispatch, () => {
-    const profile = profileSel(getState())
-    dispatch(
-      uploadToFirebase({
-        profile: [set(profile, ['settings', 'defaultCurrency'], currency)],
-      }),
-    )
-  })
-}
+    withErrorHandler("Couldn't change the default currency", dispatch, () => {
+      const profile = profileSel(getState())
+      dispatch(
+        uploadToFirebase({
+          profile: [set(profile, ['settings', 'defaultCurrency'], currency)],
+        })
+      )
+    })
+  }
 
-export const changeMainCurrency = (currency: Currency): Thunk => async (
-  dispatch,
-  getState,
-  { logger },
-) => {
-  logger.log('Change main currency')
+export const changeMainCurrency =
+  (currency: Currency): Thunk =>
+  async (dispatch, getState, { logger }) => {
+    logger.log('Change main currency')
 
-  withErrorHandler("Couldn't change the main currency", dispatch, () => {
-    const profile = profileSel(getState())
-    dispatch(
-      uploadToFirebase({
-        profile: [set(profile, ['settings', 'mainCurrency'], currency)],
-      }),
-    )
-  })
-}
+    withErrorHandler("Couldn't change the main currency", dispatch, () => {
+      const profile = profileSel(getState())
+      dispatch(
+        uploadToFirebase({
+          profile: [set(profile, ['settings', 'mainCurrency'], currency)],
+        })
+      )
+    })
+  }
 
-export const importFromJSON = (
-  e: React.ChangeEvent<HTMLInputElement>,
-): Thunk => (dispatch, getState, { logger }) => {
-  logger.log('Import from json')
+export const importFromJSON =
+  (e: React.ChangeEvent<HTMLInputElement>): Thunk =>
+  (dispatch, getState, { logger }) => {
+    logger.log('Import from json')
 
-  return dispatch(importData(e.target.files!.item(0)!, dataFromImportedJsonSel))
-}
+    return dispatch(importData(e.target.files!.item(0)!, dataFromImportedJsonSel))
+  }
 
 export const exportToJSON = (): Action => ({
   type: 'Export to csv',

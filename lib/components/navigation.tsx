@@ -111,9 +111,8 @@ const ListItemComponent = ({ item, currentScreen, nested }: ListItemProps) => {
             dispatch(
               changeNavigationExpanded({
                 ...itemsExpanded,
-                [screen]:
-                  currentScreen === screen ? !itemsExpanded[screen] : true,
-              }),
+                [screen]: currentScreen === screen ? !itemsExpanded[screen] : true,
+              })
             )
           }
           dispatch(setCurrentScreen(screen))
@@ -136,10 +135,7 @@ const ListItemComponent = ({ item, currentScreen, nested }: ListItemProps) => {
             primary: classnames(isActive && classes.listItemTextActive),
           }}
         />
-        <ListItemIcon
-          style={{ minWidth: 45 }}
-          className={classnames(isActive && classes.listItemIconActive)}
-        >
+        <ListItemIcon style={{ minWidth: 45 }} className={classnames(isActive && classes.listItemIconActive)}>
           <Icon color={isActive ? 'primary' : 'inherit'} />
         </ListItemIcon>
       </ListItem>
@@ -147,12 +143,7 @@ const ListItemComponent = ({ item, currentScreen, nested }: ListItemProps) => {
 
       <Collapse in={itemsExpanded[screen]} unmountOnExit>
         {sublist?.map((item) => (
-          <ListItemComponent
-            item={item}
-            currentScreen={currentScreen}
-            key={item.screen}
-            nested={true}
-          />
+          <ListItemComponent item={item} currentScreen={currentScreen} key={item.screen} nested={true} />
         ))}
       </Collapse>
     </React.Fragment>
@@ -186,11 +177,7 @@ const Navigation = () => {
           }}
           color="primary"
         >
-          <img
-            src="../static/coin.svg"
-            alt="coin"
-            style={{ width: `35px`, margin: '0 8px' }}
-          />
+          <img src="../static/coin.svg" alt="coin" style={{ width: `35px`, margin: '0 8px' }} />
           Expense manager
         </Typography>
         <Divider />
@@ -199,11 +186,7 @@ const Navigation = () => {
           {navigationItems
             .filter((item) => (bigDevice ? true : !item.hideOnSmallDevice))
             .map((item) => (
-              <ListItemComponent
-                item={item}
-                currentScreen={currentScreen}
-                key={item.screen}
-              />
+              <ListItemComponent item={item} currentScreen={currentScreen} key={item.screen} />
             ))}
         </div>
       </Drawer>
@@ -211,11 +194,7 @@ const Navigation = () => {
   }
 
   return (
-    <BottomNavigation
-      value={currentScreen}
-      showLabels
-      className={classes.bottomNav}
-    >
+    <BottomNavigation value={currentScreen} showLabels className={classes.bottomNav}>
       {navigationItems
         .filter((item) => (bigDevice ? true : !item.hideOnSmallDevice))
         .map(({ screen, Icon }) => (

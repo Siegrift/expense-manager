@@ -26,10 +26,7 @@ export const configureStore = () => {
   const loggerMiddleware = createLogger({
     collapsed: true,
     predicate: (_, action: Action) =>
-      !(
-        (DISABLE_SERVER_SIDE_LOGGING && typeof window === 'undefined') ||
-        action.loggable === false
-      ),
+      !((DISABLE_SERVER_SIDE_LOGGING && typeof window === 'undefined') || action.loggable === false),
     actionTransformer: (action: Action) => ({
       ...action,
       type: `${action.type}`,
@@ -44,11 +41,7 @@ export const configureStore = () => {
     middlewares.push(loggerMiddleware)
   }
 
-  const store = createStore(
-    rootReducer as any,
-    getInitialState() as any,
-    applyMiddleware(...middlewares),
-  )
+  const store = createStore(rootReducer as any, getInitialState() as any, applyMiddleware(...middlewares))
 
   return store
 }

@@ -41,11 +41,7 @@ interface ScrollAwareListProps {
  *
  * Not sure exactly why this is happening, but its probably due to how nextjs routing works.
  */
-const ScrollAwareList = ({
-  width,
-  height,
-  transactions,
-}: ScrollAwareListProps) => {
+const ScrollAwareList = ({ width, height, transactions }: ScrollAwareListProps) => {
   const listRef = React.createRef<FixedSizeList>()
   const bigDevice = useIsBigDevice()
   const router = useRouter()
@@ -60,12 +56,7 @@ const ScrollAwareList = ({
 
     dispatch(setCursor(ind))
     if (curr && ind != -1) curr.scrollToItem(ind, 'auto')
-  }, [
-    hash,
-    listRef.current,
-    transactions,
-    itemSize /* item size impacts how much to scroll */,
-  ])
+  }, [hash, listRef.current, transactions, itemSize /* item size impacts how much to scroll */])
 
   return (
     <FixedSizeList
@@ -88,25 +79,14 @@ const TransactionList = ({ transactions }: Props) => {
     <>
       {transactions.length === 0 ? (
         <div className={classes.noTransactionsWrapper}>
-          <Typography
-            variant="overline"
-            display="block"
-            gutterBottom
-            className={classes.noTransactions}
-          >
+          <Typography variant="overline" display="block" gutterBottom className={classes.noTransactions}>
             You have no transactions...
           </Typography>
         </div>
       ) : (
         <AutoSizer>
           {({ height, width }) => {
-            return (
-              <ScrollAwareList
-                width={width}
-                height={height}
-                transactions={transactions}
-              />
-            )
+            return <ScrollAwareList width={width} height={height} transactions={transactions} />
           }}
         </AutoSizer>
       )}

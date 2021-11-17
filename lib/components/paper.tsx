@@ -19,30 +19,13 @@ interface PaperProps extends MuiPaperProps {
   listContainer?: boolean
 }
 
-const Paper: React.FC<PaperProps> = ({
-  children,
-  label,
-  className,
-  listContainer,
-  ...other
-}) => {
+const Paper: React.FC<PaperProps> = ({ children, label, className, listContainer, ...other }) => {
   const classes = useStyles()
 
   return (
-    <MuiPaper
-      {...other}
-      className={classNames(
-        listContainer ? classes.listContainer : classes.paper,
-        className,
-      )}
-    >
+    <MuiPaper {...other} className={classNames(listContainer ? classes.listContainer : classes.paper, className)}>
       {label && (
-        <Typography
-          color="textSecondary"
-          gutterBottom
-          variant="subtitle1"
-          style={{ marginTop: -6 }}
-        >
+        <Typography color="textSecondary" gutterBottom variant="subtitle1" style={{ marginTop: -6 }}>
           {label}
         </Typography>
       )}

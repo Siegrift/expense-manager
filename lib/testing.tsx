@@ -23,9 +23,7 @@ export const reduxify = (Component: React.FC, store: Store) => {
     </ReduxProvider>
   )
 }
-export const configureTestStore = (
-  state: Partial<State> = getInitialState(),
-) => {
+export const configureTestStore = (state: Partial<State> = getInitialState()) => {
   const logger = { log: () => null }
   const thunkExtra = {
     logger,
@@ -34,7 +32,7 @@ export const configureTestStore = (
   const store = createStore<State, any, unknown, unknown>(
     rootReducer as any,
     state as any,
-    applyMiddleware(...middlewares),
+    applyMiddleware(...middlewares)
   )
 
   return store
@@ -57,19 +55,17 @@ export const initializeMockFirebase = () => {
     () => mockauth,
     () => mockfirestore,
     () => mockStorage,
-    null, // messaging
+    null // messaging
   )
   const firebase = mockSdk.initializeApp()
-  ;((global as any) as ExtendedGlobal).mockFirebase = firebase
+  ;(global as any as ExtendedGlobal).mockFirebase = firebase
   return firebase
 }
 
 export const getMockedFirebase = () => {
-  const g = (global as any) as ExtendedGlobal
+  const g = global as any as ExtendedGlobal
   if (!g.mockFirebase) {
-    throw new Error(
-      'Mock firebase is not present. Be sure to mock it first using "initializeMockFirebase"',
-    )
+    throw new Error('Mock firebase is not present. Be sure to mock it first using "initializeMockFirebase"')
   } else {
     return g.mockFirebase
   }

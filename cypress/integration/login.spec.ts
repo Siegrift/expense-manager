@@ -28,10 +28,7 @@ describe('login', () => {
 
     const checkPage = () => {
       cy.document().then((doc) => {
-        cy.wrap(doc.documentElement.scrollHeight).should(
-          'not.be.above',
-          doc.documentElement.clientHeight,
-        )
+        cy.wrap(doc.documentElement.scrollHeight).should('not.be.above', doc.documentElement.clientHeight)
       })
     }
 

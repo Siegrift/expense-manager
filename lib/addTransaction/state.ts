@@ -51,9 +51,7 @@ type CreateStateProps = {
   initialCurrency: Currency
 }
 
-export const createDefaultAddTransactionState = (
-  initialProps?: CreateStateProps,
-): AddTransaction => ({
+export const createDefaultAddTransactionState = (initialProps?: CreateStateProps): AddTransaction => ({
   amount: '',
   tagIds: initialProps?.initialTagIds || [],
   newTags: {},

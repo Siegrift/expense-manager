@@ -52,21 +52,13 @@ const PageWrapper = ({ children }: PageWrapperProps) => {
 
   return (
     <>
-      <Grid
-        container
-        className={classnames(
-          classes.root,
-          veryBigDevice && classes.veryBigDeviceRoot,
-        )}
-      >
+      <Grid container className={classnames(classes.root, veryBigDevice && classes.veryBigDeviceRoot)}>
         {children}
         {notification && (
           <Snackbar
             autoHideDuration={3000} // hide after max 3s
             open={!!notification}
-            onClose={(_, reason) =>
-              dispatch(setSnackbarNotification(null, reason))
-            }
+            onClose={(_, reason) => dispatch(setSnackbarNotification(null, reason))}
             anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
           >
             <Alert
@@ -84,14 +76,10 @@ const PageWrapper = ({ children }: PageWrapperProps) => {
           onConfirm={() => redirectTo('/login')}
           title="Please sign in"
           open={true}
-          ContentComponent={
-            'You appear to be logged out. Redirect to login page?'
-          }
+          ContentComponent={'You appear to be logged out. Redirect to login page?'}
         />
       )}
-      {(signInStatus === 'loggingIn' || signInStatus === 'unknown') && (
-        <LoadingOverlay />
-      )}
+      {(signInStatus === 'loggingIn' || signInStatus === 'unknown') && <LoadingOverlay />}
       <Navigation />
     </>
   )

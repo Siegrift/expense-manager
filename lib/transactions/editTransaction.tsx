@@ -12,10 +12,7 @@ import { Tag, Transaction } from '../addTransaction/state'
 import AppBar from '../components/appBar'
 import ConfirmDialog from '../components/confirmDialog'
 import TransactionForm from '../components/transactionForm'
-import {
-  createErrorNotification,
-  setSnackbarNotification,
-} from '../shared/actions'
+import { createErrorNotification, setSnackbarNotification } from '../shared/actions'
 import { INVALID_TRANSACTION_FORM_FIELDS } from '../shared/constants'
 import { isAmountInValidFormat } from '../shared/utils'
 
@@ -70,12 +67,8 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
   const [tagInputValue, setTagInputValue] = useState('')
   const [shouldValidate, setShouldValidate] = useState(false)
   const [showTxRemoveDialog, setShowTxRemoveDialog] = useState(false)
-  const [attachedFileObjects, setAttachedFileObjects] = useState<FileObject[]>(
-    [],
-  )
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>(
-    tx.attachedFiles ?? [],
-  )
+  const [attachedFileObjects, setAttachedFileObjects] = useState<FileObject[]>([])
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>(tx.attachedFiles ?? [])
 
   const onSaveHandler = (e: React.SyntheticEvent) => {
     e.stopPropagation()
@@ -95,18 +88,14 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
             tagIds,
             repeating,
             attachedFiles: uploadedFiles,
-          },
-        ),
+          }
+        )
       )
 
       Router.push(`/transactions#${tx.id}`)
     } else {
       setShouldValidate(true)
-      dispatch(
-        setSnackbarNotification(
-          createErrorNotification(INVALID_TRANSACTION_FORM_FIELDS),
-        ),
-      )
+      dispatch(setSnackbarNotification(createErrorNotification(INVALID_TRANSACTION_FORM_FIELDS)))
     }
   }
 
@@ -146,8 +135,8 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
               setNewTags(
                 pick(
                   newTags,
-                  ids.filter((id) => availableTags[id] == null),
-                ),
+                  ids.filter((id) => availableTags[id] == null)
+                )
               )
             },
             value: tagInputValue,
@@ -184,9 +173,7 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
             e.stopPropagation()
 
             dispatch(removeTx(tx.id))
-            const returnUrl = previousTx
-              ? `/transactions#${previousTx.id}`
-              : '/transactions'
+            const returnUrl = previousTx ? `/transactions#${previousTx.id}` : '/transactions'
             Router.push(returnUrl)
           }}
           onCancel={() => setShowTxRemoveDialog(false)}

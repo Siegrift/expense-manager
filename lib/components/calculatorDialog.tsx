@@ -53,11 +53,7 @@ const CalculatorDialog = ({
           label="Expression"
           value={calcExpression}
           onChange={(e) => setCalcExpression(e.target.value)}
-          helperText={
-            exprResult === null
-              ? 'Malformed expression'
-              : `Result: ${exprResult || ''}`
-          }
+          helperText={exprResult === null ? 'Malformed expression' : `Result: ${exprResult || ''}`}
           onKeyDown={(e) => {
             if (e.key === 'Enter') onOk()
           }}
