@@ -1,6 +1,7 @@
 {
   "name": "expense-manager",
   "version": "0.1.0",
+  "license": "MIT",
   "scripts": {
     "analyze": "cross-env ANALYZE=true next build",
     "build": "next build",
