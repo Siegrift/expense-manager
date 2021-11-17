@@ -1,10 +1,7 @@
 {
   "extends": "../tsconfig.json",
-  "include": [
-    ".eslintrc.js",
-    "../node_modules/cypress",
-    "*/*.ts"
-  ],
-  // TODO: Fix types
-  "types": ["cypress"]
+  "include": [".eslintrc.js", "./**/*.ts"],
+  "compilerOptions": {
+    "types": ["cypress", "@testing-library/cypress"]
+  }
 }

@@ -1,13 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": [
-      "es5",
-      "es6",
-      "es7",
-      "es2017",
-      "dom"
-    ],
+    "lib": ["es5", "es6", "es7", "es2017", "dom"],
     "allowJs": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -21,19 +15,10 @@
     "strict": true,
     "noImplicitReturns": true,
     "suppressImplicitAnyIndexErrors": true,
-    "types": [
-      "node",
-      "jest"
-    ],
-    "rootDirs": [
-      "lib",
-      "pages"
-    ],
+    "types": ["node", "jest"],
+    "rootDirs": ["lib", "pages"],
     "outDir": "build/lib"
   },
-  "include": [
-    "next-env.d.ts",
-    "lib",
-    "pages",
-  ]
+  "include": ["next-env.d.ts", "lib", "pages"],
+  "exclude": ["node_modules"]
 }
