@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "deploy": "yarn build && now --prod",
+    "deploy": "yarn build && vercel --prod",
     "dev": "NODE_OPTIONS=--max_old_space_size=8192 next dev",
     "check-eslint": "eslint --print-config pages/index.js | eslint-config-prettier-check",
     "run-eslint": "eslint \"lib/**\" \"pages/**\" \"cypress/integration/**\"",
@@ -82,7 +82,6 @@
   "devDependencies": {
     "@next/bundle-analyzer": "^9.5.5",
     "@testing-library/cypress": "^7.0.1",
-    "@types/classnames": "^2.3.1",
     "@types/jest": "^26.0.15",
     "@types/lodash": "^4.14.177",
     "@types/next": "^9.0.0",
