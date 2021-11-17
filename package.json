@@ -3,21 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "analyze": "cross-env ANALYZE=true next build",
     "build": "next build",
     "deploy": "yarn build && vercel --prod",
     "dev": "NODE_OPTIONS=--max_old_space_size=8192 next dev",
     "format": "prettier --check \"@(lib|pages)/**/*.tsx\" && yarn run-eslint",
-    "lint": "yarn eslint --ext js,ts,tsx . --max-warnings 0",
     "lint:fix": "yarn lint --fix",
-    "test": "yarn typescript && yarn test:unit && yarn test:e2e",
-    "typescript": "tsc -p .",
+    "lint": "yarn eslint --ext js,ts,tsx . --max-warnings 0",
+    "test:e2e:open": "cypress open",
+    "test:e2e:run": "cypress run",
+    "test:e2e:start-server": "next dev -p 3000",
+    "test:e2e": "start-server-and-test 'yarn test:e2e:start-server' http://localhost:3000 'yarn test:e2e:run'",
+    "test:unit:watch": "jest --watch",
     "test:unit": "jest",
-    "test:unit-watch": "jest --watch",
-    "test:e2e-start-server": "next dev -p 3000",
-    "test:e2e-run": "cypress run",
-    "test:e2e-open": "cypress open",
-    "test:e2e": "start-server-and-test 'yarn test:e2e-start-server' http://localhost:3000 'yarn test:e2e-run'",
-    "analyze": "cross-env ANALYZE=true next build"
+    "test": "yarn typescript && yarn test:unit && yarn test:e2e",
+    "typescript": "tsc -p ."
   },
   "husky": {
     "hooks": {
