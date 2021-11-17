@@ -40,7 +40,7 @@ export const configureTestStore = (state: Partial<State> = getInitialState()) =>
 
 export const byAriaLabel = (value: string) => `[aria-label="${value}"]`
 
-type ExtendedGlobal = NodeJS.Global & { mockFirebase: firebase.app.App }
+type ExtendedGlobal = typeof globalThis & { mockFirebase: firebase.app.App }
 
 export const initializeMockFirebase = () => {
   const mockauth = new firebasemock.MockAuthentication()
