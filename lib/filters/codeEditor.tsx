@@ -16,9 +16,9 @@ import FormatIcon from '@material-ui/icons/FormatAlignCenter'
 import RunCode from '@material-ui/icons/PlayCircleOutline'
 import SaveIcon from '@material-ui/icons/Save'
 import Alert from '@material-ui/lab/Alert'
+import type { OnMount } from '@monaco-editor/react'
 import dynamic from 'next/dynamic'
 import Highlight from 'react-highlight.js'
-import type { EditorDidMount } from 'react-monaco-editor'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Loading from '../components/loading'
@@ -34,7 +34,7 @@ const VALID_FILTER_NAME_PATTERN = /^[A-Za-z0-9 ]+$/
 
 const MonacoEditorLoader = () => <Loading size={50} imageStyle={{ margin: `16px auto` }} />
 
-const MonacoEditor = dynamic(import('react-monaco-editor'), {
+const MonacoEditor = dynamic(import('@monaco-editor/react'), {
   ssr: false,
   loading: MonacoEditorLoader,
 })
@@ -53,7 +53,7 @@ const CodeEditor = ({ initialFilterName }: Props) => {
   const [expanded, setExpanded] = useState(false)
   const [loadingData, setLoadingData] = useState(true)
   const frozenData = useSelector(frozenFilterDataSel)
-  const editorRef = useRef<Parameters<EditorDidMount>[0]>()
+  const editorRef = useRef<Parameters<OnMount>[0]>()
   const [initialCode, setInitialCodeValue] = useState<string | null | undefined>(undefined)
   const [filterNameError, setFilterNameError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -127,7 +127,7 @@ const CodeEditor = ({ initialFilterName }: Props) => {
     setSaving(true)
 
     if (await validate()) {
-      dispatch(uploadFilter(filterName, editorRef.current!.getValue()))
+      dispatch(uploadFilter(filterName, editorRef.current.getValue()))
       setPersistedFilterName(filterName)
     }
 
@@ -223,11 +223,11 @@ const CodeEditor = ({ initialFilterName }: Props) => {
               enabled: false,
             },
           }}
-          editorDidMount={(editor, monaco) => {
+          onMount={(editor, monaco) => {
             editorRef.current = editor
             if (typeof initialCode === 'string') editor.setValue(initialCode)
 
-            editor.onKeyDown((e) => {
+            editor.onKeyDown((e: KeyboardEvent) => {
               if (e.ctrlKey && e.keyCode === monaco.KeyCode.KEY_S) {
                 e.preventDefault()
                 handleFormatCode()
@@ -273,7 +273,7 @@ const CodeEditor = ({ initialFilterName }: Props) => {
                     visibility: expanded ? 'visible' : 'hidden',
                   }}
                   onClick={async () => {
-                    await navigator.clipboard.writeText(editorRef.current!.getValue())
+                    await navigator.clipboard.writeText(editorRef.current.getValue())
 
                     dispatch(setSnackbarNotification(createSuccessNotification('Copied to clipboard!')))
                   }}
