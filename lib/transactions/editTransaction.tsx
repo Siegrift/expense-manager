@@ -98,6 +98,7 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
           },
         ),
       )
+
       Router.push(`/transactions#${tx.id}`)
     } else {
       setShouldValidate(true)

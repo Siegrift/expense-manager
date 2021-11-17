@@ -47,8 +47,8 @@ const Login = () => {
           </Typography>
 
           <GoogleButton
-            onClick={() => {
-              dispatch(authChangeAction('loggingIn', null))
+            onClick={async () => {
+              await dispatch(authChangeAction('loggingIn', null))
               signIn()
             }}
             style={{ margin: 'auto', marginTop: '15vh' }}

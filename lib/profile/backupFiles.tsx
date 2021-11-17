@@ -120,9 +120,9 @@ const BackupFilesList = () => {
               <ListItem
                 key={filename}
                 button
-                onClick={() => {
+                onClick={async () => {
                   setShowFile({ filename, content: undefined })
-                  const success = withErrorHandler(
+                  const success = await withErrorHandler(
                     'Unable to download file content',
                     dispatch,
                     async () => {

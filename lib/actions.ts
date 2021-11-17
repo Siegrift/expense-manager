@@ -161,14 +161,14 @@ export const removeFromFirebase = (
 
 const setRepeatingTxsAsInactive = (inactive: Transaction[]) => {
   const txs = getFirebase().firestore().collection('transactions')
-  chunk(inactive, MAX_WRITES_IN_BATCH).map((c) => {
+  return chunk(inactive, MAX_WRITES_IN_BATCH).map((c) => {
     const batch = getFirebase().firestore().batch()
     c.forEach((tx) => {
       const ref = txs.doc(tx.id)
       batch.update(ref, { repeating: 'inactive' } as Partial<Transaction>)
     })
 
-    batch.commit()
+    return batch.commit()
   })
 }
 
@@ -250,6 +250,6 @@ export const addRepeatingTxs = (): Thunk => async (
     }
   })
 
-  dispatch(uploadToFirebase({ txs: added }))
+  await dispatch(uploadToFirebase({ txs: added }))
   setRepeatingTxsAsInactive(inactive)
 }

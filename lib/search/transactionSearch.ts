@@ -11,7 +11,7 @@ import { booleanOptions } from './common'
 
 const isValidDate = (query: string) => {
   return (
-    !!query.match(/^\d*\.\d*\.\d*$/) &&
+    /^\d*\.\d*\.\d*$/.exec(query) &&
     // date-fns parse is not very strict and (e.g. Date("2") is parsed)
     parse(query, 'd.M.y', new Date()).getTime() !== NaN
   )

@@ -18,7 +18,7 @@ export const uploadFilter = (filename: string, code: string): Thunk => async (
 ) => {
   const userId = currentUserIdSel(getState())
 
-  withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+  return withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
     await getStorageRef(userId!, 'filters', filename).putString(code)
     dispatch(
       setSnackbarNotification(
@@ -34,8 +34,7 @@ export const removeFilters = (filenames: string[]): Thunk => async (
 ) => {
   const userId = currentUserIdSel(getState())
 
-  // wait for completion, TODO: maybe show loading overlay
-  withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+  return withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
     await Promise.all(
       removeFiles(
         userId!,

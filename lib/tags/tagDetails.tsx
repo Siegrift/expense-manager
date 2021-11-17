@@ -122,6 +122,7 @@ const TagDetails = ({
         automatic: isAutotag,
         defaultAmount: amount,
       })
+
       Router.push('/tags')
     } else {
       setShouldValidate(

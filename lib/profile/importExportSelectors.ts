@@ -106,7 +106,7 @@ export const dataFromImportedCsvSel = (importedCsv: string) =>
           const rawTags = t[2].trim()
           if (!isValidDate(dt)) {
             errorReason = `${t[0]} is not a valid date`
-          } else if (t[1].match(/^-?\d+(\.\d{1,2})?$/) === null) {
+          } else if (/^-?\d+(\.\d{1,2})?$/.exec(t[1]) === null) {
             errorReason = `${t[1]} is not in a valid amount format`
           } else if (rawTags.length === 0) {
             errorReason = `There must be at least one tag in a transaction`

@@ -37,7 +37,7 @@ export const initializeFirebase = async (store: Store) => {
     )
   }
 
-  firebase.auth().onAuthStateChanged(async (user) => {
+  firebase.auth().onAuthStateChanged((user) => {
     if (persistedUser) persistedUser = null
     else {
       store.dispatch(

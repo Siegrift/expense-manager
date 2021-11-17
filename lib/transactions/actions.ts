@@ -40,7 +40,7 @@ export const saveTxEdit = (
     dispatch,
     async () => {
       const toRemove = difference(
-        originalTx.attachedFiles!,
+        originalTx.attachedFiles,
         editedFields.attachedFiles!,
       )
 
@@ -165,14 +165,14 @@ export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
   if (!txs[cursor]) return
 
   const actions = {
-    ARROWUP: () => {
+    ARROWUP: async () => {
       if (cursor > 0) {
-        Router.replace(`/transactions`, `/transactions#${txs[cursor - 1].id}`)
+        await Router.replace(`/transactions`, `/transactions#${txs[cursor - 1].id}`)
       }
     },
-    ARROWDOWN: () => {
+    ARROWDOWN: async () => {
       if (cursor + 1 < txs.length) {
-        Router.replace(`/transactions`, `/transactions#${txs[cursor + 1].id}`)
+        await Router.replace(`/transactions`, `/transactions#${txs[cursor + 1].id}`)
       }
     },
     E: () => Router.push(`/transactions/details?id=${txs[cursor].id}`),
@@ -185,5 +185,5 @@ export const keyPressAction = (e: KeyboardEvent): Thunk<void> => (
   logger.log('Transaction list action for key: ' + key)
 
   // trigger the action
-  actions[key]()
+  return actions[key]()
 }

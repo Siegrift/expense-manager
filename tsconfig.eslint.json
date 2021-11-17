@@ -1,0 +1,17 @@
+{
+  // https://stackoverflow.com/a/64283139/7227455
+  "extends": "./tsconfig.json",
+  "include": [
+    // Repeated from base config's "include" setting
+    "next-env.d.ts",
+    "lib",
+    "pages",
+
+    // These are the eslint-only inclusions
+    ".eslintrc.base.js",
+    ".eslintrc.js",
+    "jest.config.js",
+    "load-env.js",
+    "next.config.js",
+  ]
+}
