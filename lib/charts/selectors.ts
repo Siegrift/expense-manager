@@ -23,34 +23,25 @@ export interface TagShare {
   value: number
 }
 
-const totalAmountSel = (state: State) =>
-  reduce(state.transactions, (acc, tx) => acc + tx.amount, 0)
+const totalAmountSel = (state: State) => reduce(state.transactions, (acc, tx) => acc + tx.amount, 0)
 
-export const tagSharesSel = createSelector(
-  tagsSel,
-  transactionsSel,
-  totalAmountSel,
-  (tags, txs, total): TagShare[] => {
-    const tagShares = map(tags, (tag) => {
-      const filteredTx = filter(txs, (tx) => tx.tagIds.includes(tag.id))
-      const sum = reduce(filteredTx, (acc, tx) => acc + tx.amount, 0)
+export const tagSharesSel = createSelector(tagsSel, transactionsSel, totalAmountSel, (tags, txs, total): TagShare[] => {
+  const tagShares = map(tags, (tag) => {
+    const filteredTx = filter(txs, (tx) => tx.tagIds.includes(tag.id))
+    const sum = reduce(filteredTx, (acc, tx) => acc + tx.amount, 0)
 
-      return {
-        id: tag.id,
-        label: tag.name,
-        value: Math.round((sum / total) * 100 * 100) / 100,
-      }
-    })
+    return {
+      id: tag.id,
+      label: tag.name,
+      value: Math.round((sum / total) * 100 * 100) / 100,
+    }
+  })
 
-    // descending sort
-    return sorted(tagShares, (t1, t2) => t2.value - t1.value)
-  },
-)
+  // descending sort
+  return sorted(tagShares, (t1, t2) => t2.value - t1.value)
+})
 
-export const displayDataSel = (
-  width: number,
-  dateRange: DateRange | undefined,
-) =>
+export const displayDataSel = (width: number, dateRange: DateRange | undefined) =>
   createSelector(sortedTransactionsSel, () => {
     // 45 is ad-hoc const that works well with current xAxis format (dd.MM)
     // `width / LABEL_WIDTH_PX` is the number of labels displayed on xAxis
@@ -62,8 +53,7 @@ export const displayDataSel = (
     let daysToDisplay: number
     if (dateRange) {
       range = dateRange
-      daysToDisplay =
-        differenceInCalendarDays(dateRange.end, dateRange.start) + 1
+      daysToDisplay = differenceInCalendarDays(dateRange.end, dateRange.start) + 1
       xAxisMergeSize = Math.round(daysToDisplay / (width / LABEL_WIDTH_PX))
     } else {
       daysToDisplay = Math.round(width / LABEL_WIDTH_PX)
@@ -78,10 +68,7 @@ export const displayDataSel = (
     }
   })
 
-export const recentBalanceDataSel = (
-  daysToDisplay: number,
-  dateRange: DateRange,
-) =>
+export const recentBalanceDataSel = (daysToDisplay: number, dateRange: DateRange) =>
   createSelector(transactionsSel, (transactions) => {
     interface LineChartData {
       amount: number
@@ -95,14 +82,12 @@ export const recentBalanceDataSel = (
         (tx): LineChartData => ({
           amount: tx.amount * (tx.rate ?? 1),
           isExpense: tx.isExpense,
-          dataIndex:
-            daysToDisplay -
-            (differenceInCalendarDays(dateRange.end, tx.dateTime) + 1),
-        }),
+          dataIndex: daysToDisplay - (differenceInCalendarDays(dateRange.end, tx.dateTime) + 1),
+        })
       )
       .reduce(
         (acc, tx) => update(acc, [tx.dataIndex], (d) => [...d, tx]),
-        range(daysToDisplay).map(() => [] as LineChartData[]),
+        range(daysToDisplay).map(() => [] as LineChartData[])
       )
 
     const data = [

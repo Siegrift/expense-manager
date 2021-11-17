@@ -24,13 +24,9 @@ interface Props {
 const RecentBalance = ({ width, height, dateRange }: Props) => {
   const mainCurrency = useSelector(mainCurrencySel)
 
-  const { daysToDisplay, xAxisMergeSize, ...computedDateRange } = useSelector(
-    displayDataSel(width, dateRange),
-  )
+  const { daysToDisplay, xAxisMergeSize, ...computedDateRange } = useSelector(displayDataSel(width, dateRange))
 
-  const { data } = useSelector(
-    recentBalanceDataSel(daysToDisplay, computedDateRange),
-  )
+  const { data } = useSelector(recentBalanceDataSel(daysToDisplay, computedDateRange))
 
   if (data.length > 500) return null
 
@@ -46,10 +42,7 @@ const RecentBalance = ({ width, height, dateRange }: Props) => {
             border: '1px solid #ccc',
           }}
         >
-          {`Date: ${format(
-            addDays(computedDateRange.start, slice.points[0].data.index),
-            SLICE_DATE_FORMAT,
-          )}`}
+          {`Date: ${format(addDays(computedDateRange.start, slice.points[0].data.index), SLICE_DATE_FORMAT)}`}
           {slice.points.map((point: any) => (
             <div
               key={point.id}
@@ -67,14 +60,13 @@ const RecentBalance = ({ width, height, dateRange }: Props) => {
         </div>
       )
     },
-    [daysToDisplay, mainCurrency],
+    [daysToDisplay, mainCurrency]
   )
 
   return (
     <div
       style={{
-        position:
-          'relative' /* to make sure the toggle absolutely positioned toggle buttons are scoped */,
+        position: 'relative' /* to make sure the toggle absolutely positioned toggle buttons are scoped */,
       }}
     >
       <Line
@@ -97,10 +89,7 @@ const RecentBalance = ({ width, height, dateRange }: Props) => {
           tickPadding: 5,
           format: (v) => {
             return (v as number) % xAxisMergeSize === 0
-              ? format(
-                  addDays(computedDateRange.start, v as number),
-                  AXIS_DATE_FORMAT,
-                )
+              ? format(addDays(computedDateRange.start, v as number), AXIS_DATE_FORMAT)
               : ''
           },
         }}
@@ -108,8 +97,7 @@ const RecentBalance = ({ width, height, dateRange }: Props) => {
           orient: 'left',
           tickSize: 5,
           tickPadding: 5,
-          format: (v) =>
-            `${v} ${mainCurrency ? CURRENCIES[mainCurrency].symbol : ''}`,
+          format: (v) => `${v} ${mainCurrency ? CURRENCIES[mainCurrency].symbol : ''}`,
         }}
         pointSize={3}
         pointColor={{ theme: 'background' }}

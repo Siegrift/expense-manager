@@ -6,28 +6,17 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import PageWrapper from '../components/pageWrapper'
 import TransactionForm from '../components/transactionForm'
-import {
-  createErrorNotification,
-  setSnackbarNotification,
-} from '../shared/actions'
+import { createErrorNotification, setSnackbarNotification } from '../shared/actions'
 import { INVALID_TRANSACTION_FORM_FIELDS } from '../shared/constants'
-import {
-  useEffectAfterFirebaseLoaded,
-  useFirebaseLoaded,
-} from '../shared/hooks'
+import { useEffectAfterFirebaseLoaded, useFirebaseLoaded } from '../shared/hooks'
 import { defaultCurrencySel } from '../shared/selectors'
 import { isAmountInValidFormat } from '../shared/utils'
 
 import { addTransaction } from './actions'
 import { automaticTagIdsSel, tagsSel } from './selectors'
-import {
-  AddTransaction as AddTransactionType,
-  Tag,
-  createDefaultAddTransactionState,
-} from './state'
+import { AddTransaction as AddTransactionType, Tag, createDefaultAddTransactionState } from './state'
 
-const allFieldsAreValid = (addTx: AddTransactionType) =>
-  isAmountInValidFormat(addTx.amount)
+const allFieldsAreValid = (addTx: AddTransactionType) => isAmountInValidFormat(addTx.amount)
 
 const maybeApplyDefaultAmount = (tags: Tag[], amount: string) => {
   if (amount) return amount
@@ -68,11 +57,7 @@ const AddTransaction = () => {
     // some fields were not filled correctly. Show incorrect ones and return.
     if (!allFieldsAreValid(addTx)) {
       setAddTx((currAddTx) => set(currAddTx, ['shouldValidateAmount'], true))
-      dispatch(
-        setSnackbarNotification(
-          createErrorNotification(INVALID_TRANSACTION_FORM_FIELDS),
-        ),
-      )
+      dispatch(setSnackbarNotification(createErrorNotification(INVALID_TRANSACTION_FORM_FIELDS)))
       return
     }
 
@@ -81,7 +66,7 @@ const AddTransaction = () => {
       createDefaultAddTransactionState({
         initialTagIds: automaticTagIds,
         initialCurrency: defaultCurrency!,
-      }),
+      })
     )
   }
 
@@ -90,7 +75,7 @@ const AddTransaction = () => {
       createDefaultAddTransactionState({
         initialTagIds: automaticTagIds,
         initialCurrency: defaultCurrency!,
-      }),
+      })
     )
   })
 
@@ -100,8 +85,7 @@ const AddTransaction = () => {
         variant="add"
         isExpense={{
           value: isExpense,
-          handler: (isExpense) =>
-            setAddTx((currAddTx) => set(currAddTx, ['isExpense'], isExpense)),
+          handler: (isExpense) => setAddTx((currAddTx) => set(currAddTx, ['isExpense'], isExpense)),
         }}
         tagProps={{
           tags: allTags,
@@ -114,9 +98,9 @@ const AddTransaction = () => {
                 fpUpdate<typeof currAddTx>()(['amount'], (am) =>
                   maybeApplyDefaultAmount(
                     newTagIds.map((i) => allTags[i]),
-                    am,
-                  ),
-                ),
+                    am
+                  )
+                )
               )(currAddTx)
             })
           },
@@ -137,11 +121,11 @@ const AddTransaction = () => {
               tagIds: difference(currAddTx.tagIds, removedTagIds),
               newTags: omit(
                 currAddTx.newTags,
-                removedTagIds.filter((id) => !tags.hasOwnProperty(id)),
+                removedTagIds.filter((id) => !tags.hasOwnProperty(id))
               ),
               amount: maybeApplyDefaultAmount(
                 removedTagIds.map((id) => allTags[id]),
-                currAddTx.amount,
+                currAddTx.amount
               ),
             }))
           },
@@ -163,13 +147,11 @@ const AddTransaction = () => {
         }}
         currency={{
           value: currency,
-          handler: (value) =>
-            setAddTx((currAddTx) => set(currAddTx, ['currency'], value)),
+          handler: (value) => setAddTx((currAddTx) => set(currAddTx, ['currency'], value)),
         }}
         note={{
           value: note,
-          handler: (value) =>
-            setAddTx((currAddTx) => set(currAddTx, ['note'], value)),
+          handler: (value) => setAddTx((currAddTx) => set(currAddTx, ['note'], value)),
         }}
         dateTime={{
           value: dateTime,
@@ -190,8 +172,7 @@ const AddTransaction = () => {
         }}
         repeating={{
           value: repeating,
-          handler: (value) =>
-            setAddTx((currAddTx) => set(currAddTx, ['repeating'], value)),
+          handler: (value) => setAddTx((currAddTx) => set(currAddTx, ['repeating'], value)),
         }}
         attachedFileObjects={{
           value: attachedFileObjects,

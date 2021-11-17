@@ -32,14 +32,7 @@ module.exports = {
       'error',
       {
         // https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/order.md
-        groups: [
-          'builtin',
-          'external',
-          'internal',
-          'parent',
-          'sibling',
-          'index',
-        ],
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
         // Make react first
         pathGroups: [
           {

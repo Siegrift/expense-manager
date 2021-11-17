@@ -26,11 +26,7 @@ import { DEFAULT_DATE_FORMAT } from '../shared/constants'
 import { OverviewPeriod } from '../state'
 import TransactionList from '../transactions/transactionList'
 
-import {
-  setOverviewPeriod,
-  setCustomDateRange as setCustomDateRangeAction,
-  setMonth,
-} from './actions'
+import { setOverviewPeriod, setCustomDateRange as setCustomDateRangeAction, setMonth } from './actions'
 import {
   overviewPeriodSel,
   overviewTransactionsSel,
@@ -97,18 +93,12 @@ const Overview = () => {
   const currentFilter = useSelector(currentFilterSel)
   const availableFilters = useSelector(availableFiltersSel)
 
-  const [customDateRange, setCustomDateRange] = useState<
-    [Date | null, Date | null]
-  >([null, null])
-  const [customDateRangeError, setCustomDateRangeError] = useState<
-    [string | null, string | null]
-  >([null, null])
+  const [customDateRange, setCustomDateRange] = useState<[Date | null, Date | null]>([null, null])
+  const [customDateRangeError, setCustomDateRangeError] = useState<[string | null, string | null]>([null, null])
 
   return (
     <PageWrapper>
-      <Paper
-        style={{ marginBottom: 16, display: 'flex', flexDirection: 'column' }}
-      >
+      <Paper style={{ marginBottom: 16, display: 'flex', flexDirection: 'column' }}>
         <FormControl style={{ flex: 1, minWidth: 200 }}>
           <InputLabel>Active filter</InputLabel>
           <Select
@@ -117,10 +107,8 @@ const Overview = () => {
               const filterName = e.target.value as string
               dispatch(
                 setCurrentFilter(
-                  filterName === NO_FILTER
-                    ? undefined
-                    : availableFilters!.find((f) => f.name === filterName)!,
-                ),
+                  filterName === NO_FILTER ? undefined : availableFilters!.find((f) => f.name === filterName)!
+                )
               )
             }}
           >
@@ -141,9 +129,7 @@ const Overview = () => {
             <Select
               value={period}
               renderValue={(val) => overviewLabels[val as OverviewPeriod]}
-              onChange={(e) =>
-                dispatch(setOverviewPeriod(e.target.value as OverviewPeriod))
-              }
+              onChange={(e) => dispatch(setOverviewPeriod(e.target.value as OverviewPeriod))}
             >
               {Object.keys(overviewLabels).map((label) => (
                 <MenuItem key={label} value={label}>
@@ -159,13 +145,7 @@ const Overview = () => {
               <Select
                 label="Month"
                 value={overviewMonths[month]}
-                onChange={(e) =>
-                  dispatch(
-                    setMonth(
-                      overviewMonths.findIndex((m) => m === e.target.value),
-                    ),
-                  )
-                }
+                onChange={(e) => dispatch(setMonth(overviewMonths.findIndex((m) => m === e.target.value)))}
                 style={{ flex: 1 }}
               >
                 {overviewMonths.map((label) => (
@@ -184,35 +164,21 @@ const Overview = () => {
                 disableFuture
                 value={customDateRange}
                 onChange={(range) => {
-                  if (
-                    customDateRangeError[0] === null &&
-                    customDateRangeError[1] === null
-                  )
-                    setCustomDateRange(range)
+                  if (customDateRangeError[0] === null && customDateRangeError[1] === null) setCustomDateRange(range)
                 }}
                 onError={(reason) => setCustomDateRangeError(reason)}
                 startText="Start date"
                 endText="End date"
                 renderInput={(startProps, endProps) => (
                   <React.Fragment>
-                    <TextField
-                      {...startProps}
-                      variant="standard"
-                      style={{ flex: 1, minWidth: 180 }}
-                    />
+                    <TextField {...startProps} variant="standard" style={{ flex: 1, minWidth: 180 }} />
                     <DateRangeDelimiter> to </DateRangeDelimiter>
-                    <TextField
-                      {...endProps}
-                      variant="standard"
-                      style={{ flex: 1, minWidth: 180 }}
-                    />
+                    <TextField {...endProps} variant="standard" style={{ flex: 1, minWidth: 180 }} />
                   </React.Fragment>
                 )}
               />
               <Button
-                onClick={() =>
-                  dispatch(setCustomDateRangeAction(customDateRange))
-                }
+                onClick={() => dispatch(setCustomDateRangeAction(customDateRange))}
                 color="primary"
                 fullWidth
                 variant="contained"
@@ -242,23 +208,12 @@ const Overview = () => {
         <ChartWrapper
           className={classes.chartWrapper}
           Container="div"
-          renderChart={({ width, height }) => (
-            <RecentBalance
-              width={width}
-              height={height}
-              dateRange={dateRange}
-            />
-          )}
+          renderChart={({ width, height }) => <RecentBalance width={width} height={height} dateRange={dateRange} />}
         />
         <Link href={`/charts`}>
-          <MuiLink
-            className={classnames(classes.marginBottom, classes.link)}
-            variant="body2"
-            underline="always"
-          >
+          <MuiLink className={classnames(classes.marginBottom, classes.link)} variant="body2" underline="always">
             <>
-              See all charts{' '}
-              <LaunchIcon style={{ marginBottom: -2 }} fontSize="inherit" />
+              See all charts <LaunchIcon style={{ marginBottom: -2 }} fontSize="inherit" />
             </>
           </MuiLink>
         </Link>
@@ -293,9 +248,7 @@ const Overview = () => {
           <Typography>Relative balance</Typography>
           <Typography
             className={
-              txsInfo?.relativeBalance.startsWith('-')
-                ? classes.relativeBalanceNeg
-                : classes.relativeBalancePos
+              txsInfo?.relativeBalance.startsWith('-') ? classes.relativeBalanceNeg : classes.relativeBalancePos
             }
           >
             {txsInfo?.relativeBalance}
@@ -304,11 +257,7 @@ const Overview = () => {
         <div className={classes.infoRow}>
           <Typography>Avarage per day</Typography>
           <Typography
-            className={
-              txsInfo?.averagePerDay.startsWith('-')
-                ? classes.relativeBalanceNeg
-                : classes.relativeBalancePos
-            }
+            className={txsInfo?.averagePerDay.startsWith('-') ? classes.relativeBalanceNeg : classes.relativeBalancePos}
           >
             {txsInfo?.averagePerDay}
           </Typography>
@@ -330,14 +279,9 @@ const Overview = () => {
           <TransactionList transactions={txs} />
         </div>
         <Link href={`/transactions`}>
-          <MuiLink
-            className={classnames(classes.marginBottom, classes.link)}
-            variant="body2"
-            underline="always"
-          >
+          <MuiLink className={classnames(classes.marginBottom, classes.link)} variant="body2" underline="always">
             <>
-              See all transactions{' '}
-              <LaunchIcon style={{ marginBottom: -2 }} fontSize="inherit" />
+              See all transactions <LaunchIcon style={{ marginBottom: -2 }} fontSize="inherit" />
             </>
           </MuiLink>
         </Link>

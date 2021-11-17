@@ -12,6 +12,6 @@
     ".eslintrc.js",
     "jest.config.js",
     "load-env.js",
-    "next.config.js",
+    "next.config.js"
   ]
 }

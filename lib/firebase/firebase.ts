@@ -6,10 +6,7 @@ import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
 
-import {
-  createErrorNotification,
-  setSnackbarNotification,
-} from '../shared/actions'
+import { createErrorNotification, setSnackbarNotification } from '../shared/actions'
 
 import { authChangeAction } from './actions'
 
@@ -29,20 +26,13 @@ export const initializeFirebase = async (store: Store) => {
 
   let persistedUser = firebase.auth().currentUser
   if (persistedUser) {
-    store.dispatch(
-      authChangeAction(
-        persistedUser ? 'loggedIn' : 'loggedOut',
-        persistedUser,
-      ) as any,
-    )
+    store.dispatch(authChangeAction(persistedUser ? 'loggedIn' : 'loggedOut', persistedUser) as any)
   }
 
   firebase.auth().onAuthStateChanged((user) => {
     if (persistedUser) persistedUser = null
     else {
-      store.dispatch(
-        authChangeAction(user ? 'loggedIn' : 'loggedOut', user) as any,
-      )
+      store.dispatch(authChangeAction(user ? 'loggedIn' : 'loggedOut', user) as any)
     }
   })
 
@@ -57,20 +47,16 @@ export const initializeFirebase = async (store: Store) => {
           // in one tab at a a time.
           store.dispatch(
             setSnackbarNotification(
-              createErrorNotification(
-                'Expense manager is opened on mutliple tabs. Local persistance is disabled!',
-              ),
-            ),
+              createErrorNotification('Expense manager is opened on mutliple tabs. Local persistance is disabled!')
+            )
           )
         } else if (err.code === 'unimplemented') {
           // The current browser does not support all of the
           // features required to enable persistence
           store.dispatch(
             setSnackbarNotification(
-              createErrorNotification(
-                'Underlying platform (browser) does not support persistance',
-              ),
-            ),
+              createErrorNotification('Underlying platform (browser) does not support persistance')
+            )
           )
         }
       })

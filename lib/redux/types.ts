@@ -14,9 +14,4 @@ export interface Action<Payload = void> extends ReduxAction<string> {
   reducer: (state: State) => State
 }
 
-export type Thunk<Result = Promise<unknown>> = ThunkAction<
-  Result,
-  State,
-  ThunkExtraArgument,
-  Action<unknown>
->
+export type Thunk<Result = Promise<unknown>> = ThunkAction<Result, State, ThunkExtraArgument, Action<unknown>>

@@ -61,9 +61,7 @@ interface ShowFileContent {
 
 const FilterFiles = () => {
   const classes = useStyles()
-  const [listItems, setListItems] = React.useState<
-    ListItemData[] | null | undefined
-  >(undefined)
+  const [listItems, setListItems] = React.useState<ListItemData[] | null | undefined>(undefined)
   const firebaseLoaded = useSelector(firebaseLoadedSel)
   const userId = useSelector(currentUserIdSel)
   const dispatch = useDispatch()
@@ -81,11 +79,7 @@ const FilterFiles = () => {
     setListItems(null)
 
     const performAsyncCall = async () => {
-      const data = await withErrorHandler(
-        DOWNLOADING_DATA_ERROR,
-        dispatch,
-        () => listFiltersForUser(userId!),
-      )
+      const data = await withErrorHandler(DOWNLOADING_DATA_ERROR, dispatch, () => listFiltersForUser(userId!))
 
       if (!data) return
       else if (typeof data === 'string') dispatch(createErrorNotification(data))
@@ -99,22 +93,14 @@ const FilterFiles = () => {
 
   if (!firebaseLoaded || listItems === undefined) return null
   else if (listItems === null)
-    return (
-      <Loading
-        size={100}
-        text="Loading filter files..."
-        textStyle={{ fontSize: '2.0em' }}
-      />
-    )
+    return <Loading size={100} text="Loading filter files..." textStyle={{ fontSize: '2.0em' }} />
   else {
     return (
       <>
         <List dense>
           {!listItems.length && (
             <Paper style={{ minHeight: 200, display: 'flex' }}>
-              <span style={{ margin: 'auto' }}>
-                You have no filters created
-              </span>
+              <span style={{ margin: 'auto' }}>You have no filters created</span>
             </Paper>
           )}
           {listItems.map(({ filename, checked }, index) => {
@@ -124,27 +110,19 @@ const FilterFiles = () => {
                 button
                 onClick={async () => {
                   setShowFile({ filename, content: undefined })
-                  const success = await withErrorHandler(
-                    'Unable to download file content',
-                    dispatch,
-                    async () => {
-                      const content = await filterFileContent(userId!, filename)
+                  const success = await withErrorHandler('Unable to download file content', dispatch, async () => {
+                    const content = await filterFileContent(userId!, filename)
 
-                      setShowFile({ filename, content })
-                      return true /* success */
-                    },
-                  )
+                    setShowFile({ filename, content })
+                    return true /* success */
+                  })
 
                   if (!success) setShowFile({ filename, content: null })
                 }}
               >
                 <ListItemText primary={filename} />
                 <ListItemSecondaryAction>
-                  <Checkbox
-                    edge="end"
-                    onChange={handleToggle(index)}
-                    checked={checked}
-                  />
+                  <Checkbox edge="end" onChange={handleToggle(index)} checked={checked} />
                 </ListItemSecondaryAction>
               </ListItem>
             )
@@ -159,9 +137,7 @@ const FilterFiles = () => {
                 variant="outlined"
                 startIcon={<UnselectAllIcon />}
                 onClick={() => {
-                  setListItems(
-                    listItems.map((item) => ({ ...item, checked: false })),
-                  )
+                  setListItems(listItems.map((item) => ({ ...item, checked: false })))
                 }}
                 disabled={somethingSelected}
               >
@@ -182,12 +158,7 @@ const FilterFiles = () => {
 
             <div className={classes.buttons}>
               <Link href="/filters/create">
-                <Button
-                  size="small"
-                  color="primary"
-                  variant="outlined"
-                  startIcon={<CreateNewIcon />}
-                >
+                <Button size="small" color="primary" variant="outlined" startIcon={<CreateNewIcon />}>
                   Create new
                 </Button>
               </Link>
@@ -199,9 +170,7 @@ const FilterFiles = () => {
           onConfirm={async (e) => {
             e.stopPropagation()
 
-            const filenames = listItems
-              .filter(({ checked }) => checked)
-              .map(({ filename }) => filename)
+            const filenames = listItems.filter(({ checked }) => checked).map(({ filename }) => filename)
 
             await dispatch(removeFilters(filenames))
 
@@ -218,31 +187,18 @@ const FilterFiles = () => {
         />
 
         {showFile && (
-          <Dialog
-            onClose={() => setShowFile(null)}
-            open={true}
-            classes={{ paper: classes.showFileDialogPaper }}
-          >
+          <Dialog onClose={() => setShowFile(null)} open={true} classes={{ paper: classes.showFileDialogPaper }}>
             <DialogTitle>{`Filter - ${showFile.filename}`}</DialogTitle>
             <DialogContent dividers>
-              <Highlight language="javascript">
-                {showFile.content ?? 'Loading...'}
-              </Highlight>
+              <Highlight language="javascript">{showFile.content ?? 'Loading...'}</Highlight>
             </DialogContent>
             <DialogActions>
               <Link href={`/filters/edit?name=${showFile.filename}`}>
-                <Button
-                  color="primary"
-                  startIcon={<EditIcon color="primary" />}
-                >
+                <Button color="primary" startIcon={<EditIcon color="primary" />}>
                   Edit
                 </Button>
               </Link>
-              <Button
-                autoFocus
-                onClick={() => setShowFile(null)}
-                color="secondary"
-              >
+              <Button autoFocus onClick={() => setShowFile(null)} color="secondary">
                 Close
               </Button>
             </DialogActions>

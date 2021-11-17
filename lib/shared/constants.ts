@@ -12,5 +12,4 @@ export const USER_DATA_NOT_LOADED_ERROR = 'User data have not been loaded!'
 export const UPLOADING_DATA_ERROR = 'Unexpected error while uploading data'
 export const DOWNLOADING_DATA_ERROR = 'Unexpected error while downloading data'
 export const REQUEST_TIMEOUT_ERROR = 'Request timed out'
-export const INVALID_TRANSACTION_FORM_FIELDS =
-  'Some transaction fields are invalid'
+export const INVALID_TRANSACTION_FORM_FIELDS = 'Some transaction fields are invalid'

@@ -52,20 +52,14 @@ const EditTagScreenContent: React.FC<EditTagScreenContentProps> = ({ tag }) => {
         isRecurring,
         isRecentlyUsed,
       }}
-      onSave={(modifiedTag) =>
-        dispatch(uploadToFirebase({ tags: [modifiedTag] }))
-      }
+      onSave={(modifiedTag) => dispatch(uploadToFirebase({ tags: [modifiedTag] }))}
       onRemove={() => dispatch(removeTag(tag.id))}
     />
   )
 }
 
 const EditTagScreen = () => {
-  return (
-    <WithValidTagId>
-      {(reduxTag) => <EditTagScreenContent tag={reduxTag} />}
-    </WithValidTagId>
-  )
+  return <WithValidTagId>{(reduxTag) => <EditTagScreenContent tag={reduxTag} />}</WithValidTagId>
 }
 
 export default EditTagScreen

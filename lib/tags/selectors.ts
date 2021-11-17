@@ -7,27 +7,21 @@ import { sorted } from '../shared/utils'
 import { State } from '../state'
 
 export const tagsSel = (state: State) => state.tags
-export const sortedTagsSel = createSelector(tagsSel, (tags) =>
-  sorted(tags, (a, b) => (a.name < b.name ? -1 : 1)),
-)
+export const sortedTagsSel = createSelector(tagsSel, (tags) => sorted(tags, (a, b) => (a.name < b.name ? -1 : 1)))
 export const transactionsSel = (state: State) => state.transactions
 
-export const tagFromSortedTagsByIndex = (index: number) =>
-  createSelector(sortedTagsSel, (tags) => tags[index])
+export const tagFromSortedTagsByIndex = (index: number) => createSelector(sortedTagsSel, (tags) => tags[index])
 
 export const totalTransactionsSel = (id: string) =>
-  createSelector(
-    transactionsSel,
-    (txs) => Object.values(txs).filter((tx) => tx.tagIds.includes(id)).length,
-  )
+  createSelector(transactionsSel, (txs) => Object.values(txs).filter((tx) => tx.tagIds.includes(id)).length)
 
 export const totalExpenseInTransactionsSel = (id: string) =>
   createSelector(transactionsSel, (txs) =>
     Math.round(
       Object.values(txs)
         .filter((tx) => tx.tagIds.includes(id))
-        .reduce((acc, tx) => acc + tx.amount, 0),
-    ),
+        .reduce((acc, tx) => acc + tx.amount, 0)
+    )
   )
 
 export const isRecurringTagSel = (id: string) =>
@@ -35,11 +29,8 @@ export const isRecurringTagSel = (id: string) =>
     transactionsSel,
     (txs) =>
       Object.values(txs).filter(
-        (tx) =>
-          tx.repeating !== 'none' &&
-          tx.repeating !== 'inactive' &&
-          tx.tagIds.includes(id),
-      ).length > 0,
+        (tx) => tx.repeating !== 'none' && tx.repeating !== 'inactive' && tx.tagIds.includes(id)
+      ).length > 0
   )
 
 export const latestTransactionWithTagSel = (tagId: string) =>
@@ -64,10 +55,7 @@ export const isRecentlyUsedSel = (tagId: string) =>
     return !tx || isAfter(tx.dateTime, lastMonth)
   })
 
-export const tagByIdSel = (id: string) =>
-  createSelector(tagsSel, (tags) => tags[id])
+export const tagByIdSel = (id: string) => createSelector(tagsSel, (tags) => tags[id])
 
 export const transactionsWithTag = (tagId: string) =>
-  createSelector(transactionsSel, (txs) =>
-    Object.values(txs).filter((tx) => tx.tagIds.includes(tagId)),
-  )
+  createSelector(transactionsSel, (txs) => Object.values(txs).filter((tx) => tx.tagIds.includes(tagId)))

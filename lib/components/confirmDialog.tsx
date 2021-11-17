@@ -14,13 +14,7 @@ interface Props {
   title?: string
 }
 
-const ConfirmDialog = ({
-  open,
-  onCancel,
-  onConfirm,
-  ContentComponent,
-  title,
-}: Props) => {
+const ConfirmDialog = ({ open, onCancel, onConfirm, ContentComponent, title }: Props) => {
   return (
     <Dialog onClose={onCancel} disableEnforceFocus open={open}>
       {title && <DialogTitle>{title}</DialogTitle>}

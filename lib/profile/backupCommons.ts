@@ -38,11 +38,10 @@ export const listBackupFilesForUser = (userId: string) => {
 export const backupFileContent = async (userId: string, filename: string) =>
   firestoreFileContent(userId, ['backup', filename])
 
-export const createBackupFilename = () =>
-  format(new Date(), BACKUP_FILENAME_FORMAT)
+export const createBackupFilename = () => format(new Date(), BACKUP_FILENAME_FORMAT)
 
 export const downloadBackupFiles = (userId: string, filenames: string[]) =>
   downloadFiles(
     userId,
-    filenames.map((f) => ['backup', f]),
+    filenames.map((f) => ['backup', f])
   )

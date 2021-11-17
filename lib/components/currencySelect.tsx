@@ -12,27 +12,18 @@ interface CurrencySelectProps {
   className?: string
 }
 
-const CurrencySelect = ({
-  value,
-  onChange,
-  label,
-  className,
-}: CurrencySelectProps) => {
+const CurrencySelect = ({ value, onChange, label, className }: CurrencySelectProps) => {
   return (
     <TextField
       select
       label={label || 'Currency'}
       value={value}
       className={className}
-      onChange={(e) => onChange((e.target.value as any) as Currency)}
+      onChange={(e) => onChange(e.target.value as any as Currency)}
     >
       {Object.keys(CURRENCIES).map((value) => (
         <MenuItem key={value} value={value}>
-          <img
-            src={`/static/${value.toLowerCase()}.png`}
-            width="20"
-            style={{ marginRight: 8 }}
-          />
+          <img src={`/static/${value.toLowerCase()}.png`} width="20" style={{ marginRight: 8 }} />
           <span style={{ verticalAlign: 'text-top' }}>{value}</span>
         </MenuItem>
       ))}

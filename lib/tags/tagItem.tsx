@@ -65,12 +65,7 @@ const TagItem: React.FC<ListChildComponentProps> = ({ index, style }) => {
 
   return (
     <Link href={`/tags/details?id=${tag.id}`}>
-      <ListItem
-        button
-        style={style as any}
-        className={classes.listItem}
-        ContainerComponent="div"
-      >
+      <ListItem button style={style as any} className={classes.listItem} ContainerComponent="div">
         <div style={{ display: 'flex', width: '100%' }}>
           <ListItemText
             primary={
@@ -92,29 +87,16 @@ const TagItem: React.FC<ListChildComponentProps> = ({ index, style }) => {
             )}
             {!isRecentlyUsed && (
               <Tooltip title="Not recently used">
-                <NotRecentlyUsedIcon
-                  className={classes.icon}
-                  color="secondary"
-                />
+                <NotRecentlyUsedIcon className={classes.icon} color="secondary" />
               </Tooltip>
             )}
             <Tooltip title="Transaction count">
-              <Badge
-                className={classes.icon}
-                badgeContent={totalTxs}
-                max={99}
-                color="primary"
-              >
+              <Badge className={classes.icon} badgeContent={totalTxs} max={99} color="primary">
                 <TotalTxsIcon />
               </Badge>
             </Tooltip>
             <Tooltip title="Money involved">
-              <Badge
-                className={classes.txsSum}
-                badgeContent={totalExpenseInTxs}
-                color="primary"
-                max={999}
-              >
+              <Badge className={classes.txsSum} badgeContent={totalExpenseInTxs} color="primary" max={999}>
                 <EuroIcon />
               </Badge>
             </Tooltip>

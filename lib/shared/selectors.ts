@@ -11,32 +11,17 @@ export const profileSel = (state: State) => {
   return profiles.length >= 1 ? profiles[0] : null
 }
 
-export const mainCurrencySel = createSelector(
-  profileSel,
-  (profile) => profile?.settings.mainCurrency,
-)
+export const mainCurrencySel = createSelector(profileSel, (profile) => profile?.settings.mainCurrency)
 
-export const defaultCurrencySel = createSelector(
-  profileSel,
-  (profile) => profile?.settings.defaultCurrency,
-)
+export const defaultCurrencySel = createSelector(profileSel, (profile) => profile?.settings.defaultCurrency)
 
-export const exchangeRatesSel = createSelector(
-  profileSel,
-  (profile) => profile?.exchangeRates,
-)
+export const exchangeRatesSel = createSelector(profileSel, (profile) => profile?.exchangeRates)
 
-export const settingsSel = createSelector(
-  profileSel,
-  (profile) => profile?.settings,
-)
+export const settingsSel = createSelector(profileSel, (profile) => profile?.settings)
 
 export const signInStatusSel = (state: State) => state.signInStatus
 
 export const transactionsSel = (state: State) => state.transactions
 
 // TODO: use this selector to check if firebase is loaded instead of currentUserIdSel
-export const firebaseLoadedSel = createSelector(
-  currentUserIdSel,
-  (userId) => userId !== null,
-)
+export const firebaseLoadedSel = createSelector(currentUserIdSel, (userId) => userId !== null)

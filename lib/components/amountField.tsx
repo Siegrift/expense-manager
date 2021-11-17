@@ -38,13 +38,7 @@ interface MuiInputProps {
 
 const amountFieldId = 'amount-field'
 
-const MuiInput: React.FC<MuiInputProps> = ({
-  clearAmount,
-  openCalculator,
-  value,
-  isExpense,
-  ...others
-}) => {
+const MuiInput: React.FC<MuiInputProps> = ({ clearAmount, openCalculator, value, isExpense, ...others }) => {
   const theme = useTheme()
 
   return (
@@ -77,11 +71,7 @@ const MuiInput: React.FC<MuiInputProps> = ({
             </Tooltip>
             <Tooltip title="Open calculator" style={{ cursor: 'pointer' }}>
               <span>
-                <CalculatorIcon
-                  color={theme.palette.primary.main}
-                  size={20}
-                  onClick={openCalculator}
-                />
+                <CalculatorIcon color={theme.palette.primary.main} size={20} onClick={openCalculator} />
               </span>
             </Tooltip>
           </>

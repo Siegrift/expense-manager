@@ -66,9 +66,7 @@ interface ShowFileContent {
 
 const BackupFilesList = () => {
   const classes = useStyles()
-  const [listItems, setListItems] = React.useState<
-    ListItemData[] | null | undefined
-  >(undefined)
+  const [listItems, setListItems] = React.useState<ListItemData[] | null | undefined>(undefined)
   const firebaseLoaded = useSelector(firebaseLoadedSel)
   const userId = useSelector(currentUserIdSel)
   const dispatch = useDispatch()
@@ -86,11 +84,7 @@ const BackupFilesList = () => {
     setListItems(null)
 
     const performAsyncCall = async () => {
-      const data = await withErrorHandler(
-        DOWNLOADING_DATA_ERROR,
-        dispatch,
-        () => listBackupFilesForUser(userId!),
-      )
+      const data = await withErrorHandler(DOWNLOADING_DATA_ERROR, dispatch, () => listBackupFilesForUser(userId!))
 
       if (!data) return
       else if (typeof data === 'string') dispatch(createErrorNotification(data))
@@ -104,13 +98,7 @@ const BackupFilesList = () => {
 
   if (!firebaseLoaded || listItems === undefined) return null
   else if (listItems === null)
-    return (
-      <Loading
-        size={100}
-        text="Loading backup files..."
-        textStyle={{ fontSize: '2.0em' }}
-      />
-    )
+    return <Loading size={100} text="Loading backup files..." textStyle={{ fontSize: '2.0em' }} />
   else {
     return (
       <>
@@ -122,27 +110,19 @@ const BackupFilesList = () => {
                 button
                 onClick={async () => {
                   setShowFile({ filename, content: undefined })
-                  const success = await withErrorHandler(
-                    'Unable to download file content',
-                    dispatch,
-                    async () => {
-                      const content = await backupFileContent(userId!, filename)
+                  const success = await withErrorHandler('Unable to download file content', dispatch, async () => {
+                    const content = await backupFileContent(userId!, filename)
 
-                      setShowFile({ filename, content })
-                      return true /* success */
-                    },
-                  )
+                    setShowFile({ filename, content })
+                    return true /* success */
+                  })
 
                   if (!success) setShowFile({ filename, content: null })
                 }}
               >
                 <ListItemText primary={filename} />
                 <ListItemSecondaryAction>
-                  <Checkbox
-                    edge="end"
-                    onChange={handleToggle(index)}
-                    checked={checked}
-                  />
+                  <Checkbox edge="end" onChange={handleToggle(index)} checked={checked} />
                 </ListItemSecondaryAction>
               </ListItem>
             )
@@ -158,11 +138,7 @@ const BackupFilesList = () => {
                 startIcon={<SelectAllIcon />}
                 onClick={() => {
                   const firstInd = listItems.findIndex((item) => item.checked)
-                  setListItems(
-                    listItems.map((item, i) =>
-                      i < firstInd ? item : { ...item, checked: true },
-                    ),
-                  )
+                  setListItems(listItems.map((item, i) => (i < firstInd ? item : { ...item, checked: true })))
                 }}
                 disabled={somethingSelected}
               >
@@ -174,9 +150,7 @@ const BackupFilesList = () => {
                 variant="outlined"
                 startIcon={<UnselectAllIcon />}
                 onClick={() => {
-                  setListItems(
-                    listItems.map((item) => ({ ...item, checked: false })),
-                  )
+                  setListItems(listItems.map((item) => ({ ...item, checked: false })))
                 }}
                 disabled={somethingSelected}
               >
@@ -218,7 +192,7 @@ const BackupFilesList = () => {
                 onClick={() =>
                   downloadBackupFiles(
                     userId!,
-                    listItems.filter((i) => i.checked).map((i) => i.filename),
+                    listItems.filter((i) => i.checked).map((i) => i.filename)
                   )
                 }
                 disabled={somethingSelected}
@@ -233,9 +207,7 @@ const BackupFilesList = () => {
           onConfirm={async (e) => {
             e.stopPropagation()
 
-            const filenames = listItems
-              .filter(({ checked }) => checked)
-              .map(({ filename }) => filename)
+            const filenames = listItems.filter(({ checked }) => checked).map(({ filename }) => filename)
 
             await dispatch(removeBackupFiles(filenames))
 
@@ -252,23 +224,13 @@ const BackupFilesList = () => {
         />
 
         {showFile && (
-          <Dialog
-            onClose={() => setShowFile(null)}
-            open={true}
-            classes={{ paper: classes.showFileDialogPaper }}
-          >
+          <Dialog onClose={() => setShowFile(null)} open={true} classes={{ paper: classes.showFileDialogPaper }}>
             <DialogTitle>{`Backup - ${showFile.filename}`}</DialogTitle>
             <DialogContent dividers>
-              <Highlight language="json">
-                {showFile.content ?? 'Loading...'}
-              </Highlight>
+              <Highlight language="json">{showFile.content ?? 'Loading...'}</Highlight>
             </DialogContent>
             <DialogActions>
-              <Button
-                autoFocus
-                onClick={() => setShowFile(null)}
-                color="primary"
-              >
+              <Button autoFocus onClick={() => setShowFile(null)} color="primary">
                 Close
               </Button>
             </DialogActions>
@@ -283,10 +245,7 @@ const BackupFiles = () => {
   return (
     <>
       {/* TODO: create section for attached files download */}
-      <Alert
-        severity="info"
-        style={{ marginBottom: 8, textTransform: 'initial' }}
-      >
+      <Alert severity="info" style={{ marginBottom: 8, textTransform: 'initial' }}>
         Data is automatically saved every <b>{AUTO_BACKUP_PERIOD_DAYS} days</b>{' '}
         <i>(maybe more if there are no changes in the data)</i>.
       </Alert>

@@ -29,12 +29,10 @@ export const useRefreshExchangeRates = () => {
               exchangeRates: set(fetchData.data as any, ['rates', 'EUR'], 1),
             } as Profile,
           ],
-        }),
+        })
       )
     } else if (fetchData.error) {
-      dispatch(
-        setSnackbarNotification(createErrorNotification(fetchData.error)),
-      )
+      dispatch(setSnackbarNotification(createErrorNotification(fetchData.error)))
     }
   }, [firebaseLoaded, fetchData.data])
 

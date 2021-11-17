@@ -10,8 +10,10 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 const compose = (...fns) =>
   fns.reduce(
-    (a, b) => (...args) => a(b(...args)),
-    (arg) => arg,
+    (a, b) =>
+      (...args) =>
+        a(b(...args)),
+    (arg) => arg
   )
 
 // https://github.com/hanford/next-offline#now-20
@@ -178,7 +180,7 @@ const nextConfig = {
       new MonacoWebpackPlugin({
         languages: ['javascript'],
         filename: 'static/[name].worker.js',
-      }),
+      })
     )
     return config
   },

@@ -37,12 +37,7 @@ const Tags = () => {
       <Paper listContainer>
         {tagsLength === 0 ? (
           <div className={classes.noTagsWrapper}>
-            <Typography
-              variant="overline"
-              display="block"
-              gutterBottom
-              className={classes.noTransactions}
-            >
+            <Typography variant="overline" display="block" gutterBottom className={classes.noTransactions}>
               You have no tags...
             </Typography>
           </div>
@@ -50,12 +45,7 @@ const Tags = () => {
           <AutoSizer>
             {({ height, width }) => {
               return (
-                <FixedSizeList
-                  height={height}
-                  width={width}
-                  itemSize={60}
-                  itemCount={tagsLength}
-                >
+                <FixedSizeList height={height} width={width} itemSize={60} itemCount={tagsLength}>
                   {TagItem}
                 </FixedSizeList>
               )

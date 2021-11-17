@@ -24,12 +24,7 @@ interface Props {
   className?: string
 }
 
-const ChartWrapper: React.FunctionComponent<Props> = ({
-  label,
-  renderChart,
-  Container = Paper,
-  className,
-}) => {
+const ChartWrapper: React.FunctionComponent<Props> = ({ label, renderChart, Container = Paper, className }) => {
   const classes = useStyles()
 
   return (

@@ -23,25 +23,16 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import Loading from '../components/loading'
 import Paper from '../components/paper'
-import {
-  createSuccessNotification,
-  setSnackbarNotification,
-} from '../shared/actions'
+import { createSuccessNotification, setSnackbarNotification } from '../shared/actions'
 import { currentUserIdSel } from '../shared/selectors'
 
 import { uploadFilter } from './actions'
-import {
-  filterFileContent,
-  FILTER_TEMPLATE,
-  listFiltersForUser,
-} from './filterCommons'
+import { filterFileContent, FILTER_TEMPLATE, listFiltersForUser } from './filterCommons'
 import { frozenFilterDataSel } from './selectors'
 
 const VALID_FILTER_NAME_PATTERN = /^[A-Za-z0-9 ]+$/
 
-const MonacoEditorLoader = () => (
-  <Loading size={50} imageStyle={{ margin: `16px auto` }} />
-)
+const MonacoEditorLoader = () => <Loading size={50} imageStyle={{ margin: `16px auto` }} />
 
 const MonacoEditor = dynamic(import('react-monaco-editor'), {
   ssr: false,
@@ -63,17 +54,11 @@ const CodeEditor = ({ initialFilterName }: Props) => {
   const [loadingData, setLoadingData] = useState(true)
   const frozenData = useSelector(frozenFilterDataSel)
   const editorRef = useRef<Parameters<EditorDidMount>[0]>()
-  const [initialCode, setInitialCodeValue] = useState<
-    string | null | undefined
-  >(undefined)
+  const [initialCode, setInitialCodeValue] = useState<string | null | undefined>(undefined)
   const [filterNameError, setFilterNameError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
-  const [persistedFilterName, setPersistedFilterName] = useState(
-    initialFilterName,
-  )
-  const [filterName, setFilterName] = useState(
-    persistedFilterName ?? 'New profile',
-  )
+  const [persistedFilterName, setPersistedFilterName] = useState(initialFilterName)
+  const [filterName, setFilterName] = useState(persistedFilterName ?? 'New profile')
   const [showInfo, setShowInfo] = useState(true)
   const dispatch = useDispatch()
   const userId = useSelector(currentUserIdSel)
@@ -105,8 +90,7 @@ const CodeEditor = ({ initialFilterName }: Props) => {
         }
       }
       setInitialCodeValue(codeValue)
-      if (editorRef.current && codeValue !== null)
-        editorRef.current.setValue(codeValue)
+      if (editorRef.current && codeValue !== null) editorRef.current.setValue(codeValue)
 
       setLoadingData(false)
     }
@@ -124,16 +108,14 @@ const CodeEditor = ({ initialFilterName }: Props) => {
     if (!userId) return error('User not signed in yet')
 
     const validName = VALID_FILTER_NAME_PATTERN.test(filterName)
-    if (!validName)
-      return error(`Filename must follow pattern: ${VALID_FILTER_NAME_PATTERN}`)
+    if (!validName) return error(`Filename must follow pattern: ${VALID_FILTER_NAME_PATTERN}`)
 
     // check for overwrites
     if (persistedFilterName !== filterName) {
       const data = await listFiltersForUser(userId)
       if (typeof data === 'string') return error(data)
       else {
-        if (data.includes(filterName))
-          return error(`Filter with name ${filterName} already exists!`)
+        if (data.includes(filterName)) return error(`Filter with name ${filterName} already exists!`)
       }
     }
 
@@ -171,8 +153,7 @@ const CodeEditor = ({ initialFilterName }: Props) => {
     if (!editor) return
 
     const val = editor.getValue()
-    const formatter = (editorDevLibs as any).format
-      .default as typeof import('js-beautify')
+    const formatter = (editorDevLibs as any).format.default as typeof import('js-beautify')
     editor.setValue(formatter(val))
   }
 
@@ -198,13 +179,7 @@ const CodeEditor = ({ initialFilterName }: Props) => {
           variant="contained"
           color="primary"
           onClick={handleSave}
-          startIcon={
-            saving ? (
-              <CircularProgress size={16} color="inherit" />
-            ) : (
-              <SaveIcon />
-            )
-          }
+          startIcon={saving ? <CircularProgress size={16} color="inherit" /> : <SaveIcon />}
         >
           Save (ctrl + S)
         </Button>
@@ -215,13 +190,7 @@ const CodeEditor = ({ initialFilterName }: Props) => {
           color="primary"
           onClick={handleRunCode}
           disabled={loadingData}
-          startIcon={
-            loadingData ? (
-              <CircularProgress size={16} color="inherit" />
-            ) : (
-              <RunCode />
-            )
-          }
+          startIcon={loadingData ? <CircularProgress size={16} color="inherit" /> : <RunCode />}
         >
           Run (ctrl + R)
         </Button>
@@ -238,14 +207,9 @@ const CodeEditor = ({ initialFilterName }: Props) => {
       </div>
 
       <Collapse in={showInfo}>
-        <Alert
-          severity="info"
-          style={{ marginTop: 8 }}
-          onClose={() => setShowInfo(false)}
-        >
-          Use the code editor to create a functions, which transforms the data
-          any way you want. This code will be passed to <i>eval</i> and executed
-          on readonly state data.
+        <Alert severity="info" style={{ marginTop: 8 }} onClose={() => setShowInfo(false)}>
+          Use the code editor to create a functions, which transforms the data any way you want. This code will be
+          passed to <i>eval</i> and executed on readonly state data.
         </Alert>
       </Collapse>
 
@@ -268,14 +232,11 @@ const CodeEditor = ({ initialFilterName }: Props) => {
                 e.preventDefault()
                 handleFormatCode()
                 handleSave()
-              }  if (e.ctrlKey && e.keyCode === monaco.KeyCode.KEY_R) {
+              }
+              if (e.ctrlKey && e.keyCode === monaco.KeyCode.KEY_R) {
                 e.preventDefault()
                 handleRunCode()
-              } else if (
-                e.ctrlKey &&
-                e.shiftKey &&
-                e.keyCode === monaco.KeyCode.KEY_F
-              ) {
+              } else if (e.ctrlKey && e.shiftKey && e.keyCode === monaco.KeyCode.KEY_F) {
                 e.preventDefault()
                 handleFormatCode()
               }
@@ -290,10 +251,7 @@ const CodeEditor = ({ initialFilterName }: Props) => {
         onChange={() => setExpanded(!expanded)}
         TransitionProps={{ unmountOnExit: true }}
       >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          style={{ minHeight: 40, height: 40 }}
-        >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />} style={{ minHeight: 40, height: 40 }}>
           <Typography>Code output</Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -315,15 +273,9 @@ const CodeEditor = ({ initialFilterName }: Props) => {
                     visibility: expanded ? 'visible' : 'hidden',
                   }}
                   onClick={async () => {
-                    await navigator.clipboard.writeText(
-                      editorRef.current!.getValue(),
-                    )
+                    await navigator.clipboard.writeText(editorRef.current!.getValue())
 
-                    dispatch(
-                      setSnackbarNotification(
-                        createSuccessNotification('Copied to clipboard!'),
-                      ),
-                    )
+                    dispatch(setSnackbarNotification(createSuccessNotification('Copied to clipboard!')))
                   }}
                 >
                   <CopyIcon />

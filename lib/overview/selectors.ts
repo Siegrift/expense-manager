@@ -22,32 +22,22 @@ import { DateRange } from '../types'
 const OVERVIEW_MONTH_FORMAT = 'MMMM yyyy'
 
 export const overviewPeriodSel = (state: State) => state.overview.period
-export const customDateRangeSel = (state: State) =>
-  state.overview.customDateRange
+export const customDateRangeSel = (state: State) => state.overview.customDateRange
 export const monthSel = (state: State) => state.overview.month
 
-export const overviewMonthsSel = createSelector(
-  sortedTransactionsSel,
-  (txs) => {
-    const mapped = txs.map(({ dateTime }: Transaction) =>
-      format(dateTime, OVERVIEW_MONTH_FORMAT),
-    )
+export const overviewMonthsSel = createSelector(sortedTransactionsSel, (txs) => {
+  const mapped = txs.map(({ dateTime }: Transaction) => format(dateTime, OVERVIEW_MONTH_FORMAT))
 
-    return sortedUniq(mapped)
-  },
-)
+  return sortedUniq(mapped)
+})
 
-const monthDateRangeSel = createSelector(
-  overviewMonthsSel,
-  monthSel,
-  (options, month): DateRange | null => {
-    // if there are no transactions there won't be any option
-    if (!options[month]) return null
+const monthDateRangeSel = createSelector(overviewMonthsSel, monthSel, (options, month): DateRange | null => {
+  // if there are no transactions there won't be any option
+  if (!options[month]) return null
 
-    const date = parse(options[month], OVERVIEW_MONTH_FORMAT, new Date())
-    return { start: startOfMonth(date), end: endOfMonth(date) }
-  },
-)
+  const date = parse(options[month], OVERVIEW_MONTH_FORMAT, new Date())
+  return { start: startOfMonth(date), end: endOfMonth(date) }
+})
 
 export const dateRangeSel = createSelector(
   overviewPeriodSel,
@@ -56,8 +46,7 @@ export const dateRangeSel = createSelector(
   (period, monthRange, dateRange) => {
     const now = new Date()
     const endOfToday = endOfDay(now)
-    const invalidCustomRange =
-      !isValidDate(dateRange[0]) || !isValidDate(dateRange[1])
+    const invalidCustomRange = !isValidDate(dateRange[0]) || !isValidDate(dateRange[1])
 
     const totalDays: {
       [k in OverviewPeriod]: DateRange
@@ -72,28 +61,20 @@ export const dateRangeSel = createSelector(
     }
 
     return totalDays[period]
-  },
+  }
 )
 
-export const overviewTransactionsSel = createSelector(
-  dateRangeSel,
-  sortedTransactionsSel,
-  (range, txs) => {
-    return txs.filter((tx) => isWithinInterval(tx.dateTime, range))
-  },
-)
+export const overviewTransactionsSel = createSelector(dateRangeSel, sortedTransactionsSel, (range, txs) => {
+  return txs.filter((tx) => isWithinInterval(tx.dateTime, range))
+})
 
 export const txsInfoSel = createSelector(
   dateRangeSel,
   overviewTransactionsSel,
   mainCurrencySel,
   (dateRange, transactions, currency) => {
-    const income = transactions
-      .filter((t) => !t.isExpense)
-      .reduce((sum, tx) => sum + tx.amount, 0)
-    const expense = transactions
-      .filter((t) => t.isExpense)
-      .reduce((sum, tx) => sum + tx.amount, 0)
+    const income = transactions.filter((t) => !t.isExpense).reduce((sum, tx) => sum + tx.amount, 0)
+    const expense = transactions.filter((t) => t.isExpense).reduce((sum, tx) => sum + tx.amount, 0)
 
     if (!currency) return null
     return {
@@ -101,11 +82,10 @@ export const txsInfoSel = createSelector(
       expense: formatMoney(expense, currency),
       relativeBalance: formatMoney(income - expense, currency),
       averagePerDay: formatMoney(
-        (income - expense) /
-          (differenceInCalendarDays(dateRange.end, dateRange.start) + 1),
-        currency,
+        (income - expense) / (differenceInCalendarDays(dateRange.end, dateRange.start) + 1),
+        currency
       ),
       totalTransactions: transactions.length,
     }
-  },
+  }
 )

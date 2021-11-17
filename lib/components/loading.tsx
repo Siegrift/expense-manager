@@ -30,28 +30,14 @@ export interface LoadingProps {
   text?: string
 }
 
-export const Loading: React.FC<LoadingProps> = ({
-  imageStyle,
-  text,
-  size,
-  textStyle,
-}) => {
+export const Loading: React.FC<LoadingProps> = ({ imageStyle, text, size, textStyle }) => {
   const classes = useStyles()
 
   return (
     <>
-      <img
-        src="../static/coin.svg"
-        alt="coin"
-        style={{ width: `${size}px`, ...imageStyle }}
-        className={classes.coin}
-      />
+      <img src="../static/coin.svg" alt="coin" style={{ width: `${size}px`, ...imageStyle }} className={classes.coin} />
       {text && (
-        <Typography
-          variant="h3"
-          gutterBottom
-          style={{ textAlign: 'center', ...textStyle }}
-        >
+        <Typography variant="h3" gutterBottom style={{ textAlign: 'center', ...textStyle }}>
           {text}
         </Typography>
       )}

@@ -67,23 +67,11 @@ interface UsageStatRowProps {
   iconColor?: SvgIconProps['color']
 }
 
-const UsageStatRow: React.FC<UsageStatRowProps> = ({
-  label,
-  value,
-  Icon,
-  iconColor,
-}) => {
+const UsageStatRow: React.FC<UsageStatRowProps> = ({ label, value, Icon, iconColor }) => {
   return (
     <div style={{ display: 'flex', marginBottom: 2 }}>
-      <Icon
-        style={{ marginRight: 5, width: '0.8em' }}
-        color={iconColor || 'primary'}
-      />
-      <Typography
-        variant="body2"
-        component="span"
-        style={{ alignSelf: 'center', flex: 1 }}
-      >
+      <Icon style={{ marginRight: 5, width: '0.8em' }} color={iconColor || 'primary'} />
+      <Typography variant="body2" component="span" style={{ alignSelf: 'center', flex: 1 }}>
         {label}
       </Typography>
       <Typography variant="button" style={{ alignSelf: 'right' }}>
@@ -93,20 +81,12 @@ const UsageStatRow: React.FC<UsageStatRowProps> = ({
   )
 }
 
-const TagDetails = ({
-  tag,
-  stats,
-  appBarTitle,
-  onSave,
-  onRemove,
-}: TagDetailsProps) => {
+const TagDetails = ({ tag, stats, appBarTitle, onSave, onRemove }: TagDetailsProps) => {
   const classes = useStyles()
 
   const [tagName, setTagName] = useState(tag.name)
   const [isAutotag, setIsAutotag] = useState(tag.automatic)
-  const [amount, setAmount] = useState(
-    tag.defaultAmount ? tag.defaultAmount : '',
-  )
+  const [amount, setAmount] = useState(tag.defaultAmount ? tag.defaultAmount : '')
   const defaultCurrency = useSelector(defaultCurrencySel)
   const [shouldValidate, setShouldValidate] = useState({
     tagName: false,
@@ -129,7 +109,7 @@ const TagDetails = ({
         map(shouldValidate, (_, key) => ({
           key,
           value: true,
-        })) as typeof shouldValidate,
+        })) as typeof shouldValidate
       )
     }
   }
@@ -188,11 +168,7 @@ const TagDetails = ({
             }
             label={
               <div style={{ display: 'flex' }}>
-                <Typography
-                  variant="body2"
-                  component="span"
-                  style={{ alignSelf: 'center' }}
-                >
+                <Typography variant="body2" component="span" style={{ alignSelf: 'center' }}>
                   Automatic tag
                 </Typography>
                 <AutoIcon style={{ marginLeft: 4 }} color="primary" />
@@ -202,31 +178,13 @@ const TagDetails = ({
         </Paper>
         {stats && (
           <Paper style={{ flexDirection: 'column' }} label="Usage stats">
-            <UsageStatRow
-              label="Transaction occurrences"
-              value={stats.totalTxs}
-              Icon={TotalTxsIcon}
-            />
-            <UsageStatRow
-              label="Money involved"
-              value={stats.moneyInvolvedInTxs}
-              Icon={EuroIcon}
-            />
-            <UsageStatRow
-              label="In recurring transaction"
-              value={stats.isRecurring}
-              Icon={RepeatOneIcon}
-            />
+            <UsageStatRow label="Transaction occurrences" value={stats.totalTxs} Icon={TotalTxsIcon} />
+            <UsageStatRow label="Money involved" value={stats.moneyInvolvedInTxs} Icon={EuroIcon} />
+            <UsageStatRow label="In recurring transaction" value={stats.isRecurring} Icon={RepeatOneIcon} />
             <UsageStatRow
               label="Last used in transaction"
-              value={
-                stats.latestTransaction
-                  ? format(stats.latestTransaction.dateTime, 'dd/MM/yyyy')
-                  : 'never'
-              }
-              Icon={
-                stats.isRecentlyUsed ? RecentlyUsedIcon : NotRecentlyUsedIcon
-              }
+              value={stats.latestTransaction ? format(stats.latestTransaction.dateTime, 'dd/MM/yyyy') : 'never'}
+              Icon={stats.isRecentlyUsed ? RecentlyUsedIcon : NotRecentlyUsedIcon}
               iconColor={stats.isRecentlyUsed ? 'primary' : 'secondary'}
             />
           </Paper>

@@ -20,5 +20,5 @@ export type CurrencyValue = typeof CURRENCIES['EUR']
 export const DEFAULT_CURRENCY: Currency = 'EUR'
 
 export const exchangeRatesUrl = `https://api.exchangeratesapi.io/latest?symbols=${Object.keys(
-  omit(CURRENCIES, ['EUR']), // base currency must be excluded
+  omit(CURRENCIES, ['EUR']) // base currency must be excluded
 ).join(',')}`

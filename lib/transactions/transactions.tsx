@@ -11,12 +11,7 @@ import { COMMANDS } from '../search/transactionSearch'
 import { BACKGROUND_COLOR } from '../shared/constants'
 import { useKeyDownAction } from '../shared/hooks'
 
-import {
-  changeTxSearchQuery,
-  keyPressAction,
-  removeTx,
-  setConfirmTxDeleteDialogOpen,
-} from './actions'
+import { changeTxSearchQuery, keyPressAction, removeTx, setConfirmTxDeleteDialogOpen } from './actions'
 import {
   applySearchOnTransactions,
   isValidQuerySel,
@@ -82,10 +77,7 @@ const Transactions = () => {
                     borderRadius: 8,
                   }}
                 >
-                  <TransactionContent
-                    tx={confirmDeleteDialogForTx!}
-                    bigDevice={true}
-                  />
+                  <TransactionContent tx={confirmDeleteDialogForTx!} bigDevice={true} />
                 </div>
               </div>
               <i>

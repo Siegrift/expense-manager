@@ -24,11 +24,7 @@ import classnames from 'classnames'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { setCurrentFilter } from '../filters/actions'
-import {
-  availableFiltersSel,
-  currentFilterSel,
-  filtersErrorSel,
-} from '../filters/selectors'
+import { availableFiltersSel, currentFilterSel, filtersErrorSel } from '../filters/selectors'
 import { useIsBigDevice } from '../shared/hooks'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -56,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginRight: theme.spacing(1) / 2,
     },
     fullWidth: { flex: 1 },
-  }),
+  })
 )
 
 type Query = {
@@ -88,10 +84,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const classes = useStyles()
   const [showDialog, setShowDialog] = useState(false)
   const isBigDevice = useIsBigDevice()
-  const [
-    showFiltersAnchor,
-    setShowFiltersAnchor,
-  ] = useState<null | HTMLElement>(null)
+  const [showFiltersAnchor, setShowFiltersAnchor] = useState<null | HTMLElement>(null)
   const closeFiltersMenu = () => setShowFiltersAnchor(null)
   const availableFilters = useSelector(availableFiltersSel)
   const filtersError = useSelector(filtersErrorSel)
@@ -102,10 +95,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     <>
       {
         <Paper className={classnames(classes.root, className)}>
-          <IconButton
-            className={classes.iconButton}
-            onClick={() => setShowDialog(!showDialog)}
-          >
+          <IconButton className={classes.iconButton} onClick={() => setShowDialog(!showDialog)}>
             <InfoIcon color="primary" />
           </IconButton>
           {showDialog && (
@@ -113,22 +103,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
               <DialogTitle>Search information</DialogTitle>
               <DialogContent dividers>
                 <Typography gutterBottom>
-                  For basic searching you can use the search bar, where you can
-                  search in one of the possible <b>commands</b>. Commands can be
-                  autocompleted, and the search is performed automatically.
+                  For basic searching you can use the search bar, where you can search in one of the possible{' '}
+                  <b>commands</b>. Commands can be autocompleted, and the search is performed automatically.
                 </Typography>
                 <Typography gutterBottom>
-                  For advanced querying and filtering you can use the{' '}
-                  <b>search query language</b> where you can specify how, and in
-                  which fields you want to search.
+                  For advanced querying and filtering you can use the <b>search query language</b> where you can specify
+                  how, and in which fields you want to search.
                 </Typography>
               </DialogContent>
               <DialogActions>
-                <Button
-                  autoFocus
-                  onClick={() => setShowDialog(false)}
-                  color="primary"
-                >
+                <Button autoFocus onClick={() => setShowDialog(false)} color="primary">
                   Close dialog
                 </Button>
               </DialogActions>
@@ -193,9 +177,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                           display="block"
                           className={classnames(
                             classes.command,
-                            isValidQuery
-                              ? classes.validQuery
-                              : classes.invalidQuery,
+                            isValidQuery ? classes.validQuery : classes.invalidQuery
                           )}
                         >
                           {query.command}
@@ -210,10 +192,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                           style={{
                             marginRight: 2,
                             cursor: 'pointer',
-                            visibility:
-                              query.command || query.value
-                                ? 'visible'
-                                : 'hidden',
+                            visibility: query.command || query.value ? 'visible' : 'hidden',
                           }}
                         />
                       </InputAdornment>
@@ -226,20 +205,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 if (event == null) return
 
                 if (reason === 'reset') {
-                  if (valueOptions)
-                    onQueryChange({ ...query, value: newInputVal })
+                  if (valueOptions) onQueryChange({ ...query, value: newInputVal })
                   else onQueryChange({ command: newInputVal, value: '' })
                 } else {
-                  if (
-                    query.command === undefined &&
-                    commands.includes(newInputVal)
-                  ) {
+                  if (query.command === undefined && commands.includes(newInputVal)) {
                     onQueryChange({ command: newInputVal, value: '' })
-                  } else if (
-                    query.command !== undefined &&
-                    valueOptions &&
-                    valueOptions.includes(newInputVal)
-                  ) {
+                  } else if (query.command !== undefined && valueOptions && valueOptions.includes(newInputVal)) {
                     onQueryChange({ ...query, value: newInputVal })
                   } else onQueryChange({ ...query, value: newInputVal })
                 }
@@ -266,11 +237,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             </>
           )}
           {showFiltersAnchor && (
-            <Menu
-              anchorEl={showFiltersAnchor}
-              open={!!showFiltersAnchor}
-              onClose={closeFiltersMenu}
-            >
+            <Menu anchorEl={showFiltersAnchor} open={!!showFiltersAnchor} onClose={closeFiltersMenu}>
               {!availableFilters && (
                 <MenuItem>
                   <CircularProgress size={24} color="primary" />
@@ -300,9 +267,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 </MenuItem>
               )}
               {availableFilters && !availableFilters.length && (
-                <MenuItem onClick={closeFiltersMenu}>
-                  You have no filters
-                </MenuItem>
+                <MenuItem onClick={closeFiltersMenu}>You have no filters</MenuItem>
               )}
             </Menu>
           )}
