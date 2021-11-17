@@ -17,7 +17,8 @@
     "suppressImplicitAnyIndexErrors": true,
     "types": ["node", "jest"],
     "rootDirs": ["lib", "pages"],
-    "outDir": "build/lib"
+    "outDir": "build/lib",
+    "incremental": true
   },
   "include": ["next-env.d.ts", "lib", "pages"],
   "exclude": ["node_modules"]
