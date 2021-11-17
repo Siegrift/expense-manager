@@ -15,7 +15,3 @@ cypress/screenshots
 .vscode
 .now
 serviceAccount.json
-
-# Additional ignored files
-package.json
-tsconfig.json
