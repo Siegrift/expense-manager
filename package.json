@@ -1,7 +1,4 @@
 {
-  "engines": {
-    "node": "10.x || 12.x"
-  },
   "name": "expense-manager",
   "version": "0.1.0",
   "private": true,
@@ -43,36 +40,17 @@
     ]
   },
   "dependencies": {
-    "@date-io/date-fns": "^2.10.6",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/pickers": "4.0.0-alpha.11",
-    "@nivo/bar": "^0.63.1",
     "@nivo/line": "^0.63.1",
     "@nivo/pie": "^0.63.1",
     "@nivo/sunburst": "^0.63.1",
     "@siegrift/tsfunct": "^1.6.0",
-    "@types/d3-array": "^2.3.0",
-    "@types/js-beautify": "^1.13.1",
-    "@types/react-highlight.js": "^1.0.0",
-    "@visx/axis": "^1.1.0",
-    "@visx/brush": "^1.1.0",
-    "@visx/curve": "^1.0.0",
-    "@visx/gradient": "^1.0.0",
-    "@visx/grid": "^1.1.0",
-    "@visx/group": "^1.0.0",
-    "@visx/mock-data": "^1.0.0",
-    "@visx/pattern": "^1.1.0",
     "@visx/responsive": "^1.1.0",
-    "@visx/scale": "^1.1.0",
-    "@visx/shape": "^1.1.0",
-    "@visx/tooltip": "^1.1.0",
     "@zeit/next-css": "^1.0.1",
     "classnames": "^2.2.6",
-    "cookie-session": "^1.4.0",
-    "d3-array": "^2.8.0",
-    "d3-time-format": "^3.0.0",
     "date-fns": "^2.16.1",
     "dotenv": "^8.2.0",
     "firebase": "^7.24.0",
@@ -102,18 +80,16 @@
     "uuid": "^8.3.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.3",
-    "@bahmutov/add-typescript-to-cypress": "^2.1.2",
     "@next/bundle-analyzer": "^9.5.5",
     "@testing-library/cypress": "^7.0.1",
     "@types/classnames": "^2.2.10",
-    "@types/cookie-session": "^2.0.41",
     "@types/jest": "^26.0.15",
     "@types/lodash": "^4.14.162",
     "@types/next": "^9.0.0",
     "@types/node": "^14.14.2",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "@types/react-highlight.js": "^1.0.0",
     "@types/react-redux": "^7.1.9",
     "@types/react-select": "^3.0.22",
     "@types/react-virtualized-auto-sizer": "^1.0.0",
@@ -122,9 +98,6 @@
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.5.0",
-    "babel-eslint": "^10.1.0",
-    "babel-jest": "^26.6.1",
-    "babel-loader": "^8.1.0",
     "cross-env": "^7.0.2",
     "cypress-firebase": "^1.5.0",
     "cypress-plugin-tab": "^1.0.5",
@@ -148,9 +121,5 @@
     "start-server-and-test": "^1.11.5",
     "ts-jest": "^26.4.2",
     "typescript": "^4.0.3"
-  },
-  "peerDependencies": {
-    "//": "Cypress installation breaks on deploy",
-    "cypress": "4.4.1"
   }
 }
