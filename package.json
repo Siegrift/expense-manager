@@ -1,7 +1,6 @@
 {
   "name": "expense-manager",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
     "analyze": "cross-env ANALYZE=true next build",
     "build": "next build",
@@ -9,6 +8,7 @@
     "dev": "NODE_OPTIONS=--max_old_space_size=8192 next dev",
     "lint:fix": "yarn lint --fix",
     "lint": "yarn eslint --ext js,ts,tsx . --max-warnings 0",
+    "prettier:fix:quick": "pretty-quick --staged",
     "prettier:fix": "prettier --write \"./**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "prettier": "prettier --check \"./**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "test:e2e:open": "cypress open",
@@ -18,18 +18,8 @@
     "test:unit:watch": "jest --watch",
     "test:unit": "jest",
     "test": "yarn typescript && yarn test:unit && yarn test:e2e",
-    "typescript": "tsc -p ."
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint-staged && yarn typescript",
-      "pre-push": "yarn test"
-    }
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "yarn lint"
-    ]
+    "typescript": "tsc -p .",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@material-ui/core": "^4.12.3",
@@ -101,10 +91,10 @@
     "eslint-plugin-jest-formatting": "^3.0.0",
     "eslint-plugin-react": "^7.27.0",
     "firebase-mock": "^2.3.2",
-    "husky": "^4.3.0",
+    "husky": "^7.0.4",
     "jest": "^26.6.1",
-    "lint-staged": "^10.4.2",
-    "prettier": "2.4.1",
+    "prettier": "^2.4.1",
+    "pretty-quick": "^3.1.2",
     "start-server-and-test": "^1.14.0",
     "ts-jest": "^26.4.2",
     "typescript": "^4.4.4"
