@@ -163,16 +163,7 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config, { dev }) => {
-    config.module.rules.push({
-      test: /\.tsx$/,
-      exclude: /node_modules/,
-      loader: 'eslint-loader',
-      options: {
-        emitWarning: dev,
-      },
-    })
-
+  webpack: (config) => {
     // needed for monaco editor
     config.module.rules.push({
       test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,

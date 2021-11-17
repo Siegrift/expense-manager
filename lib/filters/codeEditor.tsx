@@ -110,6 +110,7 @@ const CodeEditor = ({ initialFilterName }: Props) => {
 
       setLoadingData(false)
     }
+
     fn()
   }, [userId])
 
@@ -262,12 +263,12 @@ const CodeEditor = ({ initialFilterName }: Props) => {
             editorRef.current = editor
             if (typeof initialCode === 'string') editor.setValue(initialCode)
 
-            editor.onKeyDown(function (e) {
+            editor.onKeyDown((e) => {
               if (e.ctrlKey && e.keyCode === monaco.KeyCode.KEY_S) {
                 e.preventDefault()
                 handleFormatCode()
                 handleSave()
-              } else if (e.ctrlKey && e.keyCode === monaco.KeyCode.KEY_R) {
+              }  if (e.ctrlKey && e.keyCode === monaco.KeyCode.KEY_R) {
                 e.preventDefault()
                 handleRunCode()
               } else if (

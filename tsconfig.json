@@ -33,11 +33,7 @@
   },
   "include": [
     "next-env.d.ts",
-    "lib/**/*.ts",
-    "pages/**/*.tsx",
-    "lib/**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
+    "lib",
+    "pages",
   ]
 }

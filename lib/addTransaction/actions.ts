@@ -68,7 +68,7 @@ export const addTransaction = (addTx: AddTransaction): Thunk => async (
       attachedFiles: addTx.attachedFileObjects.map(({ file }) => file.name),
     }
 
-    withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
+    await withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {
       await Promise.all(fileUploads)
       await dispatch(
         uploadToFirebase({ txs: [tx], tags: Object.values(addTx.newTags) }),

@@ -426,9 +426,9 @@ const TransactionForm = (props: TransactionFormProps) => {
             <ListItem
               key={filename}
               button
-              onClick={() => {
+              onClick={async () => {
                 setShowUploadedFile({ filename })
-                const success = withErrorHandler(
+                const success = await withErrorHandler(
                   'Unable to download file content',
                   dispatch,
                   async () => {

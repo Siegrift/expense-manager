@@ -28,9 +28,10 @@ export const useFetch = (url: string) => {
         const json = await request<ExchangeRates>(url)
         setResponse(json)
       } catch (error) {
-        setError(error)
+        setError((error as any as Error).message)
       }
     }
+
     fetchData()
   }, [])
   return { loading: response === null, error, data: response }

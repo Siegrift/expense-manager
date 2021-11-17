@@ -9,6 +9,7 @@ export const firestoreFileContent = async (userId: string, path: string[]) => {
 }
 
 export const downloadFiles = (userId: string, paths: string[][]) => {
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   paths.forEach(async (path) => {
     const text = await downloadTextFromUrl(
       await getStorageRef(userId, 'backup', ...path).getDownloadURL(),
@@ -18,4 +19,4 @@ export const downloadFiles = (userId: string, paths: string[][]) => {
 }
 
 export const removeFiles = (userId: string, paths: string[][]) =>
-  paths.map((path) => getStorageRef(userId!, ...path).delete())
+  paths.map((path) => getStorageRef(userId, ...path).delete())

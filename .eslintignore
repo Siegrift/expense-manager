@@ -1,7 +1,10 @@
 .next
 .storybook
+.now
+.vscode
 node_modules
 package.json
 tsconfig.json
 cypress/plugins
 cypress/support
+coverage

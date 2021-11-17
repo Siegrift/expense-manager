@@ -9,9 +9,7 @@ import { CURRENCIES, Currency } from './currencies'
 
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-export const redirectTo = (target: string) => {
-  Router.push(target)
-}
+export const redirectTo = (target: string) => Router.push(target)
 
 export function downloadFile(filename: string, text: string) {
   const element = document.createElement('a')
@@ -44,7 +42,7 @@ export function isValidDate(date: unknown) {
 }
 
 export const isAmountInValidFormat = (amount: string) =>
-  amount.match(/^\d+(\.\d{1,2})?$/) != null
+  /^\d+(\.\d{1,2})?$/.exec(amount) != null
 
 export const sorted = <T>(
   coll: T[] | ObjectOf<T>,

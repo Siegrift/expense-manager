@@ -51,7 +51,7 @@ export const displayDataSel = (
   width: number,
   dateRange: DateRange | undefined,
 ) =>
-  createSelector(sortedTransactionsSel, (txs) => {
+  createSelector(sortedTransactionsSel, () => {
     // 45 is ad-hoc const that works well with current xAxis format (dd.MM)
     // `width / LABEL_WIDTH_PX` is the number of labels displayed on xAxis
     const LABEL_WIDTH_PX = 45

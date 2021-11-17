@@ -25,7 +25,7 @@ const WithValidTagId: React.FC<WithValidTagIdProps> = (props) => {
   const router = useRouter()
   const reduxTag = useSelector(tagByIdSel(router.query.id as string))
 
-  if (reduxTag) return props.children!(reduxTag)
+  if (reduxTag) return props.children(reduxTag)
   else return null
 }
 
