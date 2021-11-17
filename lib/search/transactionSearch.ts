@@ -11,7 +11,7 @@ import { booleanOptions } from './common'
 
 const isValidDate = (query: string) => {
   return (
-    /^\d*\.\d*\.\d*$/.exec(query) &&
+    !!/^\d*\.\d*\.\d*$/.exec(query) &&
     // date-fns parse is not very strict and (e.g. Date("2") is parsed)
     parse(query, 'd.M.y', new Date()).getTime() !== NaN
   )
@@ -30,10 +30,7 @@ interface CommandWithValidation extends CommandBase {
   queryValidation: ((query: string) => boolean) | 'none'
 }
 
-const validateCommandWithOptions = (
-  command: CommandWithOptions,
-  query: string,
-) => {
+const validateCommandWithOptions = (command: CommandWithOptions, query: string) => {
   return command.valueOptions.includes(query)
 }
 
@@ -41,9 +38,7 @@ interface CommandWithOptions extends CommandBase {
   valueOptions: string[]
 }
 
-export const isCommandWithValidation = (
-  command: any,
-): command is CommandWithValidation => {
+export const isCommandWithValidation = (command: any): command is CommandWithValidation => {
   return command.queryValidation !== undefined
 }
 
@@ -54,9 +49,7 @@ export const COMMANDS: Command[] = [
     // TODO: change to CommandWithOptions
     name: 'tag',
     predicate: (tx, query, { tags }) =>
-      !!tx.tagIds.find((tagId) =>
-        tags[tagId].name.toLowerCase().includes(query.toLowerCase()),
-      ),
+      !!tx.tagIds.find((tagId) => tags[tagId].name.toLowerCase().includes(query.toLowerCase())),
     queryValidation: 'none',
   },
   {
@@ -75,14 +68,12 @@ export const COMMANDS: Command[] = [
   },
   {
     name: 'date-before',
-    predicate: (tx, query) =>
-      isAfter(parse(query, 'd.M.y', new Date()), tx.dateTime),
+    predicate: (tx, query) => isAfter(parse(query, 'd.M.y', new Date()), tx.dateTime),
     queryValidation: (query) => isValidDate(query),
   },
   {
     name: 'date-after',
-    predicate: (tx, query) =>
-      isBefore(parse(query, 'd.M.y', new Date()), tx.dateTime),
+    predicate: (tx, query) => isBefore(parse(query, 'd.M.y', new Date()), tx.dateTime),
     queryValidation: (query) => isValidDate(query),
   },
   {
@@ -110,25 +101,19 @@ export const COMMANDS: Command[] = [
   },
   {
     name: 'is-autotag',
-    predicate: (tx, query, { tags }) =>
-      !!tx.tagIds.find(
-        (tagId) => !!tags[tagId].automatic === (query === 'true'),
-      ),
+    predicate: (tx, query, { tags }) => !!tx.tagIds.find((tagId) => !!tags[tagId].automatic === (query === 'true')),
     valueOptions: booleanOptions,
   },
   {
     name: 'with-default-amount',
-    predicate: (tx, query, { tags }) =>
-      !!tx.tagIds.find(
-        (tagId) => !!tags[tagId].defaultAmount === (query === 'true'),
-      ),
+    predicate: (tx, query, { tags }) => !!tx.tagIds.find((tagId) => !!tags[tagId].defaultAmount === (query === 'true')),
     valueOptions: booleanOptions,
   },
   {
     name: 'tag-count',
     predicate: (tx, query) => tx.tagIds.length === Number.parseInt(query),
     queryValidation: (
-      query, // https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
+      query // https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
     ) => !isNaN(query as any) && !isNaN(parseInt(query)),
   },
   {
@@ -138,11 +123,7 @@ export const COMMANDS: Command[] = [
   },
 ]
 
-export const search = (
-  txs: Transaction[],
-  query: TransactionSearch,
-  other: PredicateExtra,
-) => {
+export const search = (txs: Transaction[], query: TransactionSearch, other: PredicateExtra) => {
   if (query.value === '') return txs
 
   const command = COMMANDS.find((c) => c.name == query.command!)!
@@ -154,9 +135,7 @@ export const isValidQuery = (query: TransactionSearch): boolean => {
   if (command === undefined) return false
   else if (query.value === '') return true
   else if (isCommandWithValidation(command))
-    return (
-      command.queryValidation === 'none' || command.queryValidation(query.value)
-    )
+    return command.queryValidation === 'none' || command.queryValidation(query.value)
   else return validateCommandWithOptions(command, query.value)
 }
 
