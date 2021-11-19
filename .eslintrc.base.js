@@ -76,6 +76,7 @@ module.exports = {
     '@typescript-eslint/restrict-plus-operands': 'off',
     '@typescript-eslint/no-unsafe-return': 'off',
     '@typescript-eslint/no-floating-promises': 'off',
+    '@typescript-eslint/no-unsafe-argument': 'off',
     // Sometimes you want to add await to satisfy TS when it expects function to return a promise
     '@typescript-eslint/require-await': 'off',
     // TODO: Enable once the redux-thunk types are properly typed
