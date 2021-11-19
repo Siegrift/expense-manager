@@ -34,6 +34,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
   },
   paper: {
+    '&:not(:last-child)': {
+      marginBottom: theme.spacing(2),
+    },
     '& > *:not(:first-child)': {
       marginTop: theme.spacing(2),
     },
