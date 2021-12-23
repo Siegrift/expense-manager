@@ -1,0 +1,79 @@
+name: Continuous Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  linter-prettier-tsc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone expense-manager
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+      - name: Run linter
+        run: yarn lint
+      - name: Run prettier
+        run: yarn prettier
+      - name: Run TypeScript
+        run: yarn typescript
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone expense-manager
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+      - name: Run unit tests
+        run: yarn test:unit
+
+  cypress:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone expense-manager
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Cache node modules
+        uses: actions/cache@v2
+        id: node-modules-cache
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Cache cypress
+        id: cypress-cache
+        uses: actions/cache@v2
+        with:
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.cache/Cypress
+          restore-keys: ${{ runner.os }}-cypress-
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+      - name: Increase file watcher limit
+        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+      - name: Run cypress tests
+        run: yarn test:e2e
+      - name: Store artifacts
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: cypress-videos
+          path: cypress/videos
