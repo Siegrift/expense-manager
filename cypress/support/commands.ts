@@ -5,12 +5,12 @@ import 'firebase/firestore'
 import 'firebase/storage'
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAFgtVKyy1iSHdE_44ijLyCQYW_KLEjbS0',
-  authDomain: 'expense-manager-dev-59ddb.firebaseapp.com',
-  projectId: 'expense-manager-dev-59ddb',
-  storageBucket: 'expense-manager-dev-59ddb.appspot.com',
-  messagingSenderId: '1006392817344',
-  appId: '1:1006392817344:web:80409f3801b21248e2df25',
+  apiKey: 'AIzaSyDnQSlVfpwJot94RtJoS0TRdadhD3bP2Io',
+  authDomain: 'expense-manager---staging.firebaseapp.com',
+  projectId: 'expense-manager---staging',
+  storageBucket: 'expense-manager---staging.appspot.com',
+  messagingSenderId: '238037046881',
+  appId: '1:238037046881:web:3112342690c3da9829fc20',
 }
 firebase.initializeApp(firebaseConfig)
 
