@@ -12,6 +12,7 @@ import EuroIcon from '@material-ui/icons/Euro'
 import NotRecentlyUsedIcon from '@material-ui/icons/EventBusy'
 import TotalTxsIcon from '@material-ui/icons/PostAddTwoTone'
 import RepeatOneIcon from '@material-ui/icons/RepeatOne'
+import TimelineIcon from '@material-ui/icons/Timeline'
 import Link from 'next/link'
 import { useSelector } from 'react-redux'
 import { ListChildComponentProps } from 'react-window'
@@ -78,6 +79,11 @@ const TagItem: React.FC<ListChildComponentProps> = ({ index, style }) => {
             {tag.automatic && (
               <Tooltip title="Automatic tag">
                 <AutoIcon className={classes.icon} />
+              </Tooltip>
+            )}
+            {tag.isAsset && (
+              <Tooltip title="Represents asset">
+                <TimelineIcon className={classes.icon} />
               </Tooltip>
             )}
             {isRecurring && (

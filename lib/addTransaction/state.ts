@@ -7,6 +7,7 @@ export interface Tag extends FirebaseField {
   name: string
   automatic: boolean
   defaultAmount?: string // can be empty
+  isAsset?: boolean // older tags do not have this property defined
 }
 
 export enum RepeatingOptions {

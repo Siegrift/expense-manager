@@ -12,6 +12,7 @@ import RecentlyUsedIcon from '@material-ui/icons/EventAvailable'
 import NotRecentlyUsedIcon from '@material-ui/icons/EventBusy'
 import TotalTxsIcon from '@material-ui/icons/PostAddTwoTone'
 import RepeatOneIcon from '@material-ui/icons/RepeatOne'
+import TimelineIcon from '@material-ui/icons/Timeline'
 import { map } from '@siegrift/tsfunct'
 import format from 'date-fns/format'
 import Router from 'next/router'
@@ -89,6 +90,7 @@ const TagDetails = ({ tag, stats, appBarTitle, onSave, onRemove }: TagDetailsPro
 
   const [tagName, setTagName] = useState(tag.name)
   const [isAutotag, setIsAutotag] = useState(tag.automatic)
+  const [isAsset, setIsAsset] = useState(tag.isAsset ? tag.isAsset : false)
   const [amount, setAmount] = useState(tag.defaultAmount ? tag.defaultAmount : '')
   const defaultCurrency = useSelector(defaultCurrencySel)
   const [shouldValidate, setShouldValidate] = useState({
@@ -104,6 +106,7 @@ const TagDetails = ({ tag, stats, appBarTitle, onSave, onRemove }: TagDetailsPro
         name: tagName,
         automatic: isAutotag,
         defaultAmount: amount,
+        isAsset: isAsset,
       })
 
       Router.push('/tags')
@@ -159,22 +162,26 @@ const TagDetails = ({ tag, stats, appBarTitle, onSave, onRemove }: TagDetailsPro
           <FormControlLabel
             classes={{ label: classes.label }}
             style={{ flex: 1, width: '100%' }}
-            control={
-              <Checkbox
-                checked={isAutotag}
-                onChange={() => setIsAutotag(!isAutotag)}
-                value="checkedA"
-                inputProps={{
-                  'aria-label': 'primary checkbox',
-                }}
-              />
-            }
+            control={<Checkbox checked={isAutotag} onChange={() => setIsAutotag(!isAutotag)} />}
             label={
               <div style={{ display: 'flex' }}>
                 <Typography variant="body2" component="span" style={{ alignSelf: 'center' }}>
                   Automatic tag
                 </Typography>
                 <AutoIcon style={{ marginLeft: 4 }} color="primary" />
+              </div>
+            }
+          />
+          <FormControlLabel
+            classes={{ label: classes.label }}
+            style={{ flex: 1, width: '100%' }}
+            control={<Checkbox checked={isAsset} onChange={() => setIsAsset(!isAsset)} />}
+            label={
+              <div style={{ display: 'flex' }}>
+                <Typography variant="body2" component="span" style={{ alignSelf: 'center' }}>
+                  Asset tag
+                </Typography>
+                <TimelineIcon style={{ marginLeft: 4 }} color="primary" />
               </div>
             }
           />
