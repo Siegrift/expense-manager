@@ -3,10 +3,10 @@ name: Continuous Build
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   linter-prettier-tsc:
@@ -69,6 +69,16 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Increase file watcher limit
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+      - name: Create .env-staging
+        env:
+          ENV_SECRETS: ${{ secrets.ENV_SECRETS }}
+        # This seems to be the easiest way: https://stackoverflow.com/a/64452700/7227455
+        run: echo $ENV_SECRETS | base64 -d > .env-staging
+      - name: Create serviceAccount.json
+        env:
+          SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
+        # This seems to be the easiest way: https://stackoverflow.com/a/64452700/7227455
+        run: echo $SERVICE_ACCOUNT | base64 -d > serviceAccount.json
       - name: Run cypress tests
         run: yarn test:e2e
       - name: Store artifacts

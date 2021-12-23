@@ -15,7 +15,7 @@ export const configureStore = () => {
     log: () => null,
   }
 
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.ENVIRONMENT === 'development') {
     logger.log = (message, payload) =>
       store.dispatch({
         type: message,
@@ -37,7 +37,7 @@ export const configureStore = () => {
     logger,
   }
   const middlewares = [thunk.withExtraArgument(thunkExtra)]
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.ENVIRONMENT === 'development') {
     middlewares.push(loggerMiddleware)
   }
 
