@@ -56,14 +56,21 @@ jobs:
           SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
         # This seems to be the easiest way: https://stackoverflow.com/a/64452700/7227455
         run: echo $SERVICE_ACCOUNT | base64 -d > serviceAccount.json
-      - name: Increase file watcher limit
-        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
       - name: Run cypress tests
         uses: cypress-io/github-action@v2
         with:
-          start: yarn test:e2e:start-server
+          build: yarn test:e2e:ci:build-app
+          start: yarn test:e2e:ci:start-app
           wait-on: 'http://localhost:3000'
           record: true
+          # TODO: is this needed?
+          parallel: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload videos
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-videos
+          path: cypress/videos

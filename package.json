@@ -14,8 +14,8 @@
     "prettier": "prettier --check \"./**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "test:e2e:open": "cypress open",
     "test:e2e:run": "cypress run",
-    "test:e2e:start-server": "ENVIRONMENT=staging next dev -p 3000",
-    "test:e2e": "start-server-and-test \"yarn test:e2e:start-server\" http://localhost:3000 \"yarn test:e2e:run\"",
+    "test:e2e:ci:build-app": "ENVIRONMENT=staging yarn build",
+    "test:e2e:ci:start-app": "ENVIRONMENT=staging next start",
     "test:unit:watch": "yarn test:unit --watch",
     "test:unit": "jest --runInBand",
     "test": "yarn typescript && yarn test:unit && yarn test:e2e",
@@ -97,7 +97,6 @@
     "jest": "^27.3.1",
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.2",
-    "start-server-and-test": "^1.14.0",
     "ts-jest": "^27.0.7",
     "typescript": "^4.5.2"
   }

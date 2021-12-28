@@ -12,6 +12,8 @@ describe('login', () => {
 
     cy.visit('/transactions')
     cy.location('pathname').should('equal', '/transactions')
+
+    expect(1).to.equal(2)
   })
 
   it('is redirected to /add after logging in', () => {
