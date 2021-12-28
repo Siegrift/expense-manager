@@ -46,29 +46,6 @@ jobs:
     steps:
       - name: Clone expense-manager
         uses: actions/checkout@v2
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-      - name: Cache node modules
-        uses: actions/cache@v2
-        id: node-modules-cache
-        with:
-          path: |
-            node_modules
-            */*/node_modules
-          key: modules-${{ hashFiles('**/yarn.lock') }}
-      - name: Cache cypress
-        id: cypress-cache
-        uses: actions/cache@v2
-        with:
-          key: ${{ runner.os }}-cypress-${{ hashFiles('**/yarn.lock') }}
-          path: ~/.cache/Cypress
-          restore-keys: ${{ runner.os }}-cypress-
-      - name: Install Dependencies
-        run: yarn install --frozen-lockfile
-      - name: Increase file watcher limit
-        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
       - name: Create .env-staging
         env:
           ENV_SECRETS: ${{ secrets.ENV_SECRETS }}
@@ -80,10 +57,18 @@ jobs:
         # This seems to be the easiest way: https://stackoverflow.com/a/64452700/7227455
         run: echo $SERVICE_ACCOUNT | base64 -d > serviceAccount.json
       - name: Run cypress tests
-        run: yarn test:e2e
-      - name: Store artifacts
-        uses: actions/upload-artifact@v1
-        if: always()
+        uses: cypress-io/github-action@v2
+        with:
+          build: yarn test:e2e:ci:build-app
+          start: yarn test:e2e:ci:start-app
+          wait-on: 'http://localhost:3000'
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload videos
+        uses: actions/upload-artifact@v2
+        if: failure()
         with:
           name: cypress-videos
           path: cypress/videos
