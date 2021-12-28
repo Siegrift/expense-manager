@@ -61,7 +61,7 @@ log in.
 
 The project is open for contributions and feedback. Feel free to create an issue or a PR.
 
-### Issue tracking and prioritization
+### Other tools
 
-Trello board for issue tracking can be found [here](https://trello.com/b/0WCaG9Go/expense-manager). Tough, you need to
-have access to this page to open it.
+- [Trello board](https://trello.com/b/0WCaG9Go/expense-manager) - For issue tracking (access rights needed)
+- [Cypress dashboard](https://dashboard.cypress.io/projects/4qffcg) - For debugging CI tests (access rights needed)
