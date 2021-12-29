@@ -7,6 +7,7 @@ import { ObjectOf } from './types'
 export type ScreenTitle =
   | 'add'
   | 'transactions'
+  | 'assets'
   | 'charts'
   | 'tags'
   | 'profile'
