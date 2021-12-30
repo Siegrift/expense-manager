@@ -6,12 +6,11 @@ import { useSelector } from 'react-redux'
 import { assetTagSharesSel } from './selectors'
 
 const AssetPercentages = () => {
-  const assetPercentages = useSelector(assetTagSharesSel)
-  const data = assetPercentages.map((a) => ({ ...a, id: a.label }))
+  const data = useSelector(assetTagSharesSel)
 
   return (
     <ResponsivePie
-      data={data as any}
+      data={data}
       margin={{ top: 60, right: 80, bottom: 80, left: 80 }}
       innerRadius={0.5}
       padAngle={0.7}
@@ -30,8 +29,8 @@ const AssetPercentages = () => {
           anchor: 'bottom',
           direction: 'row',
           justify: false,
-          translateX: 0,
-          translateY: 56,
+          translateX: 20,
+          translateY: 50,
           itemsSpacing: 0,
           itemWidth: 100,
           itemHeight: 18,

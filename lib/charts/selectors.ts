@@ -25,6 +25,8 @@ export interface TagShare {
 
 const totalAmountSel = (state: State) => reduce(state.transactions, (acc, tx) => acc + tx.amount, 0)
 
+const percentage = (value: number, total: number) => Math.round((value / total) * 100 * 100) / 100
+
 export const tagSharesSel = createSelector(tagsSel, transactionsSel, totalAmountSel, (tags, txs, total): TagShare[] => {
   const tagShares = map(tags, (tag) => {
     const filteredTx = filter(txs, (tx) => tx.tagIds.includes(tag.id))
@@ -33,7 +35,7 @@ export const tagSharesSel = createSelector(tagsSel, transactionsSel, totalAmount
     return {
       id: tag.id,
       label: tag.name,
-      value: Math.round((sum / total) * 100 * 100) / 100,
+      value: percentage(sum, total),
     }
   })
 

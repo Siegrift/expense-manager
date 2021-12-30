@@ -3,10 +3,11 @@ import map from 'lodash/map'
 import reduce from 'lodash/reduce'
 import { createSelector } from 'reselect'
 
+import { Tag } from '../addTransaction/state'
 import { sorted } from '../shared/utils'
 import { State } from '../state'
 
-export interface AssetTagShare {
+interface AssetTagShare {
   id: string
   label: string
   value: number
@@ -14,34 +15,36 @@ export interface AssetTagShare {
 
 const transactionsSel = (state: State) => state.transactions
 
-const assetTagSel = (state: State) => filter(state.tags, (tag) => tag.isAsset != undefined && tag.isAsset)
+const assetTagsSel = (state: State) => filter(state.tags, (tag) => !!tag.isAsset)
 
-const totalAmountSel = createSelector(transactionsSel, assetTagSel, (txs, assetTags) => {
-  const assetTxs = filter(txs, (tx) => {
-    return tx.tagIds.some((someTagId) => {
-      return assetTags.some((someAssetTag) => someTagId === someAssetTag.id)
-    })
+interface AssetTagSum {
+  tag: Tag
+  value: number
+}
+
+const assetTagsSumsSel = createSelector(assetTagsSel, transactionsSel, (assetTags, txs): AssetTagSum[] =>
+  map(assetTags, (assetTag) => {
+    const filteredTxs = filter(txs, (tx) => tx.tagIds.includes(assetTag.id))
+    const sum = reduce(filteredTxs, (acc, tx) => acc + (tx.isExpense ? -tx.amount : tx.amount), 0)
+    return {
+      tag: assetTag,
+      value: sum,
+    }
   })
-  return reduce(assetTxs, (acc, tx) => acc + (tx.isExpense ? -tx.amount : tx.amount), 0)
-})
-
-export const assetTagSharesSel = createSelector(
-  assetTagSel,
-  transactionsSel,
-  totalAmountSel,
-  (assetTags, txs, total): AssetTagShare[] => {
-    const assetTagShares = map(assetTags, (assetTag) => {
-      const filteredTx = filter(txs, (tx) => tx.tagIds.includes(assetTag.id))
-      const sum = reduce(filteredTx, (acc, tx) => acc + tx.amount, 0)
-
-      return {
-        id: assetTag.id,
-        label: assetTag.name,
-        value: Math.round((sum / total) * 100 * 100) / 100,
-      }
-    })
-
-    // descending sort
-    return sorted(assetTagShares, (t1, t2) => t2.value - t1.value)
-  }
 )
+
+const percentage = (value: number, total: number) => Math.round((value / total) * 100 * 100) / 100
+
+export const assetTagSharesSel = createSelector(assetTagsSumsSel, (assetTagsSums): AssetTagShare[] => {
+  const filteredAssetTagsSums = filter(assetTagsSums, (assetTagSum) => assetTagSum.value > 0)
+  const total = reduce(filteredAssetTagsSums, (acc, assetTagSum) => acc + assetTagSum.value, 0)
+  const assetTagShares = map(filteredAssetTagsSums, (assetTagSum) => ({
+    // graph displays both id and label - we want them both to be assetTag.name
+    id: assetTagSum.tag.name,
+    label: assetTagSum.tag.name,
+    value: percentage(assetTagSum.value, total),
+  }))
+
+  // descending sort
+  return sorted(assetTagShares, (t1, t2) => t2.value - t1.value)
+})
