@@ -1,9 +1,6 @@
 {
   "$schema": "https://on.cypress.io/cypress.schema.json",
   "baseUrl": "http://localhost:3000",
-  "env": {
-    "testUid": "Av1smpJbjLTNYtqgV0s2nVyIoVB3"
-  },
   "defaultCommandTimeout": 10000,
   "retries": {
     "runMode": 1,

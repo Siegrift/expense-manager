@@ -14,15 +14,14 @@ deploying your own fork with a custom firebase instance.
 
 ## Initial setup
 
-1. [Create a firebase project](#create-a-new-firebase-instance) for development and staging (e2e tests) - You can name
-   it `expense manager - dev` and `expense manager - staging`.
-2. Create credentials files - A credentials file is needed to connect the application to the firebase instance created
-   in previous step. You need to create two files, `.env-dev` and `.env-staging`. Fill the credentials file according to
-   `.env-template`.
+1. [Create a firebase project](#create-a-new-firebase-instance) for development. You can name it `expense manager - dev`
+   or any other name you prefer.
+2. Create credentials file - A credentials file is needed to connect the application to the firebase instance created in
+   previous step. You need to create `.env-dev` file according to `.env-template`.
 3. [Configure cloud storage CORS](#configure-cloud-storage-cors) - This is needed for firebase storage to work.
 4. Create a `serviceAccount.json` - This file is needed for e2e tests. Follow
-   [cypress-firebase setup](https://github.com/prescottprue/cypress-firebase#setup) for information how to obtain it.
-   Use the staging project.
+   [cypress-firebase setup](https://github.com/prescottprue/cypress-firebase#setup) for information on how to obtain it
+   (only download the service account - no additional setup is required).
 5. Install `node` and `yarn` - Use node version >=16.
 6. Run `yarn` - Which downloads all the dependencies.
 

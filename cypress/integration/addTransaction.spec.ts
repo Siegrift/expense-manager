@@ -1,9 +1,9 @@
-import { initializeFixtures } from './common'
+import { initializeData } from './common'
 
 describe('Add transaction', () => {
   it('creates a new transaction', () => {
-    cy.login()
-    initializeFixtures()
+    cy.firebaseLogin()
+    initializeData()
 
     cy.visit('/')
     cy.contains('Add transaction').should('be.visible')
