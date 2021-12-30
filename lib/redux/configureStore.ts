@@ -12,15 +12,11 @@ const DISABLE_SERVER_SIDE_LOGGING = true
 
 export const configureStore = () => {
   const logger: Logger = {
-    log: () => null,
-  }
-
-  if (process.env.ENVIRONMENT === 'development') {
-    logger.log = (message, payload) =>
+    log: (message, payload) =>
       store.dispatch({
         type: message,
         payload,
-      } as Action<any>)
+      } as Action<any>),
   }
 
   const loggerMiddleware = createLogger({
@@ -37,7 +33,7 @@ export const configureStore = () => {
     logger,
   }
   const middlewares = [thunk.withExtraArgument(thunkExtra)]
-  if (process.env.ENVIRONMENT === 'development') {
+  if (process.env.NODE_ENV === 'development') {
     middlewares.push(loggerMiddleware)
   }
 

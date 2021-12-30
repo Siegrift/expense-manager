@@ -1,6 +1,6 @@
 describe('login', () => {
   it('if signed in redirects to /add and shows form', () => {
-    cy.login()
+    cy.firebaseLogin()
 
     cy.visit('/')
     cy.location('pathname').should('equal', '/add')
@@ -8,7 +8,7 @@ describe('login', () => {
   })
 
   it('if is not redirected to /add if navigated on specific url', () => {
-    cy.login()
+    cy.firebaseLogin()
 
     cy.visit('/transactions')
     cy.location('pathname').should('equal', '/transactions')
@@ -17,7 +17,7 @@ describe('login', () => {
   it('is redirected to /add after logging in', () => {
     cy.visit('/login')
     cy.findAllByText('Sign in with Google', { timeout: 1500 }).should('exist')
-    cy.cypressFirebaseLogin(Cypress.env('testUid'))
+    cy.firebaseLogin()
 
     cy.location('pathname').should('equal', '/add')
   })
