@@ -4,7 +4,7 @@ import reduce from 'lodash/reduce'
 import { createSelector } from 'reselect'
 
 import { Tag } from '../addTransaction/state'
-import { sorted } from '../shared/utils'
+import { percentage, sorted } from '../shared/utils'
 import { State } from '../state'
 
 interface AssetTagShare {
@@ -32,8 +32,6 @@ const assetTagsSumsSel = createSelector(assetTagsSel, transactionsSel, (assetTag
     }
   })
 )
-
-const percentage = (value: number, total: number) => Math.round((value / total) * 100 * 100) / 100
 
 export const assetTagSharesSel = createSelector(assetTagsSumsSel, (assetTagsSums): AssetTagShare[] => {
   const filteredAssetTagsSums = filter(assetTagsSums, (assetTagSum) => assetTagSum.value > 0)

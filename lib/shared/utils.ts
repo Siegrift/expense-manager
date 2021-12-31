@@ -104,3 +104,6 @@ export const deepFreeze = <T>(object: T): T => {
 
   return Object.freeze(object)
 }
+
+export const percentage = (value: number, total: number, decimalPlaces = 2) =>
+  Math.round((value / total) * 100 * 10 ** decimalPlaces) / 10 ** decimalPlaces
