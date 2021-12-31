@@ -9,7 +9,7 @@ import range from 'lodash/range'
 import reduce from 'lodash/reduce'
 import { createSelector } from 'reselect'
 
-import { sorted } from '../shared/utils'
+import { percentage, sorted } from '../shared/utils'
 import { State } from '../state'
 import { sortedTransactionsSel } from '../transactions/selectors'
 import { DateRange } from '../types'
@@ -33,7 +33,7 @@ export const tagSharesSel = createSelector(tagsSel, transactionsSel, totalAmount
     return {
       id: tag.id,
       label: tag.name,
-      value: Math.round((sum / total) * 100 * 100) / 100,
+      value: percentage(sum, total),
     }
   })
 

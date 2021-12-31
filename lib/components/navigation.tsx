@@ -19,6 +19,7 @@ import CodeIcon from '@material-ui/icons/Code'
 import OverviewIcon from '@material-ui/icons/Home'
 import ListIcon from '@material-ui/icons/List'
 import TagIcon from '@material-ui/icons/Style'
+import TimelineIcon from '@material-ui/icons/Timeline'
 import classnames from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -76,6 +77,7 @@ const navigationItems: NavigationItem[] = [
   { screen: 'add', Icon: AddCircleOutlineIcon },
   { screen: 'overview', Icon: OverviewIcon },
   { screen: 'transactions', Icon: ListIcon, hideOnSmallDevice: true },
+  { screen: 'assets', Icon: TimelineIcon, hideOnSmallDevice: true },
   { screen: 'charts', Icon: BarChartIcon, hideOnSmallDevice: true },
   { screen: 'tags', Icon: TagIcon },
   {
