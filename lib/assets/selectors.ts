@@ -39,7 +39,7 @@ export const assetTagSharesSel = createSelector(assetTagsSumsSel, (assetTagsSums
   const assetTagShares = map(filteredAssetTagsSums, (assetTagSum) => ({
     // graph displays both id and label - we want them both to be assetTag.name
     id: assetTagSum.tag.name,
-    label: assetTagSum.tag.name,
+    label: assetTagSum.tag.name + ' (' + assetTagSum.value + ')',
     value: percentage(assetTagSum.value, total),
   }))
 
