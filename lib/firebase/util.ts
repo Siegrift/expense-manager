@@ -7,6 +7,16 @@ export async function signIn() {
   await firebase.auth().signInWithRedirect(provider)
 }
 
+export async function signUpWithEmailAndPassword(email: string, password: string) {
+  const firebase = getFirebase()
+  firebase.auth().createUserWithEmailAndPassword(email, password)
+}
+
+export async function signInWithEmailAndPassword(email: string, password: string) {
+  const firebase = getFirebase()
+  firebase.auth().signInWithEmailAndPassword(email, password)
+}
+
 export const convertTimestampsToDates = (value: any): any => {
   if (value instanceof getFirebase().firestore.Timestamp) {
     return value.toDate()
