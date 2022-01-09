@@ -6,7 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import Link from '@material-ui/core/Link'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import GoogleButton from 'react-google-button'
@@ -20,14 +20,18 @@ import { State } from '../state'
 
 import { LoadingScreen } from './loading'
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   signInButton: {
     display: 'flex',
     flexDirection: 'column',
     width: 240,
     margin: 'auto',
   },
-  or: { margin: '8px auto' },
+  or: {
+    margin: 'auto',
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
 }))
 
 interface SignInDialogProps {
@@ -78,15 +82,13 @@ const SignInDialog = (props: SignInDialogProps) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          {action === 'Sign in' && (
-            <Link
-              component="button"
-              variant="body2"
-              onClick={() => setAction(action === 'Sign in' ? 'Sign up' : 'Sign in')}
-            >
-              or create new account
-            </Link>
-          )}
+          <Link
+            component="button"
+            variant="body2"
+            onClick={() => setAction(action === 'Sign in' ? 'Sign up' : 'Sign in')}
+          >
+            {action === 'Sign in' ? 'or create new account' : 'or sign in with an existing account'}
+          </Link>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
