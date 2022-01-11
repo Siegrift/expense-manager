@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: 240,
     margin: 'auto',
   },
-  or: {
+  orText: {
     margin: 'auto',
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
@@ -77,6 +77,9 @@ const SignInDialog = (props: SignInDialogProps) => {
             fullWidth
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleAction()
+            }}
           />
           <TextField
             margin="dense"
@@ -85,6 +88,9 @@ const SignInDialog = (props: SignInDialogProps) => {
             fullWidth
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleAction()
+            }}
           />
           <Link
             component="button"
@@ -150,7 +156,7 @@ const Login = () => {
           />
 
           <div className={classes.signInButton}>
-            <p className={classes.or}>Or</p>
+            <p className={classes.orText}>Or</p>
             <Button variant="contained" onClick={() => setOpen(true)}>
               Sign in using email
             </Button>
