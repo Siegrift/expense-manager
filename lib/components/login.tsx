@@ -42,9 +42,9 @@ interface SignInDialogProps {
 const SignInDialog = (props: SignInDialogProps) => {
   const { open, setOpen } = props
   const [action, setAction] = useState('Sign in')
-  const dispatch = useDispatch()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
   const handleClose = () => {
     setOpen(false)
@@ -53,14 +53,12 @@ const SignInDialog = (props: SignInDialogProps) => {
   const handleAction = async () => {
     try {
       if (action === 'Sign in') {
-        await dispatch(authChangeAction('loggingIn', null))
         await signInWithEmailAndPassword(email, password)
       } else {
-        await dispatch(authChangeAction('loggingIn', null))
         await signUpWithEmailAndPassword(email, password)
       }
     } catch (error: any) {
-      await dispatch(authChangeAction('loggedOut', null))
+      setErrorMessage(error.message)
     }
   }
 
@@ -97,8 +95,13 @@ const SignInDialog = (props: SignInDialogProps) => {
             variant="body2"
             onClick={() => setAction(action === 'Sign in' ? 'Sign up' : 'Sign in')}
           >
-            {action === 'Sign in' ? 'or create new account' : 'or sign in with an existing account'}
+            {action === 'Sign in' ? 'or create a new account' : 'or sign in with an existing account'}
           </Link>
+          {errorMessage !== '' && (
+            <Typography color="error" style={{ marginTop: 16 }} variant="body2">
+              {errorMessage}
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
