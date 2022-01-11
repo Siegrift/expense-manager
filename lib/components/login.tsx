@@ -51,12 +51,16 @@ const SignInDialog = (props: SignInDialogProps) => {
     setAction('Sign in')
   }
   const handleAction = async () => {
-    if (action === 'Sign in') {
-      await dispatch(authChangeAction('loggingIn', null))
-      signInWithEmailAndPassword(email, password)
-    } else {
-      await dispatch(authChangeAction('loggingIn', null))
-      signUpWithEmailAndPassword(email, password)
+    try {
+      if (action === 'Sign in') {
+        await dispatch(authChangeAction('loggingIn', null))
+        await signInWithEmailAndPassword(email, password)
+      } else {
+        await dispatch(authChangeAction('loggingIn', null))
+        await signUpWithEmailAndPassword(email, password)
+      }
+    } catch (error: any) {
+      await dispatch(authChangeAction('loggedOut', null))
     }
   }
 

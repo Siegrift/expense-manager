@@ -9,12 +9,12 @@ export async function signIn() {
 
 export async function signUpWithEmailAndPassword(email: string, password: string) {
   const firebase = getFirebase()
-  firebase.auth().createUserWithEmailAndPassword(email, password)
+  return firebase.auth().createUserWithEmailAndPassword(email, password)
 }
 
 export async function signInWithEmailAndPassword(email: string, password: string) {
   const firebase = getFirebase()
-  firebase.auth().signInWithEmailAndPassword(email, password)
+  return firebase.auth().signInWithEmailAndPassword(email, password)
 }
 
 export const convertTimestampsToDates = (value: any): any => {
