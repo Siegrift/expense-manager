@@ -4,7 +4,7 @@ import reduce from 'lodash/reduce'
 import { createSelector } from 'reselect'
 
 import { Tag } from '../addTransaction/state'
-import { percentage, sorted } from '../shared/utils'
+import { percentage, sorted, round } from '../shared/utils'
 import { State } from '../state'
 
 interface AssetTagShare {
@@ -33,15 +33,19 @@ const assetTagsSumsSel = createSelector(assetTagsSel, transactionsSel, (assetTag
   })
 )
 
-export const assetTagSharesSel = createSelector(assetTagsSumsSel, (assetTagsSums): AssetTagShare[] => {
+// TODO: Write unit test for this
+export const assetTagSharesSel = createSelector(assetTagsSumsSel, (assetTagsSums) => {
   const filteredAssetTagsSums = filter(assetTagsSums, (assetTagSum) => assetTagSum.value > 0)
   const total = reduce(filteredAssetTagsSums, (acc, assetTagSum) => acc + assetTagSum.value, 0)
-  const assetTagShares = map(filteredAssetTagsSums, (assetTagSum) => ({
-    // graph displays both id and label - we want them both to be assetTag.name
-    id: assetTagSum.tag.name,
-    label: assetTagSum.tag.name + ' (' + assetTagSum.value + ')',
-    value: percentage(assetTagSum.value, total),
-  }))
+  const assetTagShares = map(
+    filteredAssetTagsSums,
+    (assetTagSum): AssetTagShare => ({
+      // graph displays both id and label - we want them both to be assetTag.name
+      id: assetTagSum.tag.name,
+      label: `${assetTagSum.tag.name} (${round(assetTagSum.value)})`,
+      value: percentage(assetTagSum.value, total),
+    })
+  )
 
   // descending sort
   return sorted(assetTagShares, (t1, t2) => t2.value - t1.value)

@@ -82,7 +82,7 @@ export const computeExchangeRate = (rates: ExchangeRates['rates'], source: Curre
   return sourceToEur / targetToEur
 }
 
-export const round = (amount: number, decimalPlaces: number) =>
+export const round = (amount: number, decimalPlaces = 2) =>
   Math.round(amount * 10 ** decimalPlaces) / 10 ** decimalPlaces
 
 export const areDistinct = <T>(arr: T[]) => {
@@ -106,4 +106,4 @@ export const deepFreeze = <T>(object: T): T => {
 }
 
 export const percentage = (value: number, total: number, decimalPlaces = 2) =>
-  Math.round((value / total) * 100 * 10 ** decimalPlaces) / 10 ** decimalPlaces
+  round((value / total) * 100, decimalPlaces)
