@@ -7,6 +7,8 @@ import DialogContent from '@material-ui/core/DialogContent'
 import TextField from '@material-ui/core/TextField'
 import math from 'mathjs-expression-parser'
 
+import { round } from '../shared/utils'
+
 interface CalculatorDialogProps {
   setShowCalc: (open: boolean) => void
   showCalc: boolean
@@ -53,7 +55,8 @@ const CalculatorDialog = ({
           label="Expression"
           value={calcExpression}
           onChange={(e) => setCalcExpression(e.target.value)}
-          helperText={exprResult === null ? 'Malformed expression' : `Result: ${exprResult || ''}`}
+          // TODO: Round based on the decimal points of a currency
+          helperText={exprResult === null ? 'Malformed expression' : `Result: ${round(exprResult, 2) || ''}`}
           onKeyDown={(e) => {
             if (e.key === 'Enter') onOk()
           }}
