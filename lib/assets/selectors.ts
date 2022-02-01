@@ -4,12 +4,11 @@ import reduce from 'lodash/reduce'
 import { createSelector } from 'reselect'
 
 import { Tag } from '../addTransaction/state'
-import { percentage, sorted, round } from '../shared/utils'
+import { percentage, sorted } from '../shared/utils'
 import { State } from '../state'
 
 interface AssetTagShare {
   id: string
-  label: string
   value: number
 }
 
@@ -22,7 +21,7 @@ interface AssetTagSum {
   value: number
 }
 
-const assetTagsSumsSel = createSelector(assetTagsSel, transactionsSel, (assetTags, txs): AssetTagSum[] =>
+export const assetTagsSumsSel = createSelector(assetTagsSel, transactionsSel, (assetTags, txs): AssetTagSum[] =>
   map(assetTags, (assetTag) => {
     const filteredTxs = filter(txs, (tx) => tx.tagIds.includes(assetTag.id))
     const sum = reduce(filteredTxs, (acc, tx) => acc + (tx.isExpense ? -tx.amount : tx.amount), 0)
@@ -40,9 +39,7 @@ export const assetTagSharesSel = createSelector(assetTagsSumsSel, (assetTagsSums
   const assetTagShares = map(
     filteredAssetTagsSums,
     (assetTagSum): AssetTagShare => ({
-      // graph displays both id and label - we want them both to be assetTag.name
       id: assetTagSum.tag.name,
-      label: `${assetTagSum.tag.name} (${round(assetTagSum.value)})`,
       value: percentage(assetTagSum.value, total),
     })
   )

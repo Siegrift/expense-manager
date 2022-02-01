@@ -11,7 +11,7 @@ const AssetPercentages = () => {
   return (
     <ResponsivePie
       data={data}
-      margin={{ top: 60, right: 80, bottom: 80, left: 80 }}
+      margin={{ top: 65, right: 80, bottom: 35, left: 80 }}
       innerRadius={0.5}
       padAngle={0.7}
       cornerRadius={3}
@@ -24,31 +24,6 @@ const AssetPercentages = () => {
       arcLinkLabelsColor={{ from: 'color' }}
       arcLabelsSkipAngle={10}
       arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
-      legends={[
-        {
-          anchor: 'bottom',
-          direction: 'row',
-          justify: false,
-          translateX: 20,
-          translateY: 50,
-          itemsSpacing: 0,
-          itemWidth: 100,
-          itemHeight: 18,
-          itemTextColor: '#999',
-          itemDirection: 'left-to-right',
-          itemOpacity: 1,
-          symbolSize: 18,
-          symbolShape: 'circle',
-          effects: [
-            {
-              on: 'hover',
-              style: {
-                itemTextColor: '#000',
-              },
-            },
-          ],
-        },
-      ]}
     />
   )
 }

@@ -1,14 +1,32 @@
 import React from 'react'
 
+import { useSelector } from 'react-redux'
+
 import ChartWrapper from '../charts/chartWrapper'
 import PageWrapper from '../components/pageWrapper'
 
 import AssetPercentages from './assetPercentages'
+import { assetTagsSumsSel } from './selectors'
 
 const Assets = () => {
+  const data = useSelector(assetTagsSumsSel)
+  console.log(data)
+
   return (
     <PageWrapper>
       <ChartWrapper label="Asset percentages" renderChart={() => <AssetPercentages />} />
+      <table>
+        <tr style={{ textAlign: 'left' }}>
+          <th>Asset</th>
+          <th>Value</th>
+        </tr>
+        {data.map((asset) => (
+          <tr key={asset.tag.name}>
+            <td>{asset.tag.name}</td>
+            <td>{asset.value}</td>
+          </tr>
+        ))}
+      </table>
     </PageWrapper>
   )
 }
