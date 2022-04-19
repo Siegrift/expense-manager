@@ -14,7 +14,7 @@ import { NO_USER_ID_ERROR, UPLOADING_DATA_ERROR, USER_DATA_NOT_LOADED_ERROR } fr
 import { currentUserIdSel, exchangeRatesSel, mainCurrencySel } from '../shared/selectors'
 import { computeExchangeRate } from '../shared/utils'
 
-import { AddTransaction, Transaction } from './state'
+import { AddTransaction, AnyTransaction } from './state'
 
 export const addTransaction =
   (addTx: AddTransaction): Thunk =>
@@ -40,14 +40,29 @@ export const addTransaction =
         storageRef.child(file.name).put(file)
       )
 
-      const tx: Transaction = {
+      const base = {
         id,
-        ...pick(addTx, ['tagIds', 'currency', 'isExpense', 'note', 'repeating']),
+        ...pick(addTx, ['tagIds', 'currency', 'note', 'repeating']),
         amount: Number.parseFloat(addTx.amount),
         dateTime: addTx.useCurrentTime ? new Date() : addTx.dateTime!,
         uid: userId,
         rate: computeExchangeRate(exchangeRates.rates, addTx.currency, mainCurrency),
         attachedFiles: addTx.attachedFileObjects.map(({ file }) => file.name),
+      }
+
+      let tx: AnyTransaction
+      const { type } = addTx
+      switch (type) {
+        case 'transfer': {
+          const fromTagId = addTx.fromTagId!
+          const toTagId = addTx.toTagId!
+          tx = { type, ...base, fromTagId, toTagId }
+          break
+        }
+        case 'expense':
+        case 'income': {
+          tx = { type, ...base }
+        }
       }
 
       await withErrorHandler(UPLOADING_DATA_ERROR, dispatch, async () => {

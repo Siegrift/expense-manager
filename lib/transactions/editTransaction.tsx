@@ -8,7 +8,7 @@ import Router, { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { ObjectOf } from '../../lib/types'
-import { Tag, Transaction } from '../addTransaction/state'
+import { Tag, AnyTransaction } from '../addTransaction/state'
 import AppBar from '../components/appBar'
 import ConfirmDialog from '../components/confirmDialog'
 import TransactionForm from '../components/transactionForm'
@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 interface EditTransactionContentProps {
-  tx: Transaction
+  tx: AnyTransaction
 }
 
 const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
@@ -56,8 +56,12 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
   const availableTags = useSelector(tagsSel)
   const previousTx = useSelector(previousTxSel(tx.id))
 
+  if (tx.type === 'transfer') {
+    const tagIn = tx.fromTagId
+  }
+
   const [amount, setAmount] = useState('' + tx.amount)
-  const [isExpense, setIsExpense] = useState(tx.isExpense)
+  const [type, setType] = useState(tx.type)
   const [note, setNote] = useState(tx.note)
   const [currency, setCurrency] = useState(tx.currency)
   const [dateTime, setDateTime] = useState(tx.dateTime)
@@ -81,7 +85,7 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
           {
             id: tx.id,
             amount: Number.parseFloat(amount),
-            isExpense,
+            type,
             note,
             currency,
             dateTime,
@@ -114,9 +118,9 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
       <div className={classes.root}>
         <TransactionForm
           variant="edit"
-          isExpense={{
-            value: isExpense,
-            handler: setIsExpense,
+          type={{
+            value: type,
+            handler: setType,
           }}
           tagProps={{
             tags: { ...availableTags, ...newTags },
