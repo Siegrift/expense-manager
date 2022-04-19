@@ -24,10 +24,19 @@ interface AssetTagSum {
 export const assetTagsSumsSel = createSelector(assetTagsSel, transactionsSel, (assetTags, txs): AssetTagSum[] =>
   map(assetTags, (assetTag) => {
     const filteredTxs = filter(txs, (tx) => tx.tagIds.includes(assetTag.id))
-    const sum = reduce(filteredTxs, (acc, tx) => acc + (tx.isExpense ? -tx.amount : tx.amount), 0)
+    const minusAmout = reduce(
+      filter(filteredTxs, (tx) => tx.type === 'expense'),
+      (acc, tx) => acc - tx.amount,
+      0
+    )
+    const plusAmout = reduce(
+      filter(filteredTxs, (tx) => tx.type === 'income'),
+      (acc, tx) => acc + tx.amount,
+      0
+    )
     return {
       tag: assetTag,
-      value: sum,
+      value: minusAmout + plusAmout,
     }
   })
 )

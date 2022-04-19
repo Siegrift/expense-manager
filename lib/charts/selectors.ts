@@ -73,7 +73,7 @@ export const recentBalanceDataSel = (daysToDisplay: number, dateRange: DateRange
     interface LineChartData {
       amount: number
       dataIndex: number
-      isExpense: boolean
+      type: string
     }
 
     const groupedTransactions = Object.values(transactions)
@@ -81,7 +81,7 @@ export const recentBalanceDataSel = (daysToDisplay: number, dateRange: DateRange
       .map(
         (tx): LineChartData => ({
           amount: tx.amount * (tx.rate ?? 1),
-          isExpense: tx.isExpense,
+          type: tx.type,
           dataIndex: daysToDisplay - (differenceInCalendarDays(dateRange.end, tx.dateTime) + 1),
         })
       )
@@ -113,7 +113,8 @@ export const recentBalanceDataSel = (daysToDisplay: number, dateRange: DateRange
 
     groupedTransactions.forEach((txs, dataInd) => {
       txs.forEach((tx) => {
-        data[tx.isExpense ? 0 : 1].data[dataInd].y += tx.amount
+        if (tx.type === 'expense') data[0].data[dataInd].y += tx.amount
+        if (tx.type === 'income') data[1].data[dataInd].y += tx.amount
       })
     })
 

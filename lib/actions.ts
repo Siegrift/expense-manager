@@ -7,7 +7,7 @@ import isBefore from 'date-fns/isBefore'
 import chunk from 'lodash/chunk'
 import { v4 as uuid } from 'uuid'
 
-import { Tag, Transaction } from './addTransaction/state'
+import { Tag, AnyTransaction } from './addTransaction/state'
 import { getFirebase } from './firebase/firebase'
 import { Profile } from './profile/state'
 import { Action, Thunk } from './redux/types'
@@ -38,7 +38,9 @@ export const setCurrentScreen = (screen: ScreenTitle): Action<ScreenTitle> => ({
 const MAX_WRITES_IN_BATCH = 500
 
 const privateUpload = (
-  entries: Array<UploadEntry<'tags', Tag> | UploadEntry<'transactions', Transaction> | UploadEntry<'profile', Profile>>
+  entries: Array<
+    UploadEntry<'tags', Tag> | UploadEntry<'transactions', AnyTransaction> | UploadEntry<'profile', Profile>
+  >
 ) => {
   const colls: FirebaseCollections = {
     tags: getFirebase().firestore().collection('tags'),
@@ -76,7 +78,7 @@ const privateRemove = (entries: Array<RemoveEntry<'tags'> | RemoveEntry<'transac
 }
 
 interface UploadToFirebaseParams extends Partial<ObjectOf<FirebaseField[]>> {
-  txs?: Transaction[]
+  txs?: AnyTransaction[]
   tags?: Tag[]
   profile?: Profile[]
 }
@@ -145,13 +147,13 @@ export const removeFromFirebase =
     return Promise.resolve()
   }
 
-const setRepeatingTxsAsInactive = (inactive: Transaction[]) => {
+const setRepeatingTxsAsInactive = (inactive: AnyTransaction[]) => {
   const txs = getFirebase().firestore().collection('transactions')
   return chunk(inactive, MAX_WRITES_IN_BATCH).map((c) => {
     const batch = getFirebase().firestore().batch()
     c.forEach((tx) => {
       const ref = txs.doc(tx.id)
-      batch.update(ref, { repeating: 'inactive' } as Partial<Transaction>)
+      batch.update(ref, { repeating: 'inactive' } as Partial<AnyTransaction>)
     })
 
     return batch.commit()
@@ -171,19 +173,19 @@ export const addRepeatingTxs =
       return
     }
 
-    const added: Transaction[] = []
-    const inactive: Transaction[] = []
+    const added: AnyTransaction[] = []
+    const inactive: AnyTransaction[] = []
     const now = new Date()
 
     Object.values(getState().transactions).forEach((tx) => {
       const repeatTx = (stepFn: typeof addYears) => {
         let i = 1
-        let lastActiveCreatedTx: Transaction | null = null
+        let lastActiveCreatedTx: AnyTransaction | null = null
 
         while (true) {
           const newDate = stepFn(tx.dateTime, i)
           if (isBefore(newDate, now)) {
-            const newTx: Transaction = {
+            const newTx: AnyTransaction = {
               ...tx,
               id: uuid(),
               dateTime: newDate,

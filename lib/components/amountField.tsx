@@ -9,6 +9,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import AddIcon from '@material-ui/icons/Add'
 import CancelIcon from '@material-ui/icons/Cancel'
 import RemoveIcon from '@material-ui/icons/Remove'
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows'
 import { FaCalculator as CalculatorIcon } from 'react-icons/fa'
 import NumberFormat from 'react-number-format'
 
@@ -26,21 +27,20 @@ interface AmountFieldProps {
   className?: string
   currency: CurrencyValue
   onPressEnter: (e: React.SyntheticEvent) => void
-  isExpense?: boolean
+  type?: string
 }
 
 interface MuiInputProps {
   clearAmount: () => void
   openCalculator: () => void
   value: string
-  isExpense?: boolean
+  transactionType?: string
 }
 
 const amountFieldId = 'amount-field'
 
-const MuiInput: React.FC<MuiInputProps> = ({ clearAmount, openCalculator, value, isExpense, ...others }) => {
+const MuiInput: React.FC<MuiInputProps> = ({ clearAmount, openCalculator, value, transactionType, ...others }) => {
   const theme = useTheme()
-
   return (
     <Input
       {...others}
@@ -49,10 +49,12 @@ const MuiInput: React.FC<MuiInputProps> = ({ clearAmount, openCalculator, value,
       placeholder="0.00"
       value={value}
       startAdornment={
-        isExpense === true ? (
+        transactionType === 'expense' ? (
           <RemoveIcon style={{ color: 'red' }} />
-        ) : isExpense === false ? (
+        ) : transactionType === 'income' ? (
           <AddIcon style={{ color: 'green' }} />
+        ) : transactionType === 'transfer' ? (
+          <CompareArrowsIcon style={{ color: 'burlywood' }} />
         ) : null
       }
       endAdornment={
@@ -91,7 +93,7 @@ const AmountField = ({
   className,
   currency,
   onPressEnter,
-  isExpense,
+  type,
 }: AmountFieldProps) => {
   const [showCalc, setShowCalc] = useState(false)
   const [calcExpression, setCalcExpression] = useState('')
@@ -151,7 +153,7 @@ const AmountField = ({
           onKeyDown={(e) => {
             if (e.key === 'Enter') onPressEnter(e)
           }}
-          isExpense={isExpense}
+          transactionType={type!}
         />
       </FormControl>
     </>

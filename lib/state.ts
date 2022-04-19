@@ -1,6 +1,6 @@
 import { Color as NotificationSeverity } from '@material-ui/lab/Alert'
 
-import { Tag, Transaction } from './addTransaction/state'
+import { Tag, AnyTransaction } from './addTransaction/state'
 import { Profile } from './profile/state'
 import { ObjectOf } from './types'
 
@@ -28,7 +28,7 @@ export interface TransactionSearch {
  */
 export interface SerializableState {
   tags: ObjectOf<Tag>
-  transactions: ObjectOf<Transaction>
+  transactions: ObjectOf<AnyTransaction>
   profile: ObjectOf<Profile>
 }
 

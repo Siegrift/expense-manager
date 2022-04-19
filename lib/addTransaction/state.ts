@@ -21,23 +21,37 @@ export enum RepeatingOptions {
 
 export type RepeatingOption = keyof typeof RepeatingOptions
 
-export interface BaseTransaction {
+interface BaseTransaction {
   rate?: number
   // NOTE: order might be important
   tagIds: string[]
   currency: Currency
-  isExpense: boolean
+  isExpense?: boolean
   note: string
   repeating: RepeatingOption
 }
 
+// TODO: rename to BasicTansaction
 export interface Transaction extends BaseTransaction, FirebaseField {
+  type: 'expense' | 'income'
   dateTime: Date
   amount: number
   attachedFiles?: string[]
 }
 
+export interface TransferTransaction extends Omit<Transaction, 'type'> {
+  type: 'transfer'
+  // TODO: Maybe arrays
+  fromTagId: string
+  toTagId: string
+}
+
+// TODO: Rename to Transaction
+export type AnyTransaction = Transaction | TransferTransaction
+
 export interface AddTransaction extends BaseTransaction {
+  type: 'expense' | 'income' | 'transfer'
+  tagIds: string[]
   useCurrentTime: boolean
   newTags: ObjectOf<Tag>
   dateTime?: Date
@@ -45,6 +59,8 @@ export interface AddTransaction extends BaseTransaction {
   amount: string
   shouldValidateAmount: boolean
   attachedFileObjects: FileObject[]
+  fromTagId?: string
+  toTagId?: string
 }
 
 type CreateStateProps = {
@@ -58,7 +74,7 @@ export const createDefaultAddTransactionState = (initialProps?: CreateStateProps
   newTags: {},
   currency: initialProps?.initialCurrency || DEFAULT_CURRENCY,
   tagInputValue: '',
-  isExpense: true,
+  type: 'expense',
   note: '',
   dateTime: undefined,
   useCurrentTime: true,

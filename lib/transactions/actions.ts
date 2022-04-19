@@ -3,7 +3,7 @@ import { difference } from 'lodash'
 import Router from 'next/router'
 
 import { removeFromFirebase, uploadToFirebase } from '../actions'
-import { Tag, Transaction } from '../addTransaction/state'
+import { AnyTransaction, Tag } from '../addTransaction/state'
 import { getStorageRef } from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
 import { createSuccessNotification, setSnackbarNotification, withErrorHandler } from '../shared/actions'
@@ -14,14 +14,14 @@ import { ObjectOf } from '../types'
 import { applySearchOnTransactions } from './selectors'
 
 export const saveTxEdit =
-  (newTags: ObjectOf<Tag>, newFiles: File[], editedFields: Omit<Transaction, 'uid'>): Thunk =>
+  (newTags: ObjectOf<Tag>, newFiles: File[], editedFields: Omit<AnyTransaction, 'uid'>): Thunk =>
   async (dispatch, getState, { logger }) => {
     logger.log('Save edited transaction', { newFiles, newTags, editedFields })
 
     const userId = currentUserIdSel(getState())!
     const originalTx = getState().transactions[editedFields.id]
     // TODO: what to do with tags that are not in any expense (deleted by edit)
-    const tx: Transaction = { ...originalTx, ...editedFields }
+    const tx: AnyTransaction = { ...originalTx, ...editedFields }
     tx.attachedFiles = (tx.attachedFiles ?? []).concat(newFiles.map((f) => f.name))
     const storageRef = getStorageRef(userId, 'files', originalTx.id)
     let success: boolean | undefined

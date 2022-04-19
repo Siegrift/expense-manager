@@ -37,7 +37,7 @@ const AddTransaction = () => {
     tagIds,
     newTags,
     tagInputValue,
-    isExpense,
+    type,
     note,
     dateTime,
     useCurrentTime,
@@ -83,9 +83,9 @@ const AddTransaction = () => {
     <PageWrapper>
       <TransactionForm
         variant="add"
-        isExpense={{
-          value: isExpense,
-          handler: (isExpense) => setAddTx((currAddTx) => set(currAddTx, ['isExpense'], isExpense)),
+        type={{
+          value: type,
+          handler: (type) => setAddTx((currAddTx) => set(currAddTx, ['type'], type)),
         }}
         tagProps={{
           tags: allTags,
