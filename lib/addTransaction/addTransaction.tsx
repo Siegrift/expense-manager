@@ -16,6 +16,9 @@ import { addTransaction } from './actions'
 import { automaticTagIdsSel, tagsSel } from './selectors'
 import { AddTransaction as AddTransactionType, Tag, createDefaultAddTransactionState } from './state'
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const emptyFunction = () => {}
+
 const allFieldsAreValid = (addTx: AddTransactionType) => isAmountInValidFormat(addTx.amount)
 
 const maybeApplyDefaultAmount = (tags: Tag[], amount: string) => {
@@ -37,7 +40,7 @@ const AddTransaction = () => {
     tagIds,
     newTags,
     tagInputValue,
-    isExpense,
+    type,
     note,
     dateTime,
     useCurrentTime,
@@ -83,38 +86,44 @@ const AddTransaction = () => {
     <PageWrapper>
       <TransactionForm
         variant="add"
-        isExpense={{
-          value: isExpense,
-          handler: (isExpense) => setAddTx((currAddTx) => set(currAddTx, ['isExpense'], isExpense)),
+        type={{
+          value: type,
+          handler: (type) => setAddTx((currAddTx) => set(currAddTx, ['type'], type)),
         }}
         tagProps={{
           tags: allTags,
           currentTagIds: tagIds,
-          onSelectTag: (id) => {
-            setAddTx((currAddTx) => {
-              const newTagIds = [...get(currAddTx, ['tagIds']), id]
-              return pipe(
-                fpSet<typeof currAddTx>()(['tagIds'], newTagIds),
-                fpUpdate<typeof currAddTx>()(['amount'], (am) =>
-                  maybeApplyDefaultAmount(
-                    newTagIds.map((i) => allTags[i]),
-                    am
-                  )
-                )
-              )(currAddTx)
-            })
-          },
-          onCreateTag: (tag) => {
-            setAddTx((currAddTx) => ({
-              ...currAddTx,
-              tagIds: [...currAddTx.tagIds, tag.id],
-              newTags: {
-                ...currAddTx.newTags,
-                [tag.id]: tag,
-              },
-              tagInputValue: '',
-            }))
-          },
+          onSelectTag:
+            tagIds.length >= 2 && type === 'transfer'
+              ? emptyFunction
+              : (id) => {
+                  setAddTx((currAddTx) => {
+                    const newTagIds = [...get(currAddTx, ['tagIds']), id]
+                    return pipe(
+                      fpSet<typeof currAddTx>()(['tagIds'], newTagIds),
+                      fpUpdate<typeof currAddTx>()(['amount'], (am) =>
+                        maybeApplyDefaultAmount(
+                          newTagIds.map((i) => allTags[i]),
+                          am
+                        )
+                      )
+                    )(currAddTx)
+                  })
+                },
+          onCreateTag:
+            tagIds.length >= 2 && type === 'transfer'
+              ? emptyFunction
+              : (tag) => {
+                  setAddTx((currAddTx) => ({
+                    ...currAddTx,
+                    tagIds: [...currAddTx.tagIds, tag.id],
+                    newTags: {
+                      ...currAddTx.newTags,
+                      [tag.id]: tag,
+                    },
+                    tagInputValue: '',
+                  }))
+                },
           onRemoveTags: (removedTagIds) => {
             setAddTx((currAddTx) => ({
               ...currAddTx,

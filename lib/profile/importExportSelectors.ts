@@ -48,9 +48,10 @@ const serializableStateSel = createSelector(
  */
 export const csvFromDataSel = createSelector(serializableStateSel, ({ transactions, tags }) => {
   const lines = Object.values(transactions).map((tx) =>
+    // TODO: fix with type = transfer
     [
       tx.dateTime.toISOString(),
-      tx.isExpense ? -tx.amount : tx.amount,
+      tx.type === 'expense' ? -tx.amount : tx.amount,
       tx.tagIds.map((id) => tags[id].name).join('|'),
       tx.note,
       tx.currency,
@@ -126,7 +127,7 @@ export const dataFromImportedCsvSel = (importedCsv: string) =>
           amount: Math.abs(amount),
           currency: t[4] as any as Currency,
           dateTime: dt,
-          isExpense: amount < 0,
+          type: amount < 0 ? 'expense' : 'income',
           note: t[3],
           tagIds: splitTags.map((tag) => {
             if (newTagsByName.get(tag)) {

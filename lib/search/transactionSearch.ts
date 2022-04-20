@@ -85,7 +85,7 @@ export const COMMANDS: Command[] = [
     name: 'is-expense',
     predicate: (tx, query) => {
       const wantExpense = query === 'true'
-      return tx.isExpense === wantExpense
+      return (tx.type === 'expense') === wantExpense
     },
     valueOptions: booleanOptions,
   },

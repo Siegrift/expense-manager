@@ -21,12 +21,13 @@ export enum RepeatingOptions {
 
 export type RepeatingOption = keyof typeof RepeatingOptions
 
-export interface BaseTransaction {
+interface BaseTransaction {
   rate?: number
   // NOTE: order might be important
   tagIds: string[]
   currency: Currency
-  isExpense: boolean
+  type: 'income' | 'expense' | 'transfer'
+  isExpense?: boolean
   note: string
   repeating: RepeatingOption
 }
@@ -58,7 +59,7 @@ export const createDefaultAddTransactionState = (initialProps?: CreateStateProps
   newTags: {},
   currency: initialProps?.initialCurrency || DEFAULT_CURRENCY,
   tagInputValue: '',
-  isExpense: true,
+  type: 'expense',
   note: '',
   dateTime: undefined,
   useCurrentTime: true,

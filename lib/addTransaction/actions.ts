@@ -42,7 +42,7 @@ export const addTransaction =
 
       const tx: Transaction = {
         id,
-        ...pick(addTx, ['tagIds', 'currency', 'isExpense', 'note', 'repeating']),
+        ...pick(addTx, ['tagIds', 'currency', 'type', 'note', 'repeating']),
         amount: Number.parseFloat(addTx.amount),
         dateTime: addTx.useCurrentTime ? new Date() : addTx.dateTime!,
         uid: userId,

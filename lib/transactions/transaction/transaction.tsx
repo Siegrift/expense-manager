@@ -82,11 +82,11 @@ const _TransactionContent = ({ tx, bigDevice }: TransactionContentProps) => {
       <Typography
         variant="h4"
         style={{
-          color: tx.isExpense ? 'red' : 'green',
+          color: tx.type === 'expense' ? 'red' : tx.type === 'income' ? 'green' : 'burlywood',
           textAlign: 'left',
         }}
       >
-        {`${tx.isExpense ? '-' : '+'}${formatMoney(tx.amount, tx.currency)}`}
+        {`${tx.type === 'expense' ? '-' : tx.type === 'income' ? '+' : '±'}${formatMoney(tx.amount, tx.currency)}`}
       </Typography>
     </div>
   )

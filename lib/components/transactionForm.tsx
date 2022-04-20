@@ -93,7 +93,7 @@ type FieldPropsWithValidation<T> = FieldProps<T> & {
 }
 
 interface BaseProps {
-  isExpense: FieldProps<boolean>
+  type: FieldProps<'expense' | 'income' | 'transfer'>
   tagProps: {
     tags: ObjectOf<Tag>
     currentTagIds: string[]
@@ -160,8 +160,7 @@ const FileContent = ({ rawContent, url, filename, isImage }: ShowFileContent) =>
 }
 
 const TransactionForm = (props: TransactionFormProps) => {
-  const { variant, tagProps, isExpense, amount, currency, dateTime, onSubmit, repeating, note, attachedFileObjects } =
-    props
+  const { variant, tagProps, type, amount, currency, dateTime, onSubmit, repeating, note, attachedFileObjects } = props
   const useCurrentTime = variant === 'add' && (props as AddTxFormVariantProps).useCurrentTime
   const uploadedFiles = variant === 'edit' && (props as EditTxFormVariantProps).uploadedFiles
   const txId = variant === 'edit' && (props as EditTxFormVariantProps).id
@@ -187,18 +186,29 @@ const TransactionForm = (props: TransactionFormProps) => {
       <Grid container className={classes.row}>
         <ButtonGroup variant="contained" fullWidth>
           <Button
-            onClick={() => isExpense.handler(true)}
+            onClick={() => type.handler('expense')}
             variant="contained"
-            color={isExpense.value ? 'primary' : 'default'}
+            color={type.value === 'expense' ? 'primary' : 'default'}
           >
             Expense
           </Button>
           <Button
-            onClick={() => isExpense.handler(false)}
+            onClick={() => type.handler('income')}
             variant="contained"
-            color={!isExpense.value ? 'primary' : 'default'}
+            color={type.value === 'income' ? 'primary' : 'default'}
           >
             Income
+          </Button>
+          <Button
+            onClick={() => {
+              type.handler('transfer')
+              const redundantTagIds = tagProps.currentTagIds.slice(2)
+              tagProps.onRemoveTags(redundantTagIds)
+            }}
+            variant="contained"
+            color={type.value === 'transfer' ? 'primary' : 'default'}
+          >
+            Transfer
           </Button>
         </ButtonGroup>
       </Grid>
@@ -217,7 +227,7 @@ const TransactionForm = (props: TransactionFormProps) => {
 
       <Grid container className={classes.row}>
         <AmountField
-          isExpense={isExpense.value}
+          type={type.value}
           currency={CURRENCIES[currency.value]}
           isValidAmount={amount.isValid}
           shouldValidateAmount={amount.validate}
