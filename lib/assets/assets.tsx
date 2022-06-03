@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import ChartWrapper from '../charts/chartWrapper'
 import PageWrapper from '../components/pageWrapper'
 
+import AssetBalance from './assetBalance'
 import AssetPercentages from './assetPercentages'
 import { assetTagsSumsSel } from './selectors'
 
@@ -14,6 +15,10 @@ const Assets = () => {
 
   return (
     <PageWrapper>
+      <ChartWrapper
+        label="Recent asset balance"
+        renderChart={({ width, height }) => <AssetBalance width={width} height={height} />}
+      />
       <ChartWrapper label="Asset percentages" renderChart={() => <AssetPercentages />} />
       <table>
         <tr style={{ textAlign: 'left' }}>
