@@ -3,7 +3,7 @@ import { difference } from 'lodash'
 import Router from 'next/router'
 
 import { removeFromFirebase, uploadToFirebase } from '../actions'
-import { Tag, Transaction } from '../addTransaction/state'
+import { Transaction, Tag } from '../addTransaction/state'
 import { getStorageRef } from '../firebase/firebase'
 import { Action, Thunk } from '../redux/types'
 import { createSuccessNotification, setSnackbarNotification, withErrorHandler } from '../shared/actions'

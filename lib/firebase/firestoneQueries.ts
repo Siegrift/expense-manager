@@ -1,4 +1,6 @@
 import { omit, set, update } from '@siegrift/tsfunct'
+import keyBy from 'lodash/keyBy'
+import map from 'lodash/map'
 
 import { State } from '../state'
 
@@ -15,7 +17,7 @@ export interface FirestoneQuery {
 }
 
 const createQueryReducer =
-  (stateProp: keyof Pick<State, 'transactions' | 'tags' | 'profile'>): QueryReducer =>
+  (stateProp: 'transactions' | 'tags' | 'profile'): QueryReducer =>
   (state, payload) => {
     return update(state, [stateProp], (statePart) => {
       let newStatePart = statePart
@@ -45,7 +47,21 @@ const allTransactionsQuery: FirestoneQuery = {
       .where('uid', '==', getFirebase().auth().currentUser!.uid)
     return q
   },
-  reducer: createQueryReducer('transactions'),
+  reducer: (state, payload) => {
+    const newState = createQueryReducer('transactions')(state, payload)
+    const modifiedTransactions = map(newState.transactions, (transaction) => {
+      if (transaction.type) return transaction
+
+      return {
+        ...transaction,
+        type: !!transaction.isExpense ? 'expense' : 'income',
+      } as const
+    })
+    return {
+      ...newState,
+      transactions: keyBy(modifiedTransactions, 'id'),
+    }
+  },
 }
 
 const allTags: FirestoneQuery = {

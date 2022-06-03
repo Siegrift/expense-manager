@@ -50,6 +50,9 @@ interface EditTransactionContentProps {
   tx: Transaction
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const emptyFunction = () => {}
+
 const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
   const classes = useStyles()
   const dispatch = useDispatch()
@@ -57,7 +60,7 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
   const previousTx = useSelector(previousTxSel(tx.id))
 
   const [amount, setAmount] = useState('' + tx.amount)
-  const [isExpense, setIsExpense] = useState(tx.isExpense)
+  const [type, setType] = useState(tx.type)
   const [note, setNote] = useState(tx.note)
   const [currency, setCurrency] = useState(tx.currency)
   const [dateTime, setDateTime] = useState(tx.dateTime)
@@ -81,7 +84,7 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
           {
             id: tx.id,
             amount: Number.parseFloat(amount),
-            isExpense,
+            type,
             note,
             currency,
             dateTime,
@@ -114,20 +117,24 @@ const EditTransactionContent = ({ tx }: EditTransactionContentProps) => {
       <div className={classes.root}>
         <TransactionForm
           variant="edit"
-          isExpense={{
-            value: isExpense,
-            handler: setIsExpense,
+          type={{
+            value: type,
+            handler: setType,
           }}
           tagProps={{
             tags: { ...availableTags, ...newTags },
             currentTagIds: tagIds,
-            onSelectTag: (id) => setTagIds([...tagIds, id]),
+            onSelectTag: (id) => {
+              tagIds.length >= 2 && type === 'transfer' ? emptyFunction : setTagIds([...tagIds, id])
+            },
             onCreateTag: (tag) => {
-              setNewTags({
-                ...newTags,
-                [tag.id]: tag,
-              })
-              setTagIds([...tagIds, tag.id])
+              tagIds.length >= 2 && type === 'transfer'
+                ? emptyFunction
+                : setNewTags({
+                    ...newTags,
+                    [tag.id]: tag,
+                  })
+              tagIds.length >= 2 && type === 'transfer' ? emptyFunction : setTagIds([...tagIds, tag.id])
             },
             onRemoveTags: (removeTagIds) => {
               const ids = difference(tagIds, removeTagIds)

@@ -73,8 +73,8 @@ export const txsInfoSel = createSelector(
   overviewTransactionsSel,
   mainCurrencySel,
   (dateRange, transactions, currency) => {
-    const income = transactions.filter((t) => !t.isExpense).reduce((sum, tx) => sum + tx.amount, 0)
-    const expense = transactions.filter((t) => t.isExpense).reduce((sum, tx) => sum + tx.amount, 0)
+    const income = transactions.filter((t) => t.type === 'income').reduce((sum, tx) => sum + tx.amount, 0)
+    const expense = transactions.filter((t) => t.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0)
 
     if (!currency) return null
     return {
