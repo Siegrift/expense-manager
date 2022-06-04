@@ -21,28 +21,31 @@ describe('settings actions', () => {
       })
 
       test('checks for errors', () => {
-        const checkError = (input: string) => dataFromImportedCsvSel(input)(state).errorReason
+        const fileName = 'notTB'
+        const checkError = (input: string) => dataFromImportedCsvSel(input, fileName)(state).errorReason
 
         expect(checkError('')).toBe('Unexpected import error. Check whether the data are in correct format.')
 
-        expect(checkError('invalid_date,-1,Travel|Tickets,,EUR,none')).toBe('invalid_date is not a valid date')
-        expect(checkError('21.11.1999,-1,Travel|Tickets,,EUR,none')).toBe('21.11.1999 is not a valid date')
-        expect(checkError('2017.08.19T00:00:00Z,-1,Travel|Tickets,,EUR,none')).toBe(
+        expect(checkError('invalid_date,1,expense,Travel|Tickets,,EUR,none')).toBe('invalid_date is not a valid date')
+        expect(checkError('21.11.1999,1,expense,Travel|Tickets,,EUR,none')).toBe('21.11.1999 is not a valid date')
+        expect(checkError('2017.08.19T00:00:00Z,1,expense,Travel|Tickets,,EUR,none')).toBe(
           '2017.08.19T00:00:00Z is not a valid date'
         )
 
-        expect(checkError('2017-08-19T00:00:00Z,+2,Travel|Tickets,,EUR,none')).toBe(
+        expect(checkError('2017-08-19T00:00:00Z,+2,income,Travel|Tickets,,EUR,none')).toBe(
           '+2 is not in a valid amount format'
         )
-        expect(checkError('2017-08-19T00:00:00Z,-1.345,Travel|Tickets,,EUR,none')).toBe(
-          '-1.345 is not in a valid amount format'
+        expect(checkError('2017-08-19T00:00:00Z,1.345,expense,Travel|Tickets,,EUR,none')).toBe(
+          '1.345 is not in a valid amount format'
         )
 
-        expect(checkError('2017-08-19T00:00:00Z,2,,,EUR,none')).toBe('There must be at least one tag in a transaction')
+        expect(checkError('2017-08-19T00:00:00Z,2,income,,,EUR,none')).toBe(
+          'There must be at least one tag in a transaction'
+        )
 
-        expect(checkError('2017-08-19T00:00:00Z,2,Travel,note,$,none')).toBe('Invalid currency of a transaction')
+        expect(checkError('2017-08-19T00:00:00Z,2,income,Travel,note,$,none')).toBe('Invalid currency of a transaction')
 
-        expect(checkError('2017-08-19T00:00:00Z,-1,Travel|Tickets,,EUR,invalid_repeating')).toBe(
+        expect(checkError('2017-08-19T00:00:00Z,1,expense,Travel|Tickets,,EUR,invalid_repeating')).toBe(
           'Invalid repeating mode invalid_repeating'
         )
       })
@@ -52,12 +55,13 @@ describe('settings actions', () => {
           id1: { id: 'id1', name: 'Travel', uid: 'user_id', automatic: false },
         }
         const csv1 =
-          '2017-08-19T00:00:00Z,-1,Travel|Tickets,,EUR,none\n2017-08-16T00:00:00Z,-0.7,Shopping,,EUR,annually'
-        const csv2 = '2016-02-16T00:00:00Z,-1.56,A|B|C,,EUR,monthly'
+          '2017-08-19T00:00:00Z,1,expense,Travel|Tickets,,EUR,none\n2017-08-16T00:00:00Z,-0.7,Shopping,,EUR,annually'
+        const csv2 = '2016-02-16T00:00:00Z,1.56,expense,A|B|C,,EUR,monthly'
+        const fileName = 'notTB'
 
         // Travel tag should be reused from state
-        expect(dataFromImportedCsvSel(csv1)(state)).toMatchSnapshot()
-        expect(dataFromImportedCsvSel(csv2)(state)).toMatchSnapshot()
+        expect(dataFromImportedCsvSel(csv1, fileName)(state)).toMatchSnapshot()
+        expect(dataFromImportedCsvSel(csv2, fileName)(state)).toMatchSnapshot()
       })
 
       test('exporting imported txs yields identity', () => {
@@ -65,9 +69,9 @@ describe('settings actions', () => {
           id1: { id: 'id1', name: 'Travel', uid: 'user_id', automatic: false },
         }
         const csv =
-          '2017-08-19T00:00:00.000Z,-1,Travel|Tickets,,EUR,none\n2017-08-16T00:00:00.000Z,-0.7,Shopping,,EUR,monthly'
-
-        const imp = dataFromImportedCsvSel(csv)(state)
+          '2017-08-19T00:00:00.000Z,1,expense,Travel|Tickets,,EUR,none\n2017-08-16T00:00:00.000Z,-0.7,Shopping,,EUR,monthly'
+        const fileName = 'notTB'
+        const imp = dataFromImportedCsvSel(csv, fileName)(state)
         const newState: State = {
           ...state,
           transactions: keyBy(imp.transactions, 'id'),

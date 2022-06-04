@@ -2,19 +2,13 @@
 
 exports[`settings actions import/export csv format creates new tags and txs 1`] = `
 Object {
-  "errorReason": undefined,
+  "errorReason": "-0.7 is not in a valid amount format",
   "profile": Object {},
   "tags": Object {
     "0": Object {
       "automatic": false,
       "id": 0,
       "name": "Tickets",
-      "uid": null,
-    },
-    "2": Object {
-      "automatic": false,
-      "id": 2,
-      "name": "Shopping",
       "uid": null,
     },
   },
@@ -33,19 +27,6 @@ Object {
       "type": "expense",
       "uid": null,
     },
-    "3": Object {
-      "amount": 0.7,
-      "currency": "EUR",
-      "dateTime": 2017-08-16T00:00:00.000Z,
-      "id": 3,
-      "note": "",
-      "repeating": "annually",
-      "tagIds": Array [
-        2,
-      ],
-      "type": "expense",
-      "uid": null,
-    },
   },
 }
 `;
@@ -55,37 +36,37 @@ Object {
   "errorReason": undefined,
   "profile": Object {},
   "tags": Object {
-    "4": Object {
+    "2": Object {
       "automatic": false,
-      "id": 4,
+      "id": 2,
       "name": "A",
       "uid": null,
     },
-    "5": Object {
+    "3": Object {
       "automatic": false,
-      "id": 5,
+      "id": 3,
       "name": "B",
       "uid": null,
     },
-    "6": Object {
+    "4": Object {
       "automatic": false,
-      "id": 6,
+      "id": 4,
       "name": "C",
       "uid": null,
     },
   },
   "transactions": Object {
-    "7": Object {
+    "5": Object {
       "amount": 1.56,
       "currency": "EUR",
       "dateTime": 2016-02-16T00:00:00.000Z,
-      "id": 7,
+      "id": 5,
       "note": "",
       "repeating": "monthly",
       "tagIds": Array [
+        2,
+        3,
         4,
-        5,
-        6,
       ],
       "type": "expense",
       "uid": null,
@@ -94,7 +75,4 @@ Object {
 }
 `;
 
-exports[`settings actions import/export csv format exporting imported txs yields identity 1`] = `
-"2017-08-19T00:00:00.000Z,-1,Travel|Tickets,,EUR,none
-2017-08-16T00:00:00.000Z,-0.7,Shopping,,EUR,monthly"
-`;
+exports[`settings actions import/export csv format exporting imported txs yields identity 1`] = `"2017-08-19T00:00:00.000Z,1,expense,Travel|Tickets,,EUR,none"`;

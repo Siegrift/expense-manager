@@ -24,7 +24,7 @@ import {
 } from './importExportSelectors'
 
 const importData =
-  (file: File, dataSourceSel: (importData: string) => (state: State) => ImportedData): Thunk =>
+  (file: File, dataSourceSel: (importData: string, importFileName: string) => (state: State) => ImportedData): Thunk =>
   async (dispatch, getState) => {
     const userId = currentUserIdSel(getState())
 
@@ -34,7 +34,7 @@ const importData =
     }
 
     const fileContent = await file.text()
-    const { errorReason, tags, transactions, profile } = dataSourceSel(fileContent)(getState())
+    const { errorReason, tags, transactions, profile } = dataSourceSel(fileContent, file.name)(getState())
 
     if (errorReason) {
       dispatch(setSnackbarNotification(createErrorNotification(errorReason)))
