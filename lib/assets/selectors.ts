@@ -121,6 +121,7 @@ type Lines = {
 
 export const recentBalanceDataSel = (monthsToDisplay: number, dateRange: DateRange) =>
   createSelector(assetTxsSel, assetTagsSel, tagsSel, (transactions, assetTags, tags) => {
+    if (monthsToDisplay === 0) return null
     interface LineChartData {
       amount: number
       dataIndex: number
@@ -157,12 +158,13 @@ export const recentBalanceDataSel = (monthsToDisplay: number, dateRange: DateRan
     }
 
     const groupedTransactions = assets
-      .filter((tx) => isWithinInterval(tx.dateTime, dateRange))
       .map(
         (tx): LineChartData => ({
           amount: tx.amount * (tx.rate ?? 1),
           type: tx.type,
-          dataIndex: monthsToDisplay - (differenceInCalendarMonths(dateRange.end, tx.dateTime) + 1),
+          dataIndex: isWithinInterval(tx.dateTime, dateRange)
+            ? monthsToDisplay - (differenceInCalendarMonths(dateRange.end, tx.dateTime) + 1)
+            : 0,
           asset: tx.tagIds.length === 1 ? nameOfTag(tx.tagIds[0], tags) : assetTxBelogsTo(tx, assetTags, tags),
         })
       )
