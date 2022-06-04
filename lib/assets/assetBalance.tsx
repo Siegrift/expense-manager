@@ -12,8 +12,8 @@ import { DateRange } from '../types'
 
 import { recentBalanceDataSel, displayDataSel } from './selectors'
 
-const AXIS_DATE_FORMAT = 'MM.yyyy'
-const SLICE_DATE_FORMAT = 'd.MM.yyyy'
+const AXIS_DATE_FORMAT = 'MMM yy'
+const SLICE_DATE_FORMAT = 'MMMM yyyy'
 
 interface Props {
   width: number
@@ -28,17 +28,6 @@ const AssetBalance = ({ width, height, dateRange }: Props) => {
 
   const data = useSelector(recentBalanceDataSel(monthsToDisplay, computedDateRange))
 
-  if (data.length > 500) return null
-
-  let minY = -500
-  let maxY = 500
-  data.forEach((asset, i) =>
-    asset.data.forEach((point, j) => {
-      minY = i === 0 && j === 0 ? point.y : Math.min(minY, point.y)
-      maxY = i === 0 && j === 0 ? point.y : Math.max(maxY, point.y)
-    })
-  )
-
   const showSlice = useCallback(
     ({ slice }: any) => {
       if (!mainCurrency) return null
@@ -51,7 +40,7 @@ const AssetBalance = ({ width, height, dateRange }: Props) => {
             border: '1px solid #ccc',
           }}
         >
-          {`Date: ${format(addMonths(computedDateRange.start, slice.points[0].data.index), SLICE_DATE_FORMAT)}`}
+          {format(addMonths(computedDateRange.start, slice.points[0].data.index), SLICE_DATE_FORMAT)}
           {slice.points.map((point: any) => (
             <div
               key={point.id}
@@ -71,6 +60,31 @@ const AssetBalance = ({ width, height, dateRange }: Props) => {
     },
     [monthsToDisplay, mainCurrency]
   )
+
+  // TODO: for some reason width can be 0 while calling selectors and then they cant work properly
+  // so we return data = null, when width updates to correct value the component rerenders and we
+  // calculate correct data
+  if (data === null) return null
+
+  if (data.length > 500) return null
+
+  let minY = -500
+  let maxY = 500
+  let maxAssetName = 50
+  data.forEach((asset, i) => {
+    maxAssetName = i === 0 ? asset.id.length : Math.max(maxAssetName, asset.id.length)
+    asset.data.forEach((point, j) => {
+      minY = i === 0 && j === 0 ? point.y : Math.min(minY, point.y)
+      maxY = i === 0 && j === 0 ? point.y : Math.max(maxY, point.y)
+    })
+  })
+
+  const formatMoneydValue = (v: number) => {
+    const absV = Math.abs(v)
+    if (absV >= 1000000) return v / 1000000 + 'M'
+    if (absV >= 1000) return v / 1000 + 'K'
+    return v
+  }
 
   return (
     <div
@@ -109,7 +123,7 @@ const AssetBalance = ({ width, height, dateRange }: Props) => {
           ticksPosition: 'before',
           tickSize: 5,
           tickPadding: 5,
-          format: (v) => `${v} ${mainCurrency ? CURRENCIES[mainCurrency].symbol : ''}`,
+          format: (v) => `${formatMoneydValue(v)} ${mainCurrency ? CURRENCIES[mainCurrency].symbol : ''}`,
         }}
         pointSize={3}
         pointColor={{ theme: 'background' }}
@@ -127,7 +141,7 @@ const AssetBalance = ({ width, height, dateRange }: Props) => {
             justify: false,
             translateX: 0,
             translateY: 50,
-            itemWidth: 100,
+            itemWidth: maxAssetName * 6.5,
             itemHeight: 20,
             itemsSpacing: 5,
             symbolSize: 10,
